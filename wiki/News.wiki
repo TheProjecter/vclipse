@@ -15,7 +15,7 @@ VClipse has been [http://www.configuration-workgroup.com/webfm_send/2003 present
 == Update Site (2010-06-24) ==
 
 We created an update site for VClipse. VClipse is available from the update site
-https://hg.codespot.com/a/eclipselabs.org/vclipse/update
+http://svn.codespot.com/a/eclipselabs.org/vclipse/trunk/update
 
 == Migration to Xtext 1.0 (Eclipse Helios) (2010-06-21) ==
 
