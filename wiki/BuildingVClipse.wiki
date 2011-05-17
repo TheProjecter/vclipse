@@ -32,9 +32,7 @@ VClipse does not work with older releases of TMF Xtext (e.g., Xtext 0.7.2 as pro
 
 VClipse is maintained on [http://code.google.com/a/eclipselabs.org/hosting/ Eclipse Labs] using the version control system [http://subversion.apache.org/ Subversion]. You can retrieve the source code using any Subversion client. 
 
- * Make sure a Subversion client is installed in your Eclipse distribution, e.g., 
-   [http://www.eclipse.org/subversive/ Sublipse] (update site at http://subclipse.tigris.org/update_1.6.x) or
-   [http://www.eclipse.org/subversive/ Subversive] (part of Helios release, update site at http://download.eclipse.org/releases/helios).
+ * Make sure a Subversion client is installed in your Eclipse distribution, e.g., [http://www.eclipse.org/subversive/ Sublipse] (update site at http://subclipse.tigris.org/update_1.6.x) or [http://www.eclipse.org/subversive/ Subversive] (part of Helios release, update site at http://download.eclipse.org/releases/helios).
  * Select ''File'' > ''Import...'' > ''Checkout from SVN'' and import all projects using the repository location http://svn.codespot.com/a/eclipselabs.org/vclipse/trunk/ You do not have to supply a user name. Import all projects into your workspace.
 
 You will now notice error markers in several files when Eclipse tries to build the projects.
