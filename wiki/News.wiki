@@ -4,6 +4,10 @@
 
 = News =
 
+== Migration to Subversion (2011-05-18) ==
+
+We migrated the version control system back from Mercurial to Subversion. Local modifications and additions can be maintained by tools like git-svn. Subversion is more known to current VClipse users.
+
 == Update Site (2010-06-24) ==
 
 We created an update site for VClipse. VClipse is available from the update site
