@@ -1,0 +1,7 @@
+#summary TableOfContents
+
+ * [News]
+ * [Features VClipse Features]
+ * [VCMLLanguage VCML Language Documentation]
+ * Developer Information
+   * [BuildingVClipse Building VClipse]

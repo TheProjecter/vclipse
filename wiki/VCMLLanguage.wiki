@@ -1,0 +1,789 @@
+#summary VCML Language Documentation
+#labels Featured,Phase-Design
+#sidebar TableOfContents
+
+= VCML Documentation =
+
+_Please note that this documentation is still incomplete.
+Meanwhile, you can have a look into the parser definition file [http://code.google.com/a/eclipselabs.org/p/vclipse/source/browse/org.vclipse.vcml/src/org/vclipse/vcml/VCML.xtext VCML.xtext]
+_
+
+VCML source code is organized in files with extension {{{.vcml}}}. Each file can contain 
+several VC objects in their textual representation. They are top level objects and can 
+contain other objects, existing in the object hierarchy, or reference existing VC objects.
+
+There are few notes about how to organize your source code under [ProjectStructure#Project_Structure Project Structure] section.
+
+== General Language Constructs ==
+
+=== Whitespace ===
+
+Whitespace is irrelevant.
+
+=== Comments ===
+
+VCML offers single-line comments and block comments.
+They are written like in Java or C:
+{{{
+// this is a single line comment
+    // this is another single line comment which does not start in the first column
+/* this is a 
+block comment
+*/
+}}}
+Block comments may not be nested.
+
+=== Strings ===
+
+Strings are character sequences enclosed in double quotes.
+Escape sequences starting with \ allow to write strings containing
+e.g. the newline or tab character or the double quote character.
+The contents of strings is case sensitive.
+
+Sample strings are:
+{{{
+"" // the empty string
+"A sample string"
+"A SAMPLE STRING" // another sample string, different from the string before
+"This is a tab\tand this is a newline\ncharacter" // a string containing a tab and a newline character
+"This is a string containing \"quotes\""
+"\\ can be escaped by writing the backslash character twice"
+"The line comment character sequence // does not introduce a comment in strings"
+}}}  
+
+Strings are used for example to represent the description of a VC object:
+{{{
+material software {
+	description "This is a string"
+	...
+}
+}}}
+
+
+=== Symbols ===
+
+Symbols are character sequences which are enclosed in single quotes.
+Escape characters are not allowed.
+Symbols are case-insensitive. 
+<wiki:comment>
+### clarify this
+</wiki:comment>
+
+Symbols are used for example as names of characteristic values or names of configuration profiles or interface designs.
+
+
+They are used for example for naming of configuration 
+profile objects:
+{{{
+material software {
+	description "Operating system to be delivered"
+	type os
+	// 'ubuntu' is a symbol
+	configurationprofile 'ubuntu' {
+		status released
+		bomapplication SD02
+		uidesign 7
+	}
+	// 'knoppix' is a symbol
+	configurationprofile 'knoppix' {
+		status inPreparation
+		bomapplication SD03
+		uidesign b
+	}
+}
+}}}
+
+Symbols can be empty.
+<wiki:comment>
+### clarify this
+</wiki:comment>
+
+=== Identifier ===
+
+Identifier are character sequence beginning with a character (only 
+ASCII characters are allowed) or underscore and containing lower/upper characters, underscore 
+or numbers.
+Examples:
+{{{
+_76
+Ubuntu
+wIndOWs_7
+}}}
+<wiki:comment>
+### verify whether _76 is an identifer in SAP
+### give an example where different cases represent the same identifier.
+</wiki:comment>
+
+Identifiers are case insensitive.
+
+Identifiers are used for example as names for characteristics, classes, or dependencies. 
+
+
+=== Extended identifier ===
+
+Extended identifiers are character sequences consisting of integer numbers, characters, which
+are parts of identifiers or the following characters: / : - and dot.
+Extended identifier can not be empty. They are used for example in interface designs declarations:
+{{{
+	interfacedesign ...
+	interfacedesign 78bWd
+	interfacedesign /:-54w
+	
+}}}
+  
+=== Class identifier ===
+
+Class identifier consist of a number surrounded by the brackets and a following identifier.
+Examples:
+{{{
+	(300)OpSys 
+	(200)car_kit4
+}}}
+
+=== Operators ===
+
+=== Literals ===
+
+=== Keywords ===
+
+Following character sequences are used as keywords in the VCML language and can not be used therefore as identifiers:
+<wiki:comment>
+### the language should be extended such that these character sequences can be used as identifiers
+
+### there are more keywords, e.g. description, documentation, status, group, ...
+</wiki:comment>
+
+==== *Keywords for VCObject declaration* ====
+{{{
+  - characteristic           - dependencynet
+  - class                    - material
+  - constraint               - interfacedesign
+  - selectioncondition       - variantfunction
+  - precondition             - varianttable
+  - procedure
+}}}
+
+=== VC Objects ===
+
+Each declaration of a VC object consists of a keyword followed by a name and an optional body. 
+Keywords specify which VC object is being declared, so there is a keyword for each VC object 
+beginning its declaration(please see [VCMLLanguage#Keywords_for_VCObject_declaration]). 
+
+All VC objects, except Classes, Materials and InterfaceDesigns, can be named with simple identifiers. Please use the 
+class identifier to give a name to a class and extended identifier to build a name for a Material or an InterfaceDesign object.
+
+==== Descriptions ====
+
+Nearly each VC object has a description.
+Descriptions can be single-language descriptions or multi-language descriptions.
+
+{{{
+Description = SimpleDescription | MultiLanguageDescriptions
+}}}
+
+A single-language description is written as follows:
+{{{	
+SimpleDescription = 'description' String
+}}}
+
+A multi-language description contains descriptions for multiple languages:
+{{{
+MultiLanguageDescriptions = 'description' '{' (Language String)* '}'
+	
+Language = AF | AR | BG | CA | CS | DA | DE | EL | EN | ES | ET | FI | FR | HE
+         | HR | HU | ID | IS | IT | JA | KO | LT | LV | MS | NL | NO | PL | PT
+         | RO | RU | SH | SK | SL | SR | SV | TH | TR | UK | Z1 | ZF | ZH
+}}}
+All SAP-supported ISO language codes can be used. 
+
+The length of the String is restricted to 30 characters each.
+
+An example for a single-language description is
+{{{
+description "the description of the VC object"
+}}}
+
+An example for a multi-language description is
+{{{
+description {
+  EN "the description of the VC object"
+  DE "die Beschreibung des VC-Objekts"
+}
+}}}
+
+Please note that descriptions are limited to 30 characters.
+In case longer texts are required, you can use documentations.
+
+==== Documentation ====
+
+Several VC objects have a documentation.
+Documentations can be single-language documentations or multi-language documentations.
+
+{{{
+Documentation = SimpleDocumentation | MultiLanguageDocumentations
+}}}
+
+A single-language documentation is written as follows:
+{{{	
+SimpleDocumentation = 'documentation' String
+}}}
+
+Multi-language documentations are slightly more complicated than descriptions, since documentations may contain
+multiple text blocks with attached format information.
+
+Multi-language documentations contain documentations for multiple languages:
+{{{
+MultiLanguageDocumentations = 'documentation' '{' (Language String ('format' Format)? )* '}'
+	
+Format = ...
+}}}
+<wiki:comment>
+### this needs to be defined
+</wiki:comment>
+
+An example for a single-language documentation is
+{{{
+documentation "the documentation of the VC object"
+}}}
+
+An example for a multi-language documentation is
+{{{
+documentation {
+  EN "the documentation of the VC object"
+  DE "die Dokumentation des VC-Objekts"
+}
+}}}
+
+<wiki:comment>
+### give another example which uses format
+</wiki:comment> 
+
+{{{
+documentation {
+  EN "the documentation of the VC object" 
+  DE "die Dokumentation des VC-Objekts"
+}
+}}}
+
+==== Status ====
+Many VC objects can have a status.
+
+A status is written as follows:
+{{{	
+Status = 'status' ('released' | 'inPreparation' | 'locked')
+}}}
+
+An example for a status is
+{{{
+status released
+}}}
+
+==== Group ====
+These VC objects can also be assigned to groups.
+In the SAP systems, groups are defined in customization and thus have a restricted range of possible values.
+In VCML, they are written as strings and are therefore not restricted.
+
+A group is written as follows:
+{{{
+Group = 'group' String
+}}}
+
+An example for a group is
+{{{
+group "PRODUCTS_CAR"
+}}}
+
+<wiki:comment>
+### Is there a length restriction for groups?
+</wiki:comment>
+
+=== Characteristic ===
+Characteristics are used to describe precisely of which elements a product is made of, and which values these elements can have.
+
+A characteristic is written as follows:
+{{{
+Characteristic =
+  'characteristic' ID ( '{'
+     Description
+	 Documentation?
+	 CharacteristicType
+     Status?
+   	 Group?
+	 CharacteristicAdditionalProperties?
+	 CharacteristicOrValueDependencies?
+  '}' )? 	
+
+CharacteristicAdditionalProperties = 
+  '[' 'additionalValue'?
+      'required'?
+      'restrictable'?
+      'noDisplay'?
+      'notReadyForInput'?
+      'multiValue'?
+      'displayAllowedValues'?  
+  ']'
+}}}
+
+Currently, only numeric and symbolic characteristics are possible.
+The other characteristic types possible in SAP like date or ADT are not yet implementd in VCML.
+
+{{{
+CharacteristicType = NumericType | SymbolicType
+}}}
+
+A !NumericType is written as follows:
+{{{	
+NumericType =
+  'numeric' '{'
+     'numberOfChars' INT
+     'decimalPlaces' INT
+	 ('unit' String)?
+     NumericAdditionalProperties?
+     ('values' '{' NumericCharacteristicValue* '}' )?
+  '}'
+
+NumericAdditionalProperties = 
+  '[' 'negativeValuesAllowed'?
+      'intervalValuesAllowed'?  
+  ']'
+
+NumericCharacteristicValue = NUMBER CharacteristicOrValueDependencies?
+}}}
+
+
+A !SymbolicType is written as follows:
+{{{	
+SymbolicType =
+  'symbolic' '{'
+     'numberOfChars' INT
+     SymbolicAdditionalProperties?
+     ('values' '{' CharacteristicValue* '}' )?
+  '}'
+
+SymbolicAdditionalProperties = 
+  '[' 'caseSensitive'? ']'
+
+CharacteristicValue =
+  SYMBOL ('{' 
+    Description? 
+    Documentation? 
+    CharacteristicOrValueDependencies?
+  '}')?
+}}}
+
+An example for a characteristic is
+{{{
+characteristic ENGINE {
+  description "the possible engines for a car"
+  numeric { 
+    numberOfChars 4
+    decimalPlaces 0
+    values {1500 1800 2100 2400}
+  } 
+  status released
+  group "PRODUCTS_CAR"
+}
+}}}
+
+Dependencies, i.e. conditions, procedures, or constraints can be attached to characteristics or characteristic values.
+
+CharacteristicOrValueDependencies are written as follows:
+{{{	
+CharacteristicOrValueDependencies =
+  'dependencies' '{'
+     ID*
+  '}'
+}}}
+The {{{ID}}} name the attached depedencies.
+
+<wiki:comment>
+### This is an example for local dependencies
+An example for CharacteristicOrValueDependencies is:
+{{{
+	dependencies {
+		precondition {
+            description "precondition for gears"
+            PRODUCTS_CAR
+            source { $SELF.GEAR in ('4-gear', '4-gear automatic')       
+                       if $ROOT.ENGINE IN ('1500', '1800') 
+                    }		
+        }
+		
+		selectioncondition {
+            description "selection condition for gears"
+            source { $SELF.GEAR SPECIFIED 
+                     if $ROOT.ENGINE SPECIFIED 
+            }
+        }
+		
+		// global dependencies like procedure, selection condition, or precondition 
+
+		PRECOND  // see [VCMLLanguage#Precondition]
+		SEL_COND // see [VCMLLanguage#Selection_Condition]
+	}
+}}}
+</wiki:comment>
+
+=== Class ===
+
+A class can be declared in the following way:
+
+{{{
+Class =
+  'class' ClassIdentifier ('{'
+    Description
+    Status?
+    Group?
+    'characteristics' '{' ID* '}'
+    ('superclasses' '{' ClassIdentifier* '}')
+  '}')?
+
+ClassIdentifier = '(' INT ')' ID
+}}}
+
+Classes reference existing characteristics in their characteristics list.
+
+An example for a class declaration
+{{{
+class (300)CAR {
+  description "this is the class for the car"
+  status released
+  group "PRODUCTS_CAR"
+  characteristics {
+    ENGINE
+    GEAR
+    COLOUR
+    INTERIOR
+  }
+  superclasses { (300)VEHICLE }
+}
+}}}
+
+
+== Constraint == 
+
+A constraint is defined as follows:
+{{{
+Constraint =
+  'constraint' ID ('{'
+    Description
+    Documentation?
+    Status?
+    Group?
+    ('source' '{' ConstraintSource '}' )?
+  '}')?  
+}}}
+
+{{{ConstraintSource}}} is the source code of the constraint.
+The syntax of the source code is exactly defined like in SAP.
+
+Example for a constraint declaration:
+{{{
+constraint CS_CAR1 {
+  description "Possible interior for the smallest engine"
+  status released
+	group "PRODUCTS_CAR"
+	source {
+	  OBJECTS: CAR IS_A (300)CAR
+      CONDITION: CAR.ENGINE = '1500'
+      RESTRICTION: CAR.INTERIOR IN ('01', '02')
+	}
+  }
+}}}
+
+== Dependency Net ==
+A dependency net is defined as follows:
+{{{
+DependencyNet =
+  'dependencynet' ID ('{'
+    Description
+    Documentation?
+    Status?
+    Group?
+    ID*
+  '}')?  
+}}}
+
+The first ID defines the name of the dependency net,
+the second ID are the names of the constraints of the dependency net.
+
+Example for a dependency net declaration:
+{{{
+dependencynet DEP_NET {
+  description "This is a constraint net for the car"
+  documentation "documentation"
+  status released
+  group "PRODUCTS_CAR"
+  CSTRT
+  CS_CAR1
+}
+}}}
+
+== Interface Design == 
+An interfacedesign is defined as follows:
+{{{
+InterfaceDesign =
+  'interfacedesign' ExtendedIdentifier ('{'
+    CharacteristicGroup*
+  '}')?  
+
+CharacteristicGroup =
+  'characteristicgroup' ExtendedIdentifier '{'
+    Description
+    ID*
+  '}'
+}}}
+
+The ID in a characteristic group refers to a characteristic.
+
+Example for an interface design declaration:
+{{{
+  interfacedesign INT_DESIGN {
+	characteristicgroup FunEl {
+	  description "functional elements"
+	  ENGINE
+      GEAR
+    }
+	characteristicgroup DesignEl {
+      description "design elements"
+      COLOUR
+      INTERIOR
+    }
+  }
+}}}
+
+
+== Material == 
+A material is defined as follows:
+{{{
+Material = 
+  'material' ExtendedIdentifier ('{'
+     Description
+     type ID
+     BillOfMaterial*
+     ('classes' '{' ClassIdentifier* '}')?
+     ConfigurationProfile*
+  '}')?
+}}}
+
+The ID refers to the material type.
+Typical types are {{{KMAT}}} (configurable material) or {{{HAWA}}} (trading goods).
+
+{{{
+BillOfMaterial =
+  'billofmaterial' '{'
+    ('itmes' '{' BOMitem* '}')?
+  '}'
+                 
+BOMitem =
+  INT ExtendedIdentifier
+  ('dependencies' '{' ID? ConfigurationProfileEntry*? '}')?   
+}}}
+
+INT represents the item number of the BOM item, the ExtendedIdentifier refers to a material, 
+and the ID to the name of a selection condition.
+
+There is also the opportunity to attach dependencies using a selection condition and configuration profile entries. 
+
+{{{
+ConfigurationProfile =
+  'configurationprofile' SYMBOL '{'
+    Status?
+    'bomapplication' ID
+    ('uidesign' ExtendedIdentifier)?
+    ID*
+    ConfigurationProfileEntry*
+  '}'
+         
+ConfigurationProfileEntry = INT ID
+}}}
+
+The ExtendedIdentifier names the appropriate Interfacedesign, and the optional IDs refer to the used DependencyNets.
+
+Example for a material declaration:
+{{{ 
+material CAR {
+  description "A configurable car"
+  type KMAT
+  classes {
+	(300)CAR
+  }
+  billofmaterial {
+	items {
+	  10	Engine_1500
+	  20	Engine_1800
+	  30	Engine_2100
+	  40	Engine_2400
+	  50	Gear_4
+	  60  	Gear_4automatic
+	  70	Gear_5
+	  80	Gear5automatic
+	  90	Interior_01
+	  100	Interior_02
+	  110	Interior_03
+	  120	Colour_black
+	  130	Colour_white
+	  140	Colour_red
+	}
+  }
+  configurationprofile 'profile_car' {
+    bomapplication AB12 uidesign CAR
+  }
+}
+
+material Engine_1500 {
+  description "Small engine"
+  type HAWA
+}
+
+material Engine_2400 {
+  description "Big engine"
+  type HAWA
+}
+}}}
+
+Please note that material objects have no documentation, group, and status
+properties, but a type property that has to be defined. One can reference
+existing classes objects in the optional class list and define many bill 
+of materials and interface design objects. 
+
+== Precondition ==
+A precondition is defined as follows:
+{{{
+Precondition =
+  'precondition' ID ('{'
+    Description
+    Documentation?
+    Status?
+    Group?
+    ('source' '{' ConditionSource '}')?
+  '}')?
+}}}
+
+ConditionSource is the source code of the precondition, exactly as defined in SAP.
+
+An example for a precondition
+{{{
+precondition PRECOND {
+  description "description"
+  documentation "documentation"
+  status released
+  group "group"
+  source { $SELF.GEAR in ('4-gear', '4-gear automatic')       
+           if $ROOT.ENGINE IN ('1500', '1800') }
+}
+}}}
+
+== Procedure ==
+A procedure is defined as follows:
+{{{
+Procedure =
+  'procedure' ID ('{'
+    Description
+    Documentation?
+    Status?
+    Group?
+    ('source' '{' ProcedureSource '}')?
+ '}')?
+}}}
+
+ProcedureSource is the source code of the procedure, exactly as defined in SAP.
+
+Example for a procedure:
+{{{
+procedure PROC {
+  description "set interior quantity"
+  documentation "documentation"
+  status released
+  group "PRODUCTS_CAR"
+  source { $self.C_QUANT = 2 if $root.ENGINE = '1500' }
+}
+}}}
+
+== Selection Condition == 
+A selection condition is defined as follows:
+{{{
+SelectionCondition =
+  'selectioncondition'  ID ('{'
+    Description
+    Documentation?
+    Status?
+    Group?
+    ('source' '{' ConditionSource '}')?
+  '}')?
+}}}
+
+ConditionSource is the source code of the selection condition, exactly as defined in SAP.
+
+Example for selection condition:
+{{{
+selectioncondition SEL_COND {
+  description "description"
+  documentation "documentation"
+  status released
+  group "group"
+  source { $SELF.GEAR SPECIFIED if $ROOT.ENGINE SPECIFIED }
+}
+}}}
+
+== Variant Function ==
+Only the interface of a VariantFunction is defined here.
+ABAP respectively Java code is not defined in VCML.
+
+A variant function is defined as follows:
+{{{
+VariantFunction =
+  'variantfunction'   ('{'
+    Description
+    Status?
+    Group?
+    ('arguments' '{' VariantFunctionArgument* '}' '}')?
+    
+VariantFunctionArgument = 'in'? ID
+}}}
+
+If the keyword {{{in}}} is given the following ID refers to an input characteristic.
+Otherwise the ID belongs to an output characteristic.
+
+Example for a variant function:
+{{{
+variantfunction VAR_FUNC {
+  description "description"
+  group "group"
+  status locked
+  arguments {
+	in ENGINE 
+	in GEAR 
+	FUELCONSUMPTION   
+  }
+}
+}}}
+
+== Variant Table ==
+
+The structure (scheme) of a variant table is defined as follows:
+{{{
+VariantTable =
+  'varianttable' ID ('{'
+    Description
+    Status?
+    Group?
+    ('arguments' '{' VariantTableArgument* '}') '}')?
+    
+VariantTableArgument = 'key'? ID
+}}}
+
+The keyword {{{key}}} is used to mark the key columns. The ID refers the appropriate columns.
+
+Example for a variant table:
+{{{
+varianttable VAR_TAB {
+  description "description"
+  group "group"
+  status inPreparation
+  arguments {
+	key INTERIOR
+	COLOUR
+  }
+}
+}}}
