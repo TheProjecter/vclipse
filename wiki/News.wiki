@@ -4,6 +4,10 @@
 
 = News =
 
+== Interface Plugins Released (2011-05-18) ==
+
+The plugins which are used to interface to a SAP R/3 system by RFC or PDR have been released.
+
 == Migration to Subversion (2011-05-18) ==
 
 We migrated the version control system back from Mercurial to Subversion. Local modifications and additions can be maintained by tools like git-svn. Subversion is more known to current VClipse users.
