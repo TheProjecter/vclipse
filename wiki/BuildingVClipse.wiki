@@ -21,7 +21,7 @@ VClipse does not work with older releases of TMF Xtext (e.g., Xtext 0.7.x as pro
    * EMF Compare SDK
  * Install the following item from the uncategorized Helios update site (deselect ''Group items by category'')
    * Apache Jakarta log4j
- * Install the following item from the TMF Xtext milestone update site at itemis http://download.itemis.com/updates/milestones
+ * Install the following items from the TMF Xtext milestone update site at itemis http://download.itemis.com/updates/milestones
    * EMFT MWE-2.0.0RC2 
    * EMFT MWE2 Language-2.0.0RC2 
    * EMFT MWE2 Runtime-2.0.0RC2 
@@ -38,8 +38,59 @@ VClipse is maintained on [http://code.google.com/a/eclipselabs.org/hosting/ Ecli
  * Select ''File'' > ''Import...'' > ''Checkout from SVN'' and import all projects using the repository location http://svn.codespot.com/a/eclipselabs.org/vclipse/trunk/ You do not have to supply a user name. Import all projects into your workspace.
 
 You will now notice error markers in several files when Eclipse tries to build the projects.
-They will disappear after the next step.
+They will disappear after the next steps.
 
+== SAP Java Connector (JCo) and SAP Java IDoc Class Library ==
+
+VClipse relies on the SAP Java Connector and the SAP Java IDoc Class Library for communicating with a R/3 system.
+These libraries are licensed by SAP without additional license fees as part of the respective solution or component license
+when you are a SAP customer.
+Redistribution of these libraries is not allowed.
+Therefore, you have to download these libraries from the SAP Service Marketplace at http://service.sap.com/connectors/ .
+You need to have an account for the SAP Service Marketplace with appropriate privileges.
+
+You need to download the most recent versions of
+ * SAP JCo 3.0.x for your operating system and architecture and
+ * SAP Java IDoc Class Library 3.0.x
+
+=== RCER: Packaging SAP JCo and SAP Java IDoc Class Library as Eclipse Bundles ===
+
+[http://rcer.sourceforge.net/ RCER] is an open-source project which permits to package JCo as Eclipse bundles. 
+
+The following documentation is taken from the RCER project and slighly adapted:
+
+==== Step 1: Installation of the Import Wizard ====
+
+    Add http://rcer.sf.net/update-site to the list of update sites:
+    Select Help - Software Updates, switch to the Available Software tab, press Add Site and add the location.
+
+    Expand the update site entry and the category and select Import Wizard for SAP Java Connector. 
+    Important: Do NOT select the SDK yet - you won't be able to install it because of missing dependencies.
+
+    Perform the installation and restart the Eclipse Workbench.
+
+==== Step 2: Generating the JCo Bundles and Fragments ====
+
+    In your Eclipse Workbench, select File - Import....
+
+    From the list of import sources, select SAP R/3 Connector - Create SAP Java Connector Plug-ins and choose Next.
+
+    If you haven't done so yet, download the JCo archives for the platforms you want to support (registration required).
+    Note that the Connector was designed to use JCo versions 3 and up - it will not work with versions prior to 3.0.0.
+
+    Select the locations of the downloaded archives. Obviously, you need to specify at least one file before continuing.
+
+    On the last page, you can choose whether you want to create the plug-in and fragment projects for the platforms you have selected archive files for.
+    If the projects already exist in your workspace, you'll be prompted whether you want to replace the existing projects instead.
+
+    You can also select whether you want to export the generated plug-ins to the dropins folder of your Eclipse installation automatically.
+    Select this option.
+
+    Select Finish.
+    This will generate the projects and export them if you have selected the corresponding option.
+    This might take some time.
+
+    Restart the Eclipse Workbench.
 
 == Building VClipse ==
 
