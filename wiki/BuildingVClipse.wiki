@@ -22,12 +22,12 @@ VClipse does not work with older releases of TMF Xtext (e.g., Xtext 0.7.x as pro
  * Install the following item from the uncategorized Helios update site (deselect ''Group items by category'')
    * Apache Jakarta log4j
  * Install the following items from the TMF Xtext milestone update site at itemis http://download.itemis.com/updates/milestones
-   * EMFT MWE-2.0.0RC2 
-   * EMFT MWE2 Language-2.0.0RC2 
-   * EMFT MWE2 Runtime-2.0.0RC2 
-   * M2T Xpand/Xtend-Additional-1.1.0RC2
-   * M2T Xpand/Xtend-1.1.0RC2
-   * TMF Xtext-2.0.0RC2
+   * EMFT MWE-2.0.0RC4 
+   * EMFT MWE2 Language-2.0.0RC4 
+   * EMFT MWE2 Runtime-2.0.0RC4 
+   * M2T Xpand/Xtend-Additional-1.1.0RC4
+   * M2T Xpand/Xtend-1.1.0RC4
+   * TMF Xtext-2.0.0RC4
    * Xtext Antlr-2.0.0M3
 
 == Subversion ==
