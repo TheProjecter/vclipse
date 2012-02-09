@@ -1,0 +1,17 @@
+#summary VClipse presentations at CWG conferences.
+
+= Introduction =
+
+VClipse was presented at the following [http://www.configuration-workgroup.com Configuration Workgroup (CWG)] conferences.
+
+== 2010 CWG European Conference - Vienna, Austria ==
+
+[http://www.configuration-workgroup.com/webfm_send/1628 ConfigModeler and VClipse - languages and IDEs for product modeling] (Tim Geisler, webXcerpt Software GmbH)
+
+== 2011 CWG European Conference - Cologne, Germany ==
+
+[http://www.configuration-workgroup.com/webfm_send/2003 Domain-Specific Languages for Product Modeling] (Tim Geisler, webXcerpt Software GmbH)
+
+== 2011 North American CWG Conference in Marco Island, Florida, USA ==
+
+[http://www.configuration-workgroup.com/webfm_send/2166 How to Create Your Own Product-Modeling Environment] (Tim Geisler, webXcerpt Software GmbH)
