@@ -9,11 +9,11 @@ VClipse was presented at the following [http://www.configuration-workgroup.com C
 
 2010 CWG European Conference - Vienna, Austria (Tim Geisler, webXcerpt Software GmbH)
 
-We present ConfigModeler and VClipse, two domain-specific languages and corresponding Eclipse-based integrated development environments (IDEs) for product modeling on different levels of abstraction.
+We present !ConfigModeler and VClipse, two domain-specific languages and corresponding Eclipse-based integrated development environments (IDEs) for product modeling on different levels of abstraction.
 
 VClipse supports the direct specification of objects and dependencies using VC's abstraction level in a textual language called VCML.
 
-ConfigModeler supports the specification of product models in a language supporting a high degree of abstraction. Developed in a customer project, this language has been designed according to the customer's needs and uses the customer's concepts. ConfigModeler translates the product models to VC objects and dependencies, optionally represented as VCML code.
+!ConfigModeler supports the specification of product models in a language supporting a high degree of abstraction. Developed in a customer project, this language has been designed according to the customer's needs and uses the customer's concepts. !ConfigModeler translates the product models to VC objects and dependencies, optionally represented as VCML code.
 
 In both cases the VC objects and dependencies can be transferred to an SAP system using RFC or product data replication (PDR) via IDocs. With VClipse, it is also possible to extract product models from an SAP system. This enables the use of standard text comparison tools and version control systems.
 
@@ -24,11 +24,11 @@ VClipse is released as an open-source project on http://www.vclipse.org - so you
 
 2011 CWG European Conference - Cologne, Germany (Tim Geisler, webXcerpt Software GmbH)
 
-We present ConfigModeler and VClipse, two domain-specific languages and corresponding Eclipse-based integrated development environments (IDEs) for product modeling on different levels of abstraction.
+We present !ConfigModeler and VClipse, two domain-specific languages and corresponding Eclipse-based integrated development environments (IDEs) for product modeling on different levels of abstraction.
 
 VClipse supports the direct specification of objects and dependencies using VC's abstraction level in a textual language called VCML. VC objects and dependencies can be transferred to an SAP system using RFC or product data replication (PDR) via IDocs. It is also possible to extract product models from an SAP system. This enables the use of standard text comparison tools and version control systems. VClipse is released as an open-source project on http://www.vclipse.org.
 
-ConfigModeler supports the specification of product models in a language supporting a high degree of abstraction. Developed in a customer project at [http://www.nokiasiemensnetworks.com Nokia Siemens Networks], this language has been designed according to the customer's needs, uses the customer's concepts, and fits into the customer’s VC and IPC add-ons. ConfigModeler translates the product models to VC objects and dependencies represented as VCML code.
+!ConfigModeler supports the specification of product models in a language supporting a high degree of abstraction. Developed in a customer project at [http://www.nokiasiemensnetworks.com Nokia Siemens Networks], this language has been designed according to the customer's needs, uses the customer's concepts, and fits into the customer’s VC and IPC add-ons. !ConfigModeler translates the product models to VC objects and dependencies represented as VCML code.
 
 We will give a demonstration of the two development environments and give an outlook to current and future developments.
 
@@ -37,11 +37,11 @@ We will give a demonstration of the two development environments and give an out
 
 2011 North American CWG Conference - Marco Island, Florida, USA (Tim Geisler, webXcerpt Software GmbH)
 
-We present ConfigModeler and VClipse, two domain-specific languages and corresponding Eclipse-based integrated development environments (IDEs) for product modeling on different levels of abstraction.
+We present !ConfigModeler and VClipse, two domain-specific languages and corresponding Eclipse-based integrated development environments (IDEs) for product modeling on different levels of abstraction.
 
 VClipse supports the direct specification of objects and dependencies using VC's abstraction level in a textual language called VCML. VC objects and dependencies can be transferred to an SAP system using RFC or product data replication (PDR) via IDocs. It is also possible to extract product models from an SAP system. This enables the use of standard text comparison tools and version control systems. VClipse is released as an open-source project on www.vclipse.org.
 
-ConfigModeler supports the specification of product models in a language supporting a high degree of abstraction. Developed in a customer project at [http://www.nokiasiemensnetworks.com Nokia Siemens Networks], this language has been designed according to the customer's needs, uses the customer's concepts, and fits into the customer’s VC and IPC add-ons. ConfigModeler translates the product models to VC objects and dependencies represented as VCML code.
+!ConfigModeler supports the specification of product models in a language supporting a high degree of abstraction. Developed in a customer project at [http://www.nokiasiemensnetworks.com Nokia Siemens Networks], this language has been designed according to the customer's needs, uses the customer's concepts, and fits into the customer’s VC and IPC add-ons. !ConfigModeler translates the product models to VC objects and dependencies represented as VCML code.
 
 An integration of the automatic testing tool [http://www.fysbee.com ConfigScan] allows to validate the product models.
 
