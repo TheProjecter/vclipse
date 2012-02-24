@@ -5,7 +5,7 @@
 VClipse was presented at the following [http://www.configuration-workgroup.com Configuration Workgroup (CWG)] conferences.
 
 
-== [http://www.configuration-workgroup.com/webfm_send/1628 ConfigModeler and VClipse - languages and IDEs for product modeling] ==
+== [http://vclipse.eclipselabs.org.codespot.com/files/webXcerpt-TimGeisler-ConfigModeler-VClipse-CWG-2010-04-20.pdf ConfigModeler and VClipse - languages and IDEs for product modeling] ==
 
 2010 CWG European Conference - Vienna, Austria (Tim Geisler, webXcerpt Software GmbH)
 
