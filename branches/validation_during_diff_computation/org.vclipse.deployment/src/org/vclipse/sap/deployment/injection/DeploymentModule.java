@@ -12,6 +12,7 @@ import org.vclipse.connection.VClipseConnectionPlugin;
 import org.vclipse.idoc2jcoidoc.DefaultIDoc2JCoIDocProcessor;
 import org.vclipse.idoc2jcoidoc.IDoc2JCoIDocPlugin;
 import org.vclipse.idoc2jcoidoc.IIDoc2JCoIDocProcessor;
+import org.vclipse.sap.deployment.DeploymentPlugin;
 import org.vclipse.sap.deployment.OneClickWorkflow;
 import org.vclipse.vcml.VCMLRuntimeModule;
 import org.vclipse.vcml.diff.compare.Comparison;
@@ -24,9 +25,9 @@ import com.google.inject.name.Names;
 
 public class DeploymentModule extends VCMLRuntimeModule {
 
-	private AbstractUIPlugin plugin;
+	private DeploymentPlugin plugin;
 	
-	public DeploymentModule(AbstractUIPlugin plugin) {
+	public DeploymentModule(DeploymentPlugin plugin) {
 		this.plugin = plugin;
 	}
 	

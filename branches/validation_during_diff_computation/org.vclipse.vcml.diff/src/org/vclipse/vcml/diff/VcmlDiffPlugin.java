@@ -10,19 +10,95 @@
  ******************************************************************************/
 package org.vclipse.vcml.diff;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.xtext.service.AbstractGenericModule;
 import org.osgi.framework.BundleContext;
-import org.vclipse.base.ui.BaseUiPlugin;
+import org.vclipse.base.ui.dialogs.ErrorDialog;
 import org.vclipse.vcml.diff.injection.DiffModule;
 
-public class VcmlDiffPlugin extends BaseUiPlugin {
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
-	static {
-		ID = "org.vclipse.vcml.diff";
-	}
+public class VcmlDiffPlugin extends AbstractUIPlugin {
 
-	public void start(final BundleContext context) throws Exception {
+	public static String ID = "org.vclipse.vcml.diff"; 
+
+	protected static VcmlDiffPlugin plugin;
+	
+	protected Injector injector;
+	
+	protected DiffModule injectionModule;
+	
+	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
 		injectionModule = new DiffModule(this);
+	}
+
+	public void stop(BundleContext context) throws Exception {
+		plugin = null;
+		super.stop(context);
+	}
+	
+	public static VcmlDiffPlugin getDefault() {
+		return plugin;
+	}
+	
+	public static Image getImage(String key) {
+		return getDefault().getImageRegistry().get(key);
+	}
+	
+	public Injector getInjector(AbstractGenericModule optionalModule) {
+		if(injector == null) {
+			if(optionalModule != null) {
+				injector = Guice.createInjector(optionalModule);
+			} else if(injectionModule != null) {
+				injector = Guice.createInjector(injectionModule);
+			} else {
+				throw new IllegalArgumentException("Injection module not initialized.");
+			}
+		}
+		return injector;
+	}
+	
+	public Injector getInjector() {
+		return getInjector(injectionModule);
+	}
+	
+	public static void showErrorDialog(String dialogTitle, String message, IStatus status) {
+		showErrorDialog(null, dialogTitle, message, status);
+	}
+	
+	public static void showErrorDialog(Exception exception, String dialogTitle, String message) {
+		showErrorDialog(exception, dialogTitle, message, null);
+	}
+	
+	public static void showErrorDialog(final Exception exception, final String dialogTitle, final String message, final IStatus status) {
+		log(message, null);
+		final Display display = Display.getDefault();
+		display.syncExec(new Runnable() {
+			@Override
+			public void run() {
+				new ErrorDialog(display.getActiveShell(), dialogTitle, message, status).open();
+			}
+		});
+	}
+	
+	public static void log(String message, int severity) {
+		log(message, severity, null);
+	}
+	
+	public static void log(String message, Throwable throwable) {
+		log(message, IStatus.ERROR, throwable);
+	}
+	
+	public static void log(String message, int severity, Throwable throwable) {
+		getDefault().getLog().log(throwable == null ? 
+				new Status(severity, ID, message) : 
+					new Status(severity, ID, IStatus.OK, message, throwable));
 	}
 }
