@@ -59,6 +59,5 @@ public class ConvertSendAction implements IObjectActionDelegate {
 	}
 
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
-		// not used
 	}
 }

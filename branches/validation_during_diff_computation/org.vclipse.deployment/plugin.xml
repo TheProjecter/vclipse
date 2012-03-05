@@ -8,6 +8,7 @@
             objectClass="org.eclipse.core.resources.IFile">
          <action
                class="org.vclipse.sap.deployment.injection.ExtensionFactory:org.vclipse.sap.deployment.ConvertSendAction"
+               enablesFor="1"
                icon="icons/package_go.png"
                id="org.vclipse.actions.convertToIDocsAndSend"
                label="Create and send ALE distribution packet"
@@ -37,6 +38,7 @@
             objectClass="org.eclipse.core.resources.IFile">
          <action
                class="org.vclipse.sap.deployment.injection.ExtensionFactory:org.vclipse.sap.deployment.DeltaDeploymentAction"
+               enablesFor="1"
                icon="icons/delta_package_go.png"
                id="org.vclipse.deployment.diff"
                label="Create and send ALE distribution packet of delta"
