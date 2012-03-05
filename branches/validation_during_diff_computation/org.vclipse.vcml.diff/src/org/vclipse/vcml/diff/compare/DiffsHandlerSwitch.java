@@ -1,6 +1,7 @@
-package org.vclipse.vcml.diff;
+package org.vclipse.vcml.diff.compare;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -17,8 +18,11 @@ import org.eclipse.emf.compare.diff.metamodel.ReferenceOrderChange;
 import org.eclipse.emf.compare.diff.metamodel.UpdateAttribute;
 import org.eclipse.emf.compare.diff.metamodel.util.DiffSwitch;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.xtext.EcoreUtil2;
+import org.eclipse.xtext.naming.IQualifiedNameProvider;
+import org.vclipse.vcml.diff.IDiffFilter;
 import org.vclipse.vcml.vcml.Constraint;
 import org.vclipse.vcml.vcml.DependencyNet;
 import org.vclipse.vcml.vcml.Model;
@@ -27,7 +31,9 @@ import org.vclipse.vcml.vcml.VCObject;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.google.inject.Inject;
 
 public class DiffsHandlerSwitch extends DiffSwitch<Boolean> {
 
@@ -36,16 +42,32 @@ public class DiffsHandlerSwitch extends DiffSwitch<Boolean> {
 
 	private Model resultModel;
 	private Model newStateModel;
-	private Set<VCObject> modelElements; 
-	private IDiffFilter diffFilter;
+	private Set<VCObject> modelElements;
+	private Map<String, EReference> references;
 	private IProgressMonitor monitor;
+
+	private IDiffFilter diffFilter;
+	private IQualifiedNameProvider nameProvider;
 	
-	public DiffsHandlerSwitch(Model resultModel, Model newStateModel, IProgressMonitor monitor) {
+	@Inject
+	public DiffsHandlerSwitch(IDiffFilter diffFilter, IQualifiedNameProvider nameProvider) {
+		modelElements = Sets.newHashSet();
+		this.diffFilter = diffFilter;
+		this.nameProvider = nameProvider;
+		references = Maps.newHashMap();
+	}
+	
+	public void handleDiffModel(DiffModel diffModel, Model resultModel, Model newStateModel, IProgressMonitor monitor) {
+		modelElements.clear();
+		references.clear();
 		this.resultModel = resultModel;
 		this.newStateModel = newStateModel;
-		modelElements = Sets.newHashSet();
-		diffFilter = new DefaultDiffFilter();
 		this.monitor = monitor;
+		doSwitch(diffModel);
+	}
+	
+	public Map<String, EReference> getReferences() {
+		return references;
 	}
 
 	@Override
@@ -73,9 +95,15 @@ public class DiffsHandlerSwitch extends DiffSwitch<Boolean> {
 		// finalize model
 		List<VCObject> objects = resultModel.getObjects();
 		List<VCObject> leftObjects = Lists.newArrayList(newStateModel.getObjects());
-		for(VCObject o : leftObjects) {
-			if(modelElements.contains(o)) {
-				objects.add(EcoreUtil.copy(o));
+		for(final VCObject vcobject : leftObjects) {
+			if(modelElements.contains(vcobject)) {
+				VCObject copy = EcoreUtil.copy(vcobject);
+				EReference value = references.get(vcobject);
+				if(value != null) {
+					references.remove(vcobject);
+					references.put(copy.getName(), value);					
+				}
+				objects.add(copy);
 			}
 		}
 		return HANDLED;
@@ -95,6 +123,18 @@ public class DiffsHandlerSwitch extends DiffSwitch<Boolean> {
 
 	@Override
 	public Boolean caseModelElementChangeLeftTarget(ModelElementChangeLeftTarget object) {
+			
+		EObject newStateObject = object.getLeftElement();
+		EObject oldStateParent = object.getRightParent();
+		final EObject oldStateObject = (EObject)oldStateParent.eGet(newStateObject.eContainmentFeature());
+		
+		
+		boolean allowed = diffFilter.changeAllowed(newStateObject.eContainer(), oldStateParent, newStateObject, oldStateObject, object.getKind());
+		if(!allowed) {
+			String lastSegment = nameProvider.apply(newStateObject.eContainer()).getLastSegment();
+			references.put(lastSegment, newStateObject.eContainmentFeature());			
+		}
+		
 		return addObject2HandleList(object.getLeftElement());
 	}
 

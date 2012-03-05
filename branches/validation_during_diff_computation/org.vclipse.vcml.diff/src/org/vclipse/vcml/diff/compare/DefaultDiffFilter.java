@@ -1,23 +1,38 @@
 /**
  * 
  */
-package org.vclipse.vcml.diff;
+package org.vclipse.vcml.diff.compare;
 
 import org.eclipse.emf.compare.diff.metamodel.DifferenceKind;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.EcoreSwitch;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceStore;
+import org.vclipse.vcml.diff.IDiffFilter;
 import org.vclipse.vcml.vcml.VcmlPackage;
+
+import com.google.inject.Inject;
 
 public class DefaultDiffFilter extends EcoreSwitch<Boolean> implements IDiffFilter {
 
 	private IPreferenceStore preferenceStore;
 	
-	public DefaultDiffFilter() {
-		VcmlDiffPlugin plugin = VcmlDiffPlugin.getDefault();
-		preferenceStore = plugin == null ? new PreferenceStore() : plugin.getPreferenceStore();
+	@Inject
+	public DefaultDiffFilter(IPreferenceStore preferenceStore) {
+		this.preferenceStore = preferenceStore;
+	}
+	
+	public boolean changeAllowed(EObject newParent, EObject oldParent, EObject newChild, EObject oldChild, DifferenceKind changeKind) {
+		// type change of a property
+		if(newParent.eClass() == oldParent.eClass()) {
+			if(newChild.eClass() == oldChild.eClass()) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+		
+		return false;
 	}
 	
 	@Override

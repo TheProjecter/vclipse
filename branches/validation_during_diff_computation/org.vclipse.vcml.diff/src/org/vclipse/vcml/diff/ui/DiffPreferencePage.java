@@ -5,22 +5,28 @@ package org.vclipse.vcml.diff.ui;
 
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.vclipse.vcml.diff.IDiffFilter;
-import org.vclipse.vcml.diff.VcmlDiffPlugin;
+
+import com.google.inject.Inject;
 
 public class DiffPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
-	public DiffPreferencePage() {
+	private IPreferenceStore preferenceStore;
+	
+	@Inject
+	public DiffPreferencePage(IPreferenceStore preferenceStore) {
 		super(GRID);
+		this.preferenceStore = preferenceStore;
 	}
 	
 	@Override
 	public void init(final IWorkbench workbench) {
 		setDescription("Following preferences affect the model that is exported during the VCML Diff operation.");
-		setPreferenceStore(VcmlDiffPlugin.getDefault().getPreferenceStore());
+		setPreferenceStore(preferenceStore);
 	}
 	
 	@Override

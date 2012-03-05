@@ -5,7 +5,11 @@ package org.vclipse.vcml.diff;
 
 import org.eclipse.emf.compare.diff.metamodel.DifferenceKind;
 import org.eclipse.emf.ecore.EObject;
+import org.vclipse.vcml.diff.compare.DefaultDiffFilter;
 
+import com.google.inject.ImplementedBy;
+
+@ImplementedBy(DefaultDiffFilter.class)
 public interface IDiffFilter {
 
 	public static final String CLASS_IGNORE_CHARACTERISTIC_ORDER = VcmlDiffPlugin.ID + ".classIgnoreCharacteristicOrder";
@@ -25,4 +29,6 @@ public interface IDiffFilter {
 	public static final String VARIANT_TABLE_IGNORE_ARGUMENTS_ORDER = VcmlDiffPlugin.ID + ".variantTableIgnoreArgumentsOrder";
 
 	public boolean filter(EObject object, DifferenceKind kind);
+	
+	public boolean changeAllowed(EObject newParent, EObject oldParent, EObject newChild, EObject oldChild, DifferenceKind changeKind);
 }

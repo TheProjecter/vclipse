@@ -1,11 +1,14 @@
-package org.vclipse.vcml.diff;
+package org.vclipse.vcml.diff.compare;
 
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -17,22 +20,53 @@ import org.eclipse.emf.compare.match.MatchOptions;
 import org.eclipse.emf.compare.match.metamodel.MatchModel;
 import org.eclipse.emf.compare.match.service.MatchService;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.xtext.EcoreUtil2;
+import org.eclipse.xtext.naming.IQualifiedNameProvider;
+import org.eclipse.xtext.naming.QualifiedName;
+import org.eclipse.xtext.parser.IParseResult;
 import org.eclipse.xtext.resource.SaveOptions;
+import org.eclipse.xtext.ui.editor.validation.MarkerCreator;
+import org.eclipse.xtext.validation.Issue;
 import org.vclipse.base.UriUtil;
+import org.vclipse.vcml.parser.antlr.VCMLParser;
 import org.vclipse.vcml.vcml.Import;
 import org.vclipse.vcml.vcml.Model;
 import org.vclipse.vcml.vcml.Option;
 import org.vclipse.vcml.vcml.OptionType;
 import org.vclipse.vcml.vcml.VcmlFactory;
 
+import com.google.common.collect.Maps;
+import com.google.inject.Inject;
+
 public class Comparison {
 
 	private static final VcmlFactory VCML_FACTORY = VcmlFactory.eINSTANCE;
-
+	
+	@Inject
+	private DiffsHandlerSwitch diffsHandlerSwitch;
+	
+	@Inject
+	private MarkerCreator markerCreator;
+	
+	@Inject
+	private IssueCreator issueCreator;
+	
+	@Inject
+	private IQualifiedNameProvider nameProvider;
+	
+	@Inject
+	private VCMLParser vcmlParser;
+	
+	private Map<String, EReference> vcNameWithReference;
+	
+	public Comparison() {
+		vcNameWithReference = Maps.newHashMap();
+	}
+	
 	public void compare(IFile oldFile, IFile newFile, IFile resultFile, IProgressMonitor monitor) throws CoreException, InterruptedException, IOException {
 		
 		monitor.subTask("Initialising models for comparison...");
@@ -51,13 +85,29 @@ public class Comparison {
 		
 		// compare the file contents
 		compare(oldResource, newResource, resultResource, monitor);
+		resultResource.save(SaveOptions.defaultOptions().toOptionsMap());
+
+		IParseResult parse = vcmlParser.parse(new FileReader(new File(resultResource.getURI().toFileString())));;
+		EObject rootASTElement = parse.getRootASTElement();
+		for(EObject object : rootASTElement.eContents()) {
+			QualifiedName apply = nameProvider.apply(object);
+			if(apply != null) {
+				String lastSegment = apply.getLastSegment();
+				if(vcNameWithReference.containsKey(lastSegment)) {
+					Issue createIssue = issueCreator.createIssue(object, vcNameWithReference.get(lastSegment));
+					if(createIssue != null) {
+						markerCreator.createMarker(createIssue, resultFile, IMarker.PROBLEM);					
+					}					
+				}
+			}
+		}
 		
 		// refresh the result file
-		resultResource.save(SaveOptions.defaultOptions().toOptionsMap());
 		resultFile.refreshLocal(IResource.DEPTH_ONE, monitor);
 	}
 	
 	public void compare(Resource oldResource, Resource newResource, Resource resultResource, IProgressMonitor monitor) throws InterruptedException, IOException {
+		vcNameWithReference.clear();
 		monitor.subTask("Comparing models...");
 		Map<String, Object> options = new HashMap<String, Object>();   
 		options.put(MatchOptions.OPTION_DISTINCT_METAMODELS, false);
@@ -90,11 +140,9 @@ public class Comparison {
 			}
 		}
 		
-		List<EObject> contents = resultResource.getContents();
-		contents.add(resultModel);
-		new DiffsHandlerSwitch(resultModel, changedModel, monitor).doSwitch(diffModel);
-		
-		// resources contain same objects
-		monitor.worked(10);
+		resultResource.getContents().add(resultModel);
+		diffsHandlerSwitch.handleDiffModel(diffModel, resultModel, changedModel, monitor);
+		vcNameWithReference = diffsHandlerSwitch.getReferences();
 	}
+	
 }

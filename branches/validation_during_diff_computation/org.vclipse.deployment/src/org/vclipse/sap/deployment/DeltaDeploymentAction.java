@@ -28,7 +28,7 @@ import org.eclipse.xtext.util.StringInputStream;
 import org.tigris.subversion.subclipse.core.SVNTeamProvider;
 import org.vclipse.idoc2jcoidoc.IDocSenderStatus;
 import org.vclipse.sap.deployment.preferences.PreferencesInitializer;
-import org.vclipse.vcml.diff.Comparison;
+import org.vclipse.vcml.diff.compare.Comparison;
 import org.vclipse.vcml.vcml.VCObject;
 
 import com.google.common.collect.Iterables;
