@@ -97,13 +97,7 @@ public class DiffsHandlerSwitch extends DiffSwitch<Boolean> {
 		List<VCObject> leftObjects = Lists.newArrayList(newStateModel.getObjects());
 		for(final VCObject vcobject : leftObjects) {
 			if(modelElements.contains(vcobject)) {
-				VCObject copy = EcoreUtil.copy(vcobject);
-				EReference value = references.get(vcobject);
-				if(value != null) {
-					references.remove(vcobject);
-					references.put(copy.getName(), value);					
-				}
-				objects.add(copy);
+				objects.add(EcoreUtil.copy(vcobject));
 			}
 		}
 		return HANDLED;
@@ -123,17 +117,18 @@ public class DiffsHandlerSwitch extends DiffSwitch<Boolean> {
 
 	@Override
 	public Boolean caseModelElementChangeLeftTarget(ModelElementChangeLeftTarget object) {
-			
 		EObject newStateObject = object.getLeftElement();
 		EObject oldStateParent = object.getRightParent();
-		final EObject oldStateObject = (EObject)oldStateParent.eGet(newStateObject.eContainmentFeature());
-		
-		
-		boolean allowed = diffFilter.changeAllowed(newStateObject.eContainer(), oldStateParent, newStateObject, oldStateObject, object.getKind());
-		if(!allowed) {
-			String lastSegment = nameProvider.apply(newStateObject.eContainer()).getLastSegment();
-			references.put(lastSegment, newStateObject.eContainmentFeature());			
+		Object containment = oldStateParent.eGet(newStateObject.eContainmentFeature());
+		if(containment instanceof EObject) {
+			final EObject oldStateObject = (EObject)containment;
+			boolean allowed = diffFilter.changeAllowed(newStateObject.eContainer(), oldStateParent, newStateObject, oldStateObject, object.getKind());
+			if(!allowed) {
+				String lastSegment = nameProvider.apply(newStateObject.eContainer()).getLastSegment();
+				references.put(lastSegment, newStateObject.eContainmentFeature());			
+			}
 		}
+		
 		
 		return addObject2HandleList(object.getLeftElement());
 	}

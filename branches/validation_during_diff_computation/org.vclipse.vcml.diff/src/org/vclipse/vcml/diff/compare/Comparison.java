@@ -1,6 +1,7 @@
 package org.vclipse.vcml.diff.compare;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
@@ -68,7 +69,6 @@ public class Comparison {
 	}
 	
 	public void compare(IFile oldFile, IFile newFile, IFile resultFile, IProgressMonitor monitor) throws CoreException, InterruptedException, IOException {
-		
 		monitor.subTask("Initialising models for comparison...");
 		
 		// create resources from files
@@ -87,12 +87,20 @@ public class Comparison {
 		compare(oldResource, newResource, resultResource, monitor);
 		resultResource.save(SaveOptions.defaultOptions().toOptionsMap());
 
+		createMarkers(resultFile, resultResource);
+		
+		// refresh the result file
+		resultFile.refreshLocal(IResource.DEPTH_ONE, monitor);
+	}
+
+	public void createMarkers(IFile resultFile, Resource resultResource) throws FileNotFoundException, CoreException {
+		resultFile.deleteMarkers(null, false, IResource.DEPTH_ONE);
 		IParseResult parse = vcmlParser.parse(new FileReader(new File(resultResource.getURI().toFileString())));;
 		EObject rootASTElement = parse.getRootASTElement();
 		for(EObject object : rootASTElement.eContents()) {
-			QualifiedName apply = nameProvider.apply(object);
-			if(apply != null) {
-				String lastSegment = apply.getLastSegment();
+			QualifiedName qualifiedName = nameProvider.apply(object);
+			if(qualifiedName != null) {
+				String lastSegment = qualifiedName.getLastSegment();
 				if(vcNameWithReference.containsKey(lastSegment)) {
 					Issue createIssue = issueCreator.createIssue(object, vcNameWithReference.get(lastSegment));
 					if(createIssue != null) {
@@ -101,9 +109,6 @@ public class Comparison {
 				}
 			}
 		}
-		
-		// refresh the result file
-		resultFile.refreshLocal(IResource.DEPTH_ONE, monitor);
 	}
 	
 	public void compare(Resource oldResource, Resource newResource, Resource resultResource, IProgressMonitor monitor) throws InterruptedException, IOException {
@@ -144,5 +149,8 @@ public class Comparison {
 		diffsHandlerSwitch.handleDiffModel(diffModel, resultModel, changedModel, monitor);
 		vcNameWithReference = diffsHandlerSwitch.getReferences();
 	}
-	
+
+	public boolean foundProblems() {
+		return !vcNameWithReference.isEmpty();
+	}
 }

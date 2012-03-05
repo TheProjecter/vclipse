@@ -31,7 +31,6 @@ public class DefaultDiffFilter extends EcoreSwitch<Boolean> implements IDiffFilt
 				return false;
 			}
 		}
-		
 		return false;
 	}
 	
