@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.compare.diff.metamodel.AttributeChangeLeftTarget;
 import org.eclipse.emf.compare.diff.metamodel.AttributeChangeRightTarget;
 import org.eclipse.emf.compare.diff.metamodel.DiffElement;
@@ -115,12 +114,10 @@ public class DiffsHandlerSwitch extends DiffSwitch<Boolean> {
 			final EObject oldStateObject = (EObject)containment;
 			boolean allowed = vcmlDiffFilter.changeAllowed(newStateObject.eContainer(), oldStateParent, newStateObject, oldStateObject, object.getKind());
 			if(!allowed) {
-				URI newStateObjectUri = EcoreUtil.getURI(newStateObject.eContainer());
-				URI oldStateObjectUri = EcoreUtil.getURI(oldStateObject.eContainer());
-				
-				String[] data = new String[]{oldStateObjectUri.toString(), newStateObjectUri.toString()};
-				messageAcceptor.acceptError("Change for ... is not allowed", 
-						newStateObject.eContainer(), newStateObject.eContainmentFeature(), ValidationMessageAcceptor.INSIGNIFICANT_INDEX, "Compare Issue", data);
+				messageAcceptor.acceptError("", newStateObject.eContainer(), 
+						newStateObject.eContainmentFeature(), ValidationMessageAcceptor.INSIGNIFICANT_INDEX, 
+							"Compare Issue", new String[]{
+								EcoreUtil.getURI(oldStateObject.eContainer()).toString(), EcoreUtil.getURI(newStateObject.eContainer()).toString()});
 			}
 		}
 		return addObject2HandleList(object.getLeftElement());
@@ -167,8 +164,6 @@ public class DiffsHandlerSwitch extends DiffSwitch<Boolean> {
 	
 	@Override
 	public Boolean caseAttributeChangeLeftTarget(AttributeChangeLeftTarget object) {
-		EObject leftElement = object.getLeftElement();
-		
 		return addObject2HandleList(object.getLeftElement());
 	}
 
