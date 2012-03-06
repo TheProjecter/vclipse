@@ -115,8 +115,8 @@ public class DiffsHandlerSwitch extends DiffSwitch<Boolean> {
 			final EObject oldStateObject = (EObject)containment;
 			boolean allowed = vcmlDiffFilter.changeAllowed(newStateObject.eContainer(), oldStateParent, newStateObject, oldStateObject, object.getKind());
 			if(!allowed) {
-				URI newStateObjectUri = EcoreUtil.getURI(newStateObject);
-				URI oldStateObjectUri = EcoreUtil.getURI(oldStateObject);
+				URI newStateObjectUri = EcoreUtil.getURI(newStateObject.eContainer());
+				URI oldStateObjectUri = EcoreUtil.getURI(oldStateObject.eContainer());
 				
 				String[] data = new String[]{oldStateObjectUri.toString(), newStateObjectUri.toString()};
 				messageAcceptor.acceptError("Change for ... is not allowed", 

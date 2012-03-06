@@ -94,7 +94,7 @@ public class Comparison {
 		for(EObject object : rootASTElement.eContents()) {
 			IssueImpl issue = currentMessageAcceptor.getIssue(object);
 			if(issue != null) {
-				issueUtility.associateWith(issue, object);
+				issueUtility.associate(issue, object);
 				markerCreator.createMarker(issue, resultFile, IMarker.PROBLEM);
 			}
 		}
