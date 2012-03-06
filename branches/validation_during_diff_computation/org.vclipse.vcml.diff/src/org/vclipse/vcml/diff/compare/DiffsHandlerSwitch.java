@@ -1,7 +1,6 @@
 package org.vclipse.vcml.diff.compare;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -18,10 +17,9 @@ import org.eclipse.emf.compare.diff.metamodel.ReferenceOrderChange;
 import org.eclipse.emf.compare.diff.metamodel.UpdateAttribute;
 import org.eclipse.emf.compare.diff.metamodel.util.DiffSwitch;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.xtext.EcoreUtil2;
-import org.eclipse.xtext.naming.IQualifiedNameProvider;
+import org.eclipse.xtext.validation.ValidationMessageAcceptor;
 import org.vclipse.vcml.diff.IDiffFilter;
 import org.vclipse.vcml.vcml.Constraint;
 import org.vclipse.vcml.vcml.DependencyNet;
@@ -31,7 +29,6 @@ import org.vclipse.vcml.vcml.VCObject;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
@@ -43,33 +40,26 @@ public class DiffsHandlerSwitch extends DiffSwitch<Boolean> {
 	private Model resultModel;
 	private Model newStateModel;
 	private Set<VCObject> modelElements;
-	private Map<String, EReference> references;
 	private IProgressMonitor monitor;
 
 	private IDiffFilter diffFilter;
-	private IQualifiedNameProvider nameProvider;
+	private DiffMessageAcceptor messageAcceptor;
 	
 	@Inject
-	public DiffsHandlerSwitch(IDiffFilter diffFilter, IQualifiedNameProvider nameProvider) {
+	public DiffsHandlerSwitch(IDiffFilter diffFilter) {
 		modelElements = Sets.newHashSet();
 		this.diffFilter = diffFilter;
-		this.nameProvider = nameProvider;
-		references = Maps.newHashMap();
 	}
 	
-	public void handleDiffModel(DiffModel diffModel, Model resultModel, Model newStateModel, IProgressMonitor monitor) {
+	public void handleDiffModel(DiffModel diffModel, Model resultModel, Model newStateModel, DiffMessageAcceptor messageAcceptor, IProgressMonitor monitor) {
 		modelElements.clear();
-		references.clear();
 		this.resultModel = resultModel;
 		this.newStateModel = newStateModel;
+		this.messageAcceptor = messageAcceptor;
 		this.monitor = monitor;
 		doSwitch(diffModel);
 	}
 	
-	public Map<String, EReference> getReferences() {
-		return references;
-	}
-
 	@Override
 	public Boolean caseDiffModel(DiffModel object) {
 		for(DiffElement diffElement : object.getOwnedElements()) {
@@ -124,12 +114,13 @@ public class DiffsHandlerSwitch extends DiffSwitch<Boolean> {
 			final EObject oldStateObject = (EObject)containment;
 			boolean allowed = diffFilter.changeAllowed(newStateObject.eContainer(), oldStateParent, newStateObject, oldStateObject, object.getKind());
 			if(!allowed) {
-				String lastSegment = nameProvider.apply(newStateObject.eContainer()).getLastSegment();
-				references.put(lastSegment, newStateObject.eContainmentFeature());			
+				String[] data = new String[]{""};
+				messageAcceptor.acceptError("Change for ... is not allowed", newStateObject.eContainer(), 
+						newStateObject.eContainmentFeature(), ValidationMessageAcceptor.INSIGNIFICANT_INDEX, 
+							"", data);
+						
 			}
 		}
-		
-		
 		return addObject2HandleList(object.getLeftElement());
 	}
 
@@ -174,6 +165,8 @@ public class DiffsHandlerSwitch extends DiffSwitch<Boolean> {
 	
 	@Override
 	public Boolean caseAttributeChangeLeftTarget(AttributeChangeLeftTarget object) {
+		EObject leftElement = object.getLeftElement();
+		
 		return addObject2HandleList(object.getLeftElement());
 	}
 
@@ -185,6 +178,10 @@ public class DiffsHandlerSwitch extends DiffSwitch<Boolean> {
 	@Override
 	public Boolean caseUpdateAttribute(UpdateAttribute object) {
 		if(!diffFilter.filter(object.getAttribute(), object.getKind())) {
+//			EObject changedEObject = object.getLeftElement();
+//			EReference containmentReference = object.getAttribute().eContainmentFeature();
+//			EObject parentObject = changedEObject.eContainer();
+//			references.put(nameProvider.apply(parentObject).getLastSegment(), containmentReference);	
 			return addObject2HandleList(object.getLeftElement());
 		}
 		return NOT_HANDLED;

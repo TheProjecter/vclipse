@@ -111,7 +111,7 @@ public class DeltaDeploymentAction implements IObjectActionDelegate {
 						monitor.subTask("Saving the diff file.");
 						if(preferenceStore.getBoolean(PreferencesInitializer.SAVE_DIFF_FILES)) {
 							diffResource.save(SaveOptions.newBuilder().format().getOptions().toOptionsMap());	
-							if(comparison.foundProblems()) {
+							if(comparison.reportedProblems()) {
 								comparison.createMarkers(resultFile, diffResource);
 								Display.getDefault().syncExec(new Runnable() {
 									@Override

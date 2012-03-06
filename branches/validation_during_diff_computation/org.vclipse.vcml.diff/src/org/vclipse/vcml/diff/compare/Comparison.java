@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -21,13 +20,10 @@ import org.eclipse.emf.compare.match.MatchOptions;
 import org.eclipse.emf.compare.match.metamodel.MatchModel;
 import org.eclipse.emf.compare.match.service.MatchService;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.xtext.EcoreUtil2;
-import org.eclipse.xtext.naming.IQualifiedNameProvider;
-import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.parser.IParseResult;
 import org.eclipse.xtext.resource.SaveOptions;
 import org.eclipse.xtext.ui.editor.validation.MarkerCreator;
@@ -40,8 +36,8 @@ import org.vclipse.vcml.vcml.Option;
 import org.vclipse.vcml.vcml.OptionType;
 import org.vclipse.vcml.vcml.VcmlFactory;
 
-import com.google.common.collect.Maps;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 public class Comparison {
 
@@ -54,19 +50,12 @@ public class Comparison {
 	private MarkerCreator markerCreator;
 	
 	@Inject
-	private IssueCreator issueCreator;
-	
-	@Inject
-	private IQualifiedNameProvider nameProvider;
-	
-	@Inject
 	private VCMLParser vcmlParser;
 	
-	private Map<String, EReference> vcNameWithReference;
+	@Inject
+	private Provider<DiffMessageAcceptor> messageAcceptorProvider;
 	
-	public Comparison() {
-		vcNameWithReference = Maps.newHashMap();
-	}
+	private DiffMessageAcceptor currentMessageAcceptor;
 	
 	public void compare(IFile oldFile, IFile newFile, IFile resultFile, IProgressMonitor monitor) throws CoreException, InterruptedException, IOException {
 		monitor.subTask("Initialising models for comparison...");
@@ -98,21 +87,14 @@ public class Comparison {
 		IParseResult parse = vcmlParser.parse(new FileReader(new File(resultResource.getURI().toFileString())));;
 		EObject rootASTElement = parse.getRootASTElement();
 		for(EObject object : rootASTElement.eContents()) {
-			QualifiedName qualifiedName = nameProvider.apply(object);
-			if(qualifiedName != null) {
-				String lastSegment = qualifiedName.getLastSegment();
-				if(vcNameWithReference.containsKey(lastSegment)) {
-					Issue createIssue = issueCreator.createIssue(object, vcNameWithReference.get(lastSegment));
-					if(createIssue != null) {
-						markerCreator.createMarker(createIssue, resultFile, IMarker.PROBLEM);					
-					}					
-				}
+			Issue issue = currentMessageAcceptor.getIssue(object);
+			if(issue != null) {
+				markerCreator.createMarker(issue, resultFile, issue.getType().name());
 			}
 		}
 	}
 	
 	public void compare(Resource oldResource, Resource newResource, Resource resultResource, IProgressMonitor monitor) throws InterruptedException, IOException {
-		vcNameWithReference.clear();
 		monitor.subTask("Comparing models...");
 		Map<String, Object> options = new HashMap<String, Object>();   
 		options.put(MatchOptions.OPTION_DISTINCT_METAMODELS, false);
@@ -146,11 +128,11 @@ public class Comparison {
 		}
 		
 		resultResource.getContents().add(resultModel);
-		diffsHandlerSwitch.handleDiffModel(diffModel, resultModel, changedModel, monitor);
-		vcNameWithReference = diffsHandlerSwitch.getReferences();
+		currentMessageAcceptor = messageAcceptorProvider.get();
+		diffsHandlerSwitch.handleDiffModel(diffModel, resultModel, changedModel, currentMessageAcceptor, monitor);
 	}
 
-	public boolean foundProblems() {
-		return !vcNameWithReference.isEmpty();
+	public boolean reportedProblems() {
+		return currentMessageAcceptor != null && currentMessageAcceptor.hasMessages();
 	}
 }
