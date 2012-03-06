@@ -33,7 +33,7 @@ public class DiffModule extends VCMLRuntimeModule {
 		return DiffMessageAcceptor.class;
 	}
 	
-	public Provider<DiffMessageAcceptor> providerDiffValiadationMessageAcceptor() {
+	public Provider<DiffMessageAcceptor> registerDiffValiadationMessageAcceptor() {
 		return new Provider<DiffMessageAcceptor>() {
 			@Override
 			public DiffMessageAcceptor get() {
