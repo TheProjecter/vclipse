@@ -33,7 +33,7 @@ import org.tigris.subversion.subclipse.core.SVNTeamProvider;
 import org.vclipse.base.ui.util.VClipseResourceUtil;
 import org.vclipse.idoc2jcoidoc.IDocSenderStatus;
 import org.vclipse.sap.deployment.preferences.PreferencesInitializer;
-import org.vclipse.vcml.diff.compare.Comparison;
+import org.vclipse.vcml.diff.compare.VcmlCompare;
 import org.vclipse.vcml.vcml.VCObject;
 
 import com.google.common.collect.Iterables;
@@ -46,7 +46,7 @@ public class DeltaDeploymentAction implements IObjectActionDelegate {
 	private static final String SAP_CONTAINER = "SAP";
 	
 	@Inject
-	private Comparison comparison;
+	private VcmlCompare vcmlCompare;
 	
 	@Inject
 	private OneClickWorkflow workflow;
@@ -94,7 +94,7 @@ public class DeltaDeploymentAction implements IObjectActionDelegate {
 						Resource diffResource = resourceUtils.getResource(resourceSet, resultFile);
 						
 						monitor.subTask("Comparing existing vcml resources.");
-						comparison.compare(sapStateResource, newStateResource, diffResource, monitor);
+						vcmlCompare.compare(sapStateResource, newStateResource, diffResource, monitor);
 						
 						// the diff resource is empty -> can not go on
 						EList<EObject> contents = diffResource.getContents();
@@ -112,8 +112,8 @@ public class DeltaDeploymentAction implements IObjectActionDelegate {
 						monitor.subTask("Saving the diff file.");
 						if(preferenceStore.getBoolean(PreferencesInitializer.SAVE_DIFF_FILES)) {
 							diffResource.save(SaveOptions.newBuilder().format().getOptions().toOptionsMap());	
-							if(comparison.reportedProblems()) {
-								comparison.createMarkers(resultFile, diffResource);
+							if(vcmlCompare.reportedProblems()) {
+								vcmlCompare.createMarkers(resultFile, diffResource);
 								Display.getDefault().syncExec(new Runnable() {
 									@Override
 									public void run() {

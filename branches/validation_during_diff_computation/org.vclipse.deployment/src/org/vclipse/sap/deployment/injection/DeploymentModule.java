@@ -15,7 +15,7 @@ import org.vclipse.idoc2jcoidoc.IIDoc2JCoIDocProcessor;
 import org.vclipse.sap.deployment.DeploymentPlugin;
 import org.vclipse.sap.deployment.OneClickWorkflow;
 import org.vclipse.vcml.VCMLRuntimeModule;
-import org.vclipse.vcml.diff.compare.Comparison;
+import org.vclipse.vcml.diff.compare.VcmlCompare;
 import org.vclipse.vcml.ui.VCMLUiPlugin;
 import org.vclipse.vcml2idoc.VCML2IDocUIPlugin;
 import org.vclipse.vcml2idoc.builder.VCML2IDocSwitch;
@@ -73,7 +73,7 @@ public class DeploymentModule extends VCMLRuntimeModule {
 		return OneClickWorkflow.class;
 	}
 	
-	public Class<? extends Comparison> bindComparison() {
-		return Comparison.class;
+	public Class<? extends VcmlCompare> bindComparison() {
+		return VcmlCompare.class;
 	}
 }

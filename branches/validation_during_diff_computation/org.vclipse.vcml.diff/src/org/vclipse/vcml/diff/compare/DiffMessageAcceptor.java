@@ -12,7 +12,6 @@ import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.nodemodel.ICompositeNode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.validation.CheckType;
-import org.eclipse.xtext.validation.Issue;
 import org.eclipse.xtext.validation.Issue.IssueImpl;
 import org.eclipse.xtext.validation.ValidationMessageAcceptor;
 
@@ -40,13 +39,14 @@ public class DiffMessageAcceptor implements ValidationMessageAcceptor {
 		return null;
 	}
 	
+	
 	public boolean hasMessages() {
 		return !issues.isEmpty();
 	}
 	
 	@Override
 	public void acceptError(String message, EObject object, EStructuralFeature feature, int index, String code, String... issueData) {
-		IssueImpl issue = new Issue.IssueImpl();
+		IssueImpl issue = new IssueImpl();
 		issue.setType(CheckType.NORMAL);
 		issue.setSeverity(Severity.ERROR);
 		issue.setMessage(message);

@@ -70,7 +70,7 @@ public class ExportDiffsDialog extends TitleAreaDialog {
 		fileSelectionDialog.setExtensions(new String[]{"*.vcml"});
 		
 		getShell().setText("Compare 2 files with each other");
-		setTitle("Comparison Dialog");
+		setTitle("VcmlCompare Dialog");
 		setMessage("One can compare 2 files with vcml extension and extract differences to a third file");
 		
 		Composite mainArea = new Composite(parent, SWT.NONE);
@@ -79,7 +79,7 @@ public class ExportDiffsDialog extends TitleAreaDialog {
 		
 		Group group = new Group(mainArea, SWT.NONE);
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		group.setText("Comparison sources");
+		group.setText("VcmlCompare sources");
 		group.setLayout(new GridLayout(3, false));
 		
 		Label label = new Label(group, SWT.NONE);

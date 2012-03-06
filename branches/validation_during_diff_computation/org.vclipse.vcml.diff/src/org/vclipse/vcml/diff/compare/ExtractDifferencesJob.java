@@ -16,7 +16,7 @@ import com.google.inject.Inject;
 public final class ExtractDifferencesJob extends Job {
 
 	@Inject
-	private Comparison comparison;
+	private VcmlCompare vcmlCompare;
 	private IFile resultFile;
 	private IFile newFile;
 	private IFile oldFile;
@@ -48,7 +48,7 @@ public final class ExtractDifferencesJob extends Job {
 				resultFile.setContents(new StringInputStream(""), true, true, monitor);
 			}
 			monitor.worked(5);
-			comparison.compare(oldFile, newFile, resultFile, monitor);
+			vcmlCompare.compare(oldFile, newFile, resultFile, monitor);
 			return Status.OK_STATUS;
 		} catch(CoreException exception) {
 			VcmlDiffPlugin.showErrorDialog(exception, "Error during differences export", exception.getMessage());

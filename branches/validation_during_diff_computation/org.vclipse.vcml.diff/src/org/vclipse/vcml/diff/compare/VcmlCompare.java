@@ -37,7 +37,7 @@ import org.vclipse.vcml.vcml.VcmlFactory;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-public class Comparison {
+public class VcmlCompare {
 
 	private static final VcmlFactory VCML_FACTORY = VcmlFactory.eINSTANCE;
 	
@@ -107,6 +107,21 @@ public class Comparison {
 	}
 	
 	public void compare(Resource oldResource, Resource newResource, Resource resultResource, IProgressMonitor monitor) throws InterruptedException, IOException {
+		Model resultModel = compare(oldResource, newResource, monitor);
+		
+		// compute the import uri -> the old file should be imported by the result file
+		Import importStatement = VCML_FACTORY.createImport();
+		importStatement.setImportURI(new UriUtil().computeImportUri(oldResource, resultResource));
+		resultModel.getImports().add(importStatement);
+	
+		EList<EObject> contents = resultResource.getContents();
+		if(!contents.isEmpty()) {
+			contents.clear();
+		}
+		contents.add(resultModel);
+	}
+	
+	public Model compare(Resource oldResource, Resource newResource, IProgressMonitor monitor) throws InterruptedException {
 		monitor.subTask("Comparing models...");
 		Map<String, Object> options = new HashMap<String, Object>();   
 		options.put(MatchOptions.OPTION_DISTINCT_METAMODELS, false);
@@ -119,11 +134,6 @@ public class Comparison {
 		
 		Model resultModel = VCML_FACTORY.createModel();		
 		
-		// compute the import uri -> the old file should be imported by the result file
-		Import importStatement = VCML_FACTORY.createImport();
-		importStatement.setImportURI(new UriUtil().computeImportUri(oldResource, resultResource));
-		resultModel.getImports().add(importStatement);
-	
 		// get the ups option from the new file and provide it to the results file
 		Model changedModel = VCML_FACTORY.createModel();
 		List<EObject> newModelContent = newResource.getContents();
@@ -139,15 +149,12 @@ public class Comparison {
 			}
 		}
 		
-		EList<EObject> contents = resultResource.getContents();
-		if(!contents.isEmpty()) {
-			contents.clear();
-		}
-		contents.add(resultModel);
 		currentMessageAcceptor = messageAcceptorProvider.get();
 		diffsHandlerSwitch.handleDiffModel(diffModel, resultModel, changedModel, currentMessageAcceptor, monitor);
+		
+		return resultModel;
 	}
-
+	
 	public boolean reportedProblems() {
 		return currentMessageAcceptor != null && currentMessageAcceptor.hasMessages();
 	}
