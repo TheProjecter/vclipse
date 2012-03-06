@@ -59,6 +59,10 @@ public class DiffMessageAcceptor implements ValidationMessageAcceptor {
 				issue.setUriToProblem(EcoreUtil.getURI(entry));
 			}
 		}
+		QualifiedName qualifiedName = nameProvider.apply(object);
+		if(qualifiedName != null) {
+			issues.put(qualifiedName.getLastSegment(), issue);			
+		}
 	}
 
 	@Override
