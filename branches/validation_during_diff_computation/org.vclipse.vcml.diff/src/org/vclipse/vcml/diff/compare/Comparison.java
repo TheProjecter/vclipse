@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -27,7 +28,7 @@ import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.parser.IParseResult;
 import org.eclipse.xtext.resource.SaveOptions;
 import org.eclipse.xtext.ui.editor.validation.MarkerCreator;
-import org.eclipse.xtext.validation.Issue;
+import org.eclipse.xtext.validation.Issue.IssueImpl;
 import org.vclipse.base.UriUtil;
 import org.vclipse.vcml.parser.antlr.VCMLParser;
 import org.vclipse.vcml.vcml.Import;
@@ -51,6 +52,9 @@ public class Comparison {
 	
 	@Inject
 	private VCMLParser vcmlParser;
+	
+	@Inject
+	private IssueUtility issueUtility;
 	
 	@Inject
 	private Provider<DiffMessageAcceptor> messageAcceptorProvider;
@@ -86,10 +90,12 @@ public class Comparison {
 		resultFile.deleteMarkers(null, false, IResource.DEPTH_ONE);
 		IParseResult parse = vcmlParser.parse(new FileReader(new File(resultResource.getURI().toFileString())));;
 		EObject rootASTElement = parse.getRootASTElement();
+		
 		for(EObject object : rootASTElement.eContents()) {
-			Issue issue = currentMessageAcceptor.getIssue(object);
+			IssueImpl issue = currentMessageAcceptor.getIssue(object);
 			if(issue != null) {
-				markerCreator.createMarker(issue, resultFile, issue.getType().name());
+				issueUtility.associateWith(issue, object);
+				markerCreator.createMarker(issue, resultFile, IMarker.PROBLEM);
 			}
 		}
 	}

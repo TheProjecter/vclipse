@@ -5,12 +5,12 @@ package org.vclipse.vcml.diff;
 
 import org.eclipse.emf.compare.diff.metamodel.DifferenceKind;
 import org.eclipse.emf.ecore.EObject;
-import org.vclipse.vcml.diff.compare.DefaultDiffFilter;
+import org.vclipse.vcml.diff.compare.VcmlDiffFilter;
 
 import com.google.inject.ImplementedBy;
 
-@ImplementedBy(DefaultDiffFilter.class)
-public interface IDiffFilter {
+@ImplementedBy(VcmlDiffFilter.class)
+public interface IVcmlDiffFilter {
 
 	public static final String CLASS_IGNORE_CHARACTERISTIC_ORDER = VcmlDiffPlugin.ID + ".classIgnoreCharacteristicOrder";
 	

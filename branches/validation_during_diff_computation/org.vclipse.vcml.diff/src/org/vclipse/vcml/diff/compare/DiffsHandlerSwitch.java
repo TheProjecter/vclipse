@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.compare.diff.metamodel.AttributeChangeLeftTarget;
 import org.eclipse.emf.compare.diff.metamodel.AttributeChangeRightTarget;
 import org.eclipse.emf.compare.diff.metamodel.DiffElement;
@@ -20,7 +21,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.validation.ValidationMessageAcceptor;
-import org.vclipse.vcml.diff.IDiffFilter;
+import org.vclipse.vcml.diff.IVcmlDiffFilter;
 import org.vclipse.vcml.vcml.Constraint;
 import org.vclipse.vcml.vcml.DependencyNet;
 import org.vclipse.vcml.vcml.Model;
@@ -42,13 +43,13 @@ public class DiffsHandlerSwitch extends DiffSwitch<Boolean> {
 	private Set<VCObject> modelElements;
 	private IProgressMonitor monitor;
 
-	private IDiffFilter diffFilter;
+	private IVcmlDiffFilter vcmlDiffFilter;
 	private DiffMessageAcceptor messageAcceptor;
 	
 	@Inject
-	public DiffsHandlerSwitch(IDiffFilter diffFilter) {
+	public DiffsHandlerSwitch(IVcmlDiffFilter vcmlDiffFilter) {
 		modelElements = Sets.newHashSet();
-		this.diffFilter = diffFilter;
+		this.vcmlDiffFilter = vcmlDiffFilter;
 	}
 	
 	public void handleDiffModel(DiffModel diffModel, Model resultModel, Model newStateModel, DiffMessageAcceptor messageAcceptor, IProgressMonitor monitor) {
@@ -112,13 +113,14 @@ public class DiffsHandlerSwitch extends DiffSwitch<Boolean> {
 		Object containment = oldStateParent.eGet(newStateObject.eContainmentFeature());
 		if(containment instanceof EObject) {
 			final EObject oldStateObject = (EObject)containment;
-			boolean allowed = diffFilter.changeAllowed(newStateObject.eContainer(), oldStateParent, newStateObject, oldStateObject, object.getKind());
+			boolean allowed = vcmlDiffFilter.changeAllowed(newStateObject.eContainer(), oldStateParent, newStateObject, oldStateObject, object.getKind());
 			if(!allowed) {
-				String[] data = new String[]{""};
-				messageAcceptor.acceptError("Change for ... is not allowed", newStateObject.eContainer(), 
-						newStateObject.eContainmentFeature(), ValidationMessageAcceptor.INSIGNIFICANT_INDEX, 
-							"", data);
-						
+				URI newStateObjectUri = EcoreUtil.getURI(newStateObject);
+				URI oldStateObjectUri = EcoreUtil.getURI(oldStateObject);
+				
+				String[] data = new String[]{oldStateObjectUri.toString(), newStateObjectUri.toString()};
+				messageAcceptor.acceptError("Change for ... is not allowed", 
+						newStateObject.eContainer(), newStateObject.eContainmentFeature(), ValidationMessageAcceptor.INSIGNIFICANT_INDEX, "Compare Issue", data);
 			}
 		}
 		return addObject2HandleList(object.getLeftElement());
@@ -141,7 +143,7 @@ public class DiffsHandlerSwitch extends DiffSwitch<Boolean> {
 
 	@Override
 	public Boolean caseReferenceChange(ReferenceChange object) {
-		if(!diffFilter.filter(object.getReference(), object.getKind())) {
+		if(!vcmlDiffFilter.filter(object.getReference(), object.getKind())) {
 			return addObject2HandleList(object.getLeftElement());
 		}
 		return HANDLED;
@@ -153,7 +155,7 @@ public class DiffsHandlerSwitch extends DiffSwitch<Boolean> {
 		List<EObject> rightTarget = object.getRightTarget();
 		if(leftTarget != null && rightTarget != null) {
 			if(leftTarget.size() == rightTarget.size()) {
-				if(!diffFilter.filter(object.getReference(), object.getKind())) {
+				if(!vcmlDiffFilter.filter(object.getReference(), object.getKind())) {
 					return addObject2HandleList(object.getLeftElement());
 				}
 			}
@@ -177,7 +179,7 @@ public class DiffsHandlerSwitch extends DiffSwitch<Boolean> {
 
 	@Override
 	public Boolean caseUpdateAttribute(UpdateAttribute object) {
-		if(!diffFilter.filter(object.getAttribute(), object.getKind())) {
+		if(!vcmlDiffFilter.filter(object.getAttribute(), object.getKind())) {
 //			EObject changedEObject = object.getLeftElement();
 //			EReference containmentReference = object.getAttribute().eContainmentFeature();
 //			EObject parentObject = changedEObject.eContainer();

@@ -1,5 +1,6 @@
 package org.vclipse.vcml.diff.compare;
 
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.emf.ecore.EObject;
@@ -15,12 +16,13 @@ import org.eclipse.xtext.validation.Issue;
 import org.eclipse.xtext.validation.Issue.IssueImpl;
 import org.eclipse.xtext.validation.ValidationMessageAcceptor;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
 public class DiffMessageAcceptor implements ValidationMessageAcceptor {
 
-	private Map<String, Issue> issues;
+	private Map<String, IssueImpl> issues;
 	
 	@Inject
 	private IQualifiedNameProvider nameProvider;
@@ -29,7 +31,7 @@ public class DiffMessageAcceptor implements ValidationMessageAcceptor {
 		issues = Maps.newHashMap();
 	}
 
-	public Issue getIssue(EObject object) {
+	public IssueImpl getIssue(EObject object) {
 		QualifiedName qualifiedName = nameProvider.apply(object);
 		if(qualifiedName != null) {
 			String lastSegment = qualifiedName.getLastSegment();
@@ -47,6 +49,8 @@ public class DiffMessageAcceptor implements ValidationMessageAcceptor {
 		IssueImpl issue = new Issue.IssueImpl();
 		issue.setType(CheckType.NORMAL);
 		issue.setSeverity(Severity.ERROR);
+		issue.setMessage(message);
+		issue.setCode(code);
 		
 		Object childObject = object.eGet(feature);
 		if(childObject instanceof EObject) {
@@ -57,6 +61,9 @@ public class DiffMessageAcceptor implements ValidationMessageAcceptor {
 				issue.setLineNumber(node.getStartLine());
 				issue.setOffset(node.getTotalOffset());
 				issue.setUriToProblem(EcoreUtil.getURI(entry));
+				List<String> stringData = Lists.newArrayList(issueData);
+				stringData.add(feature.getName());
+				issue.setData(stringData.toArray(new String[stringData.size()]));
 			}
 		}
 		QualifiedName qualifiedName = nameProvider.apply(object);
