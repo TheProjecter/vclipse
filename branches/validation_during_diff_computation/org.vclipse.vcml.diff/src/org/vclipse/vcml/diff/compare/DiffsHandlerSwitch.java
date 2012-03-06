@@ -19,7 +19,6 @@ import org.eclipse.emf.compare.diff.metamodel.util.DiffSwitch;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.xtext.EcoreUtil2;
-import org.eclipse.xtext.validation.ValidationMessageAcceptor;
 import org.vclipse.vcml.diff.IVcmlDiffFilter;
 import org.vclipse.vcml.vcml.Constraint;
 import org.vclipse.vcml.vcml.DependencyNet;
@@ -115,7 +114,7 @@ public class DiffsHandlerSwitch extends DiffSwitch<Boolean> {
 			boolean allowed = vcmlDiffFilter.changeAllowed(newStateObject.eContainer(), oldStateParent, newStateObject, oldStateObject, object.getKind());
 			if(!allowed) {
 				messageAcceptor.acceptError("", newStateObject.eContainer(), 
-						newStateObject.eContainmentFeature(), ValidationMessageAcceptor.INSIGNIFICANT_INDEX, 
+						newStateObject.eContainmentFeature(), 1, 
 							"Compare_Issue", new String[]{
 								EcoreUtil.getURI(oldStateObject.eContainer()).toString(), 
 									EcoreUtil.getURI(newStateObject.eContainer()).toString()});

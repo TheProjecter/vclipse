@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.jface.action.IAction;
@@ -31,6 +30,7 @@ import org.eclipse.xtext.resource.SaveOptions;
 import org.eclipse.xtext.resource.XtextResourceSet;
 import org.eclipse.xtext.util.StringInputStream;
 import org.tigris.subversion.subclipse.core.SVNTeamProvider;
+import org.vclipse.base.ui.util.VClipseResourceUtil;
 import org.vclipse.idoc2jcoidoc.IDocSenderStatus;
 import org.vclipse.sap.deployment.preferences.PreferencesInitializer;
 import org.vclipse.vcml.diff.compare.Comparison;
@@ -45,19 +45,20 @@ public class DeltaDeploymentAction implements IObjectActionDelegate {
 
 	private static final String SAP_CONTAINER = "SAP";
 	
-	final private Comparison comparison;
-	final private OneClickWorkflow workflow;
-	final private IPreferenceStore preferenceStore;
+	@Inject
+	private Comparison comparison;
+	
+	@Inject
+	private OneClickWorkflow workflow;
+	
+	@Inject
+	private IPreferenceStore preferenceStore;
+	
+	@Inject
+	private VClipseResourceUtil resourceUtils;
 	
 	private IStructuredSelection selection;
 	private IWorkbenchPart activePart;
-	
-	@Inject
-	public DeltaDeploymentAction(Comparison comparison, OneClickWorkflow workflow, IPreferenceStore preferenceStore) {
-		this.comparison = comparison;
-		this.workflow = workflow;
-		this.preferenceStore = preferenceStore;
-	}
 	
 	@Override
 	public void run(IAction action) {
@@ -88,9 +89,9 @@ public class DeltaDeploymentAction implements IObjectActionDelegate {
 						}
 
 						// handle resources
-						Resource newStateResource = resourceSet.getResource(URI.createURI(currentFile.getLocationURI().toString()), true);
-						Resource sapStateResource = resourceSet.getResource(URI.createURI(sapStateFile.getLocationURI().toString()), true);
-						Resource diffResource = resourceSet.createResource(URI.createURI(resultFile.getLocationURI().toString()));
+						Resource newStateResource = resourceUtils.getResource(resourceSet, currentFile);
+						Resource sapStateResource = resourceUtils.getResource(resourceSet, sapStateFile);
+						Resource diffResource = resourceUtils.getResource(resourceSet, resultFile);
 						
 						monitor.subTask("Comparing existing vcml resources.");
 						comparison.compare(sapStateResource, newStateResource, diffResource, monitor);

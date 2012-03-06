@@ -66,6 +66,11 @@ public class DiffMessageAcceptor implements ValidationMessageAcceptor {
 				issue.setData(stringData.toArray(new String[stringData.size()]));
 			}
 		}
+		
+		List<String> stringData = Lists.newArrayList(issueData);
+		stringData.add(feature.getName());
+		issue.setData(stringData.toArray(new String[stringData.size()]));
+		
 		QualifiedName qualifiedName = nameProvider.apply(object);
 		if(qualifiedName != null) {
 			issues.put(qualifiedName.getLastSegment(), issue);			

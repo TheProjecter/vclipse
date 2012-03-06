@@ -24,11 +24,13 @@ public class IssueUtility {
 				EObject containedEObject = (EObject)containedObject;
 				ICompositeNode node = NodeModelUtils.getNode(containedEObject);
 				if(node != null) {
-					issue.setLength(node.getTotalLength());
+					issue.setLength(node.getLength());
 					issue.setLineNumber(node.getStartLine());
 					issue.setOffset(node.getTotalOffset());
 				}
-				issue.setUriToProblem(EcoreUtil.getURI(containedEObject));
+				URI uri = EcoreUtil.getURI(containedEObject);
+				String test = uri.toString();
+				issue.setUriToProblem(URI.createURI(test));
 			}
 		}
 	}

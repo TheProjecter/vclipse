@@ -1,7 +1,5 @@
 package org.vclipse.vcml.diff.compare;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
@@ -14,7 +12,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.compare.diff.metamodel.DiffModel;
 import org.eclipse.emf.compare.diff.service.DiffService;
 import org.eclipse.emf.compare.match.MatchOptions;
@@ -22,14 +19,14 @@ import org.eclipse.emf.compare.match.metamodel.MatchModel;
 import org.eclipse.emf.compare.match.service.MatchService;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.parser.IParseResult;
 import org.eclipse.xtext.resource.SaveOptions;
+import org.eclipse.xtext.resource.XtextResourceSet;
 import org.eclipse.xtext.ui.editor.validation.MarkerCreator;
 import org.eclipse.xtext.validation.Issue.IssueImpl;
 import org.vclipse.base.UriUtil;
+import org.vclipse.base.ui.util.VClipseResourceUtil;
 import org.vclipse.vcml.parser.antlr.VCMLParser;
 import org.vclipse.vcml.vcml.Import;
 import org.vclipse.vcml.vcml.Model;
@@ -57,6 +54,9 @@ public class Comparison {
 	private IssueUtility issueUtility;
 	
 	@Inject
+	private VClipseResourceUtil resourceUtils;
+	
+	@Inject
 	private Provider<DiffMessageAcceptor> messageAcceptorProvider;
 	
 	private DiffMessageAcceptor currentMessageAcceptor;
@@ -64,11 +64,12 @@ public class Comparison {
 	public void compare(IFile oldFile, IFile newFile, IFile resultFile, IProgressMonitor monitor) throws CoreException, InterruptedException, IOException {
 		monitor.subTask("Initialising models for comparison...");
 		
+		XtextResourceSet resourceSet = new XtextResourceSet();
+		
 		// create resources from files
-		ResourceSet set = new ResourceSetImpl();
-		Resource newResource = set.getResource(URI.createURI(newFile.getLocationURI().toString()), true);
-		Resource oldResource = set.getResource(URI.createURI(oldFile.getLocationURI().toString()), true);
-		Resource resultResource = set.getResource(URI.createURI(resultFile.getLocationURI().toString()), true);
+		Resource newResource = resourceUtils.getResource(resourceSet, newFile);
+		Resource oldResource = resourceUtils.getResource(resourceSet, oldFile);
+		Resource resultResource = resourceUtils.getResource(resourceSet, resultFile);
 		
 		// clean the result resource if it does exist
 		EList<EObject> contents = resultResource.getContents();
@@ -81,16 +82,15 @@ public class Comparison {
 		resultResource.save(SaveOptions.defaultOptions().toOptionsMap());
 
 		createMarkers(resultFile, resultResource);
-		
 		// refresh the result file
 		resultFile.refreshLocal(IResource.DEPTH_ONE, monitor);
 	}
 
-	public void createMarkers(IFile resultFile, Resource resultResource) throws FileNotFoundException, CoreException {
+	public void createMarkers(IFile resultFile, Resource resultResource) throws CoreException, IOException {
 		resultFile.deleteMarkers(IMarker.PROBLEM, false, IResource.DEPTH_ONE);
 		
 		EList<EObject> contents = resultResource.getContents();
-		IParseResult parse = vcmlParser.parse(new FileReader(new File(resultResource.getURI().toFileString())));
+		IParseResult parse = vcmlParser.parse(new FileReader(resultFile.getLocation().toFile()));
 		EObject rootASTElement = parse.getRootASTElement();
 		if(rootASTElement instanceof Model) {
 			contents.clear();
@@ -139,7 +139,11 @@ public class Comparison {
 			}
 		}
 		
-		resultResource.getContents().add(resultModel);
+		EList<EObject> contents = resultResource.getContents();
+		if(!contents.isEmpty()) {
+			contents.clear();
+		}
+		contents.add(resultModel);
 		currentMessageAcceptor = messageAcceptorProvider.get();
 		diffsHandlerSwitch.handleDiffModel(diffModel, resultModel, changedModel, currentMessageAcceptor, monitor);
 	}
