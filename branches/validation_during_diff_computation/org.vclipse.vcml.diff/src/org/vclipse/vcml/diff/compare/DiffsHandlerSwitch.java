@@ -116,8 +116,9 @@ public class DiffsHandlerSwitch extends DiffSwitch<Boolean> {
 			if(!allowed) {
 				messageAcceptor.acceptError("", newStateObject.eContainer(), 
 						newStateObject.eContainmentFeature(), ValidationMessageAcceptor.INSIGNIFICANT_INDEX, 
-							"Compare Issue", new String[]{
-								EcoreUtil.getURI(oldStateObject.eContainer()).toString(), EcoreUtil.getURI(newStateObject.eContainer()).toString()});
+							"Compare_Issue", new String[]{
+								EcoreUtil.getURI(oldStateObject.eContainer()).toString(), 
+									EcoreUtil.getURI(newStateObject.eContainer()).toString()});
 			}
 		}
 		return addObject2HandleList(object.getLeftElement());

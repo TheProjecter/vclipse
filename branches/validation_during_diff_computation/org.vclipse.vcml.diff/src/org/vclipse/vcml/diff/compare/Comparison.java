@@ -87,11 +87,17 @@ public class Comparison {
 	}
 
 	public void createMarkers(IFile resultFile, Resource resultResource) throws FileNotFoundException, CoreException {
-		resultFile.deleteMarkers(null, false, IResource.DEPTH_ONE);
-		IParseResult parse = vcmlParser.parse(new FileReader(new File(resultResource.getURI().toFileString())));;
-		EObject rootASTElement = parse.getRootASTElement();
+		resultFile.deleteMarkers(IMarker.PROBLEM, false, IResource.DEPTH_ONE);
 		
-		for(EObject object : rootASTElement.eContents()) {
+		EList<EObject> contents = resultResource.getContents();
+		IParseResult parse = vcmlParser.parse(new FileReader(new File(resultResource.getURI().toFileString())));
+		EObject rootASTElement = parse.getRootASTElement();
+		if(rootASTElement instanceof Model) {
+			contents.clear();
+			contents.add(rootASTElement);
+		}
+		
+		for(EObject object : contents.get(0).eContents()) {
 			IssueImpl issue = currentMessageAcceptor.getIssue(object);
 			if(issue != null) {
 				issueUtility.associate(issue, object);
