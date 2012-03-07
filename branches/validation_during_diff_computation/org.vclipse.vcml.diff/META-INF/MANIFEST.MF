@@ -5,8 +5,7 @@ Bundle-SymbolicName: org.vclipse.vcml.diff;singleton:=true
 Bundle-Version: 0.4.2.qualifier
 Bundle-Activator: org.vclipse.vcml.diff.VcmlDiffPlugin
 Bundle-Vendor: webXcerpt Software GmbH, Munich, Germany (www.webxcerpt.com)
-Require-Bundle: org.vclipse.vcml.ui,
- org.eclipse.xtext;bundle-version="2.2.1",
+Require-Bundle: org.eclipse.xtext;bundle-version="2.2.1",
  org.eclipse.xtext.ui;bundle-version="2.2.1",
  org.eclipse.emf.compare;bundle-version="1.2.1",
  org.eclipse.emf.compare.diff.edit;bundle-version="1.2.1",
@@ -15,7 +14,10 @@ Require-Bundle: org.vclipse.vcml.ui,
  org.eclipse.ui.ide,
  org.eclipse.core.runtime,
  org.eclipse.core.resources,
- org.eclipse.emf.ecore
+ org.eclipse.emf.ecore,
+ org.vclipse.vcml.mm,
+ org.vclipse.base.ui,
+ org.vclipse.vcml
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: org.vclipse.vcml.diff,

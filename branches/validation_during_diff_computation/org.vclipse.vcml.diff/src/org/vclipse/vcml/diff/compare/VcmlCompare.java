@@ -12,6 +12,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.compare.diff.metamodel.ComparisonResourceSnapshot;
+import org.eclipse.emf.compare.diff.metamodel.DiffFactory;
 import org.eclipse.emf.compare.diff.metamodel.DiffModel;
 import org.eclipse.emf.compare.diff.service.DiffService;
 import org.eclipse.emf.compare.match.MatchOptions;
@@ -60,6 +62,8 @@ public class VcmlCompare {
 	private Provider<DiffMessageAcceptor> messageAcceptorProvider;
 	
 	private DiffMessageAcceptor currentMessageAcceptor;
+	
+	private ComparisonResourceSnapshot snapshot;
 	
 	public void compare(IFile oldFile, IFile newFile, IFile resultFile, IProgressMonitor monitor) throws CoreException, InterruptedException, IOException {
 		monitor.subTask("Initialising models for comparison...");
@@ -121,7 +125,13 @@ public class VcmlCompare {
 		contents.add(resultModel);
 	}
 	
+	public ComparisonResourceSnapshot getComparisonSnapshot() {
+		return snapshot;
+	}
+	
 	public Model compare(Resource oldResource, Resource newResource, IProgressMonitor monitor) throws InterruptedException {
+		snapshot = DiffFactory.eINSTANCE.createComparisonResourceSnapshot();
+		
 		monitor.subTask("Comparing models...");
 		Map<String, Object> options = new HashMap<String, Object>();   
 		options.put(MatchOptions.OPTION_DISTINCT_METAMODELS, false);
@@ -152,6 +162,8 @@ public class VcmlCompare {
 		currentMessageAcceptor = messageAcceptorProvider.get();
 		diffsHandlerSwitch.handleDiffModel(diffModel, resultModel, changedModel, currentMessageAcceptor, monitor);
 		
+		snapshot.setDiff(diffModel);
+		snapshot.setMatch(matchModel);
 		return resultModel;
 	}
 	
