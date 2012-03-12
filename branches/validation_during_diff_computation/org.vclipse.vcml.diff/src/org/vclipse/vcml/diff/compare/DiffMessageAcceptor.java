@@ -39,7 +39,6 @@ public class DiffMessageAcceptor implements ValidationMessageAcceptor {
 		return null;
 	}
 	
-	
 	public boolean hasMessages() {
 		return !issues.isEmpty();
 	}
@@ -47,7 +46,7 @@ public class DiffMessageAcceptor implements ValidationMessageAcceptor {
 	@Override
 	public void acceptError(String message, EObject object, EStructuralFeature feature, int index, String code, String... issueData) {
 		IssueImpl issue = new IssueImpl();
-		issue.setType(CheckType.NORMAL);
+		issue.setType(CheckType.EXPENSIVE);
 		issue.setSeverity(Severity.ERROR);
 		issue.setMessage(message);
 		issue.setCode(code);

@@ -17,7 +17,8 @@ Require-Bundle: org.eclipse.xtext;bundle-version="2.2.1",
  org.eclipse.emf.ecore,
  org.vclipse.vcml.mm,
  org.vclipse.base.ui,
- org.vclipse.vcml
+ org.vclipse.vcml,
+ org.vclipse.jpplib;bundle-version="0.6.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: org.vclipse.vcml.diff,

@@ -25,6 +25,7 @@ import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.parser.IParseResult;
 import org.eclipse.xtext.resource.SaveOptions;
 import org.eclipse.xtext.resource.XtextResourceSet;
+import org.eclipse.xtext.ui.MarkerTypes;
 import org.eclipse.xtext.ui.editor.validation.MarkerCreator;
 import org.eclipse.xtext.validation.Issue.IssueImpl;
 import org.vclipse.base.UriUtil;
@@ -105,7 +106,7 @@ public class VcmlCompare {
 			IssueImpl issue = currentMessageAcceptor.getIssue(object);
 			if(issue != null) {
 				issueUtility.associate(issue, object);
-				markerCreator.createMarker(issue, resultFile, IMarker.PROBLEM);
+				markerCreator.createMarker(issue, resultFile, MarkerTypes.forCheckType(issue.getType()));
 			}
 		}
 	}
@@ -162,8 +163,8 @@ public class VcmlCompare {
 		currentMessageAcceptor = messageAcceptorProvider.get();
 		diffsHandlerSwitch.handleDiffModel(diffModel, resultModel, changedModel, currentMessageAcceptor, monitor);
 		
-		snapshot.setDiff(diffModel);
 		snapshot.setMatch(matchModel);
+		snapshot.setDiff(diffModel);
 		return resultModel;
 	}
 	

@@ -13,12 +13,12 @@ package org.vclipse.vcml.ui.quickfix;
 import java.util.List;
 
 import org.eclipse.compare.CompareUI;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.compare.diff.metamodel.ComparisonResourceSnapshot;
-import org.eclipse.emf.compare.ui.editor.ModelCompareEditorInput;
+import org.eclipse.emf.compare.ui.TypedElementWrapper;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.team.internal.ui.history.CompareFileRevisionEditorInput;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.xtext.resource.XtextResourceSet;
 import org.eclipse.xtext.ui.editor.model.edit.IModificationContext;
 import org.eclipse.xtext.ui.editor.model.edit.ISemanticModification;
@@ -32,10 +32,11 @@ import org.vclipse.vcml.diff.compare.VcmlCompare;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
+@SuppressWarnings("restriction")
 public class VCMLQuickfixProvider extends DefaultQuickfixProvider {
 	
 	@Inject
-	private VcmlCompare vcmlCompare;
+	private VcmlCompare compare;
 	
 	@Override
 	public List<IssueResolution> getResolutions(Issue issue) {
@@ -136,15 +137,41 @@ public class VCMLQuickfixProvider extends DefaultQuickfixProvider {
 	public void fixCompareIssue(final Issue issue, IssueResolutionAcceptor acceptor) {
 		acceptor.accept(issue, "Show change in compare editor", "Opens the compare editor for objects where the change is applied.", null, new ISemanticModification() {
 			public void apply(EObject element, IModificationContext context) throws Exception {
-				String[] data = issue.getData();
-				XtextResourceSet xtextResourceSet = new XtextResourceSet();
-				Resource resource = xtextResourceSet.getResource(URI.createURI(data[0]), true);
-				Resource resource2 = xtextResourceSet.getResource(URI.createURI(data[1]), true);
 				
-				vcmlCompare.compare(resource, resource2, new NullProgressMonitor());
-				ComparisonResourceSnapshot comparisonSnapshot = vcmlCompare.getComparisonSnapshot();
-				ModelCompareEditorInput input = new ModelCompareEditorInput(comparisonSnapshot);
-				CompareUI.openCompareEditor(input, true);
+				String[] data = issue.getData();
+				XtextResourceSet resourceSet = new XtextResourceSet();
+				EObject leftObject = resourceSet.getEObject(URI.createURI(data[0]), true);
+				EObject rightObject = resourceSet.getEObject(URI.createURI(data[1]), true);
+				
+				
+//				CompareContainer container = new CompareContainer();
+//				DiffNode diffNode = new DiffNode(new TypedElementWrapper(leftObject), new TypedElementWrapper(rightObject));
+//				container.addCompareInputChangeListener(diffNode, new ICompareInputChangeListener() {
+//					public void compareInputChanged(ICompareInput source) {
+//						// TODO Auto-generated method stub
+//						
+//					}
+//				});
+				
+				
+//				ComparisonUtility util = new ComparisonUtility(issue);
+//				
+				IWorkbenchPage activePage = 
+						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+//		
+//				LocalResourceTypedElement elementLeft = 
+//						new LocalResourceTypedElement(util.getLeft());
+//				LocalResourceTypedElement elementRight = 
+//						new LocalResourceTypedElement(util.getRight());
+//				
+				
+				CompareFileRevisionEditorInput input2 = 
+					new CompareFileRevisionEditorInput(new TypedElementWrapper(leftObject), 
+							new TypedElementWrapper(rightObject), activePage);
+				
+				
+				CompareUI.openCompareEditor(input2, true);
+				
 			}
 		});
 	}
