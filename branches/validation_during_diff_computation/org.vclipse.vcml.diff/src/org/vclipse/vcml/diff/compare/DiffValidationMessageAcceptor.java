@@ -19,22 +19,23 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
-public class DiffMessageAcceptor implements ValidationMessageAcceptor {
+public class DiffValidationMessageAcceptor implements ValidationMessageAcceptor {
 
-	private Map<String, IssueImpl> issues;
+	private final Map<String, IssueImpl> issues;
+	
+	private final IQualifiedNameProvider nameProvider;
 	
 	@Inject
-	private IQualifiedNameProvider nameProvider;
-	
-	public DiffMessageAcceptor() {
+	public DiffValidationMessageAcceptor(IQualifiedNameProvider nameProvider) {
 		issues = Maps.newHashMap();
+		this.nameProvider = nameProvider;
 	}
 
 	public IssueImpl getIssue(EObject object) {
 		QualifiedName qualifiedName = nameProvider.apply(object);
 		if(qualifiedName != null) {
 			String lastSegment = qualifiedName.getLastSegment();
-			return issues.get(lastSegment);
+			return issues.get(lastSegment);				
 		}
 		return null;
 	}
@@ -46,7 +47,7 @@ public class DiffMessageAcceptor implements ValidationMessageAcceptor {
 	@Override
 	public void acceptError(String message, EObject object, EStructuralFeature feature, int index, String code, String... issueData) {
 		IssueImpl issue = new IssueImpl();
-		issue.setType(CheckType.EXPENSIVE);
+		issue.setType(CheckType.NORMAL);
 		issue.setSeverity(Severity.ERROR);
 		issue.setMessage(message);
 		issue.setCode(code);
@@ -58,7 +59,7 @@ public class DiffMessageAcceptor implements ValidationMessageAcceptor {
 			if(node != null) {
 				issue.setLength(node.getTotalLength());
 				issue.setLineNumber(node.getStartLine());
-				issue.setOffset(node.getTotalOffset());
+				issue.setOffset(node.getOffset());
 				issue.setUriToProblem(EcoreUtil.getURI(entry));
 				List<String> stringData = Lists.newArrayList(issueData);
 				stringData.add(feature.getName());

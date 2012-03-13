@@ -31,7 +31,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
-public class DiffsHandlerSwitch extends DiffSwitch<Boolean> {
+public class DiffModelSwitch extends DiffSwitch<Boolean> {
 
 	private Boolean HANDLED = Boolean.TRUE;
 	private Boolean NOT_HANDLED = null;
@@ -42,15 +42,15 @@ public class DiffsHandlerSwitch extends DiffSwitch<Boolean> {
 	private IProgressMonitor monitor;
 
 	private IVcmlDiffFilter vcmlDiffFilter;
-	private DiffMessageAcceptor messageAcceptor;
+	private DiffValidationMessageAcceptor messageAcceptor;
 	
 	@Inject
-	public DiffsHandlerSwitch(IVcmlDiffFilter vcmlDiffFilter) {
+	public DiffModelSwitch(IVcmlDiffFilter vcmlDiffFilter) {
 		modelElements = Sets.newHashSet();
 		this.vcmlDiffFilter = vcmlDiffFilter;
 	}
 	
-	public void handleDiffModel(DiffModel diffModel, Model resultModel, Model newStateModel, DiffMessageAcceptor messageAcceptor, IProgressMonitor monitor) {
+	public void handleDiffModel(DiffModel diffModel, Model resultModel, Model newStateModel, DiffValidationMessageAcceptor messageAcceptor, IProgressMonitor monitor) {
 		modelElements.clear();
 		this.resultModel = resultModel;
 		this.newStateModel = newStateModel;

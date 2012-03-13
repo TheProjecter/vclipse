@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -27,6 +26,7 @@ import org.eclipse.xtext.resource.SaveOptions;
 import org.eclipse.xtext.resource.XtextResourceSet;
 import org.eclipse.xtext.ui.MarkerTypes;
 import org.eclipse.xtext.ui.editor.validation.MarkerCreator;
+import org.eclipse.xtext.validation.CheckType;
 import org.eclipse.xtext.validation.Issue.IssueImpl;
 import org.vclipse.base.UriUtil;
 import org.vclipse.base.ui.util.VClipseResourceUtil;
@@ -45,7 +45,7 @@ public class VcmlCompare {
 	private static final VcmlFactory VCML_FACTORY = VcmlFactory.eINSTANCE;
 	
 	@Inject
-	private DiffsHandlerSwitch diffsHandlerSwitch;
+	private DiffModelSwitch diffModelSwitch;
 	
 	@Inject
 	private MarkerCreator markerCreator;
@@ -60,9 +60,9 @@ public class VcmlCompare {
 	private VClipseResourceUtil resourceUtils;
 	
 	@Inject
-	private Provider<DiffMessageAcceptor> messageAcceptorProvider;
+	private Provider<DiffValidationMessageAcceptor> messageAcceptorProvider;
 	
-	private DiffMessageAcceptor currentMessageAcceptor;
+	private DiffValidationMessageAcceptor currentMessageAcceptor;
 	
 	private ComparisonResourceSnapshot snapshot;
 	
@@ -92,8 +92,6 @@ public class VcmlCompare {
 	}
 
 	public void createMarkers(IFile resultFile, Resource resultResource) throws CoreException, IOException {
-		resultFile.deleteMarkers(IMarker.PROBLEM, false, IResource.DEPTH_ONE);
-		
 		EList<EObject> contents = resultResource.getContents();
 		IParseResult parse = vcmlParser.parse(new FileReader(resultFile.getLocation().toFile()));
 		EObject rootASTElement = parse.getRootASTElement();
@@ -102,6 +100,7 @@ public class VcmlCompare {
 			contents.add(rootASTElement);
 		}
 		
+		resultFile.deleteMarkers(MarkerTypes.forCheckType(CheckType.NORMAL), true, IResource.DEPTH_ONE);
 		for(EObject object : contents.get(0).eContents()) {
 			IssueImpl issue = currentMessageAcceptor.getIssue(object);
 			if(issue != null) {
@@ -161,7 +160,7 @@ public class VcmlCompare {
 		}
 		
 		currentMessageAcceptor = messageAcceptorProvider.get();
-		diffsHandlerSwitch.handleDiffModel(diffModel, resultModel, changedModel, currentMessageAcceptor, monitor);
+		diffModelSwitch.handleDiffModel(diffModel, resultModel, changedModel, currentMessageAcceptor, monitor);
 		
 		snapshot.setMatch(matchModel);
 		snapshot.setDiff(diffModel);

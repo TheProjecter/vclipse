@@ -15,14 +15,16 @@ import com.google.inject.Inject;
 
 public final class ExtractDifferencesJob extends Job {
 
-	@Inject
-	private VcmlCompare vcmlCompare;
 	private IFile resultFile;
 	private IFile newFile;
 	private IFile oldFile;
+
+	private final VcmlCompare compare;
 	
-	public ExtractDifferencesJob() {
+	@Inject
+	public ExtractDifferencesJob(VcmlCompare compare) {
 		super("Export job for differences betweeen 2 vcml files.");
+		this.compare = compare;
 	}
 
 	public void setResultFile(IFile resultFile) {
@@ -48,7 +50,7 @@ public final class ExtractDifferencesJob extends Job {
 				resultFile.setContents(new StringInputStream(""), true, true, monitor);
 			}
 			monitor.worked(5);
-			vcmlCompare.compare(oldFile, newFile, resultFile, monitor);
+			compare.compare(oldFile, newFile, resultFile, monitor);
 			return Status.OK_STATUS;
 		} catch(CoreException exception) {
 			VcmlDiffPlugin.showErrorDialog(exception, "Error during differences export", exception.getMessage());

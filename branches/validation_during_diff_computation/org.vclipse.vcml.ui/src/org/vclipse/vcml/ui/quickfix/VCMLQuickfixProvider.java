@@ -13,8 +13,8 @@ package org.vclipse.vcml.ui.quickfix;
 import java.util.List;
 
 import org.eclipse.compare.CompareUI;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.compare.ui.TypedElementWrapper;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.team.internal.ui.history.CompareFileRevisionEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
@@ -27,7 +27,8 @@ import org.eclipse.xtext.ui.editor.quickfix.Fix;
 import org.eclipse.xtext.ui.editor.quickfix.IssueResolution;
 import org.eclipse.xtext.ui.editor.quickfix.IssueResolutionAcceptor;
 import org.eclipse.xtext.validation.Issue;
-import org.vclipse.vcml.diff.compare.VcmlCompare;
+import org.vclipse.vcml.diff.storage.EObjectTypedElement;
+import org.vclipse.vcml.formatting.VCMLPrettyPrinter;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
@@ -35,8 +36,8 @@ import com.google.inject.Inject;
 @SuppressWarnings("restriction")
 public class VCMLQuickfixProvider extends DefaultQuickfixProvider {
 	
-	@Inject
-	private VcmlCompare compare;
+	@Inject VCMLPrettyPrinter prettyPrinter;
+	@Inject IWorkspaceRoot workspaceRoot;
 	
 	@Override
 	public List<IssueResolution> getResolutions(Issue issue) {
@@ -137,41 +138,18 @@ public class VCMLQuickfixProvider extends DefaultQuickfixProvider {
 	public void fixCompareIssue(final Issue issue, IssueResolutionAcceptor acceptor) {
 		acceptor.accept(issue, "Show change in compare editor", "Opens the compare editor for objects where the change is applied.", null, new ISemanticModification() {
 			public void apply(EObject element, IModificationContext context) throws Exception {
-				
 				String[] data = issue.getData();
 				XtextResourceSet resourceSet = new XtextResourceSet();
 				EObject leftObject = resourceSet.getEObject(URI.createURI(data[0]), true);
 				EObject rightObject = resourceSet.getEObject(URI.createURI(data[1]), true);
 				
-				
-//				CompareContainer container = new CompareContainer();
-//				DiffNode diffNode = new DiffNode(new TypedElementWrapper(leftObject), new TypedElementWrapper(rightObject));
-//				container.addCompareInputChangeListener(diffNode, new ICompareInputChangeListener() {
-//					public void compareInputChanged(ICompareInput source) {
-//						// TODO Auto-generated method stub
-//						
-//					}
-//				});
-				
-				
-//				ComparisonUtility util = new ComparisonUtility(issue);
-//				
 				IWorkbenchPage activePage = 
 						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-//		
-//				LocalResourceTypedElement elementLeft = 
-//						new LocalResourceTypedElement(util.getLeft());
-//				LocalResourceTypedElement elementRight = 
-//						new LocalResourceTypedElement(util.getRight());
-//				
 				
-				CompareFileRevisionEditorInput input2 = 
-					new CompareFileRevisionEditorInput(new TypedElementWrapper(leftObject), 
-							new TypedElementWrapper(rightObject), activePage);
-				
-				
-				CompareUI.openCompareEditor(input2, true);
-				
+				CompareUI.openCompareEditor(
+						new CompareFileRevisionEditorInput(
+							new EObjectTypedElement(leftObject, prettyPrinter, workspaceRoot), 
+								new EObjectTypedElement(rightObject, prettyPrinter, workspaceRoot), activePage), true);
 			}
 		});
 	}
