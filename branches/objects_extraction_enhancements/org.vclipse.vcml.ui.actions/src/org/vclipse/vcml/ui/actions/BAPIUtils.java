@@ -25,7 +25,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.xtext.IGrammarAccess;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.parser.IParseResult;
-import org.eclipse.xtext.parser.IParser;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.serializer.ISerializer;
 import org.eclipse.xtext.util.Strings;
@@ -35,6 +34,7 @@ import org.vclipse.console.CMConsolePlugin;
 import org.vclipse.console.CMConsolePlugin.Kind;
 import org.vclipse.vcml.VCMLRuntimeModule;
 import org.vclipse.vcml.formatting.VCMLPrettyPrinter;
+import org.vclipse.vcml.parser.antlr.VCMLParser;
 import org.vclipse.vcml.services.VCMLGrammarAccess.ConditionSourceElements;
 import org.vclipse.vcml.services.VCMLGrammarAccess.ConstraintSourceElements;
 import org.vclipse.vcml.services.VCMLGrammarAccess.ProcedureSourceElements;
@@ -49,16 +49,16 @@ import org.vclipse.vcml.vcml.ConstraintSource;
 import org.vclipse.vcml.vcml.Description;
 import org.vclipse.vcml.vcml.Documentation;
 import org.vclipse.vcml.vcml.FormattedDocumentationBlock;
+import org.vclipse.vcml.vcml.GlobalDependency;
 import org.vclipse.vcml.vcml.Language;
 import org.vclipse.vcml.vcml.Model;
 import org.vclipse.vcml.vcml.MultiLanguageDescription;
 import org.vclipse.vcml.vcml.MultiLanguageDescriptions;
 import org.vclipse.vcml.vcml.MultipleLanguageDocumentation;
 import org.vclipse.vcml.vcml.MultipleLanguageDocumentation_LanguageBlock;
-import org.vclipse.vcml.vcml.PFunction;
+import org.vclipse.vcml.vcml.Procedure;
 import org.vclipse.vcml.vcml.ProcedureSource;
 import org.vclipse.vcml.vcml.SimpleDescription;
-import org.vclipse.vcml.vcml.Statement;
 import org.vclipse.vcml.vcml.VcmlFactory;
 
 import com.google.common.collect.ArrayListMultimap;
@@ -89,7 +89,7 @@ public class BAPIUtils {
 	protected static final VcmlFactory VCML = VcmlFactory.eINSTANCE;
 
 	@Inject
-	private IParser parser;
+	private VCMLParser parser;
 	
 	@Inject
 	private IGrammarAccess grammarAccess;
@@ -114,7 +114,7 @@ public class BAPIUtils {
 	
 		// injection TODO injection should be simplified
 		Injector injector = Guice.createInjector(new VCMLRuntimeModule());
-		parser = injector.getInstance(IParser.class);
+		parser = injector.getInstance(VCMLParser.class);
 		grammarAccess = injector.getInstance(IGrammarAccess.class);
 		preferenceStore = VCMLUiPlugin.getDefault().getInjector().getInstance(IPreferenceStore.class);
 		prettyPrinter = new VCMLPrettyPrinter();
@@ -417,17 +417,13 @@ public class BAPIUtils {
 		}
 	}
 	
-	protected ProcedureSource readProcedureSource(JCoTable table, Model vcmlModel) {
+	protected ProcedureSource readProcedureSource(JCoTable table, Procedure procedure, Model vcmlModel) {
 		StringParser stringParser = new StringParser();
 		StringBuffer source = readSourceLines(table);
 		ProcedureSourceElements elements = ((org.vclipse.vcml.services.VCMLGrammarAccess)grammarAccess).getProcedureSourceAccess();
     	IParseResult result = parser.parse(elements.getRule(), new StringReader(source.toString()));
     	if(result.getRootASTElement() instanceof ProcedureSource) {
-    		for(Statement statement : ((ProcedureSource)result.getRootASTElement()).getStatements()) {
-    			if(statement instanceof PFunction) {
-    				stringParser.parse(statement, source.toString(), vcmlModel);
-    			}
-    		}
+    		stringParser.parse(procedure, source.toString(), vcmlModel);
     	}
     	Iterator<INode> iterator = result.getSyntaxErrors().iterator();
     	if(iterator.hasNext()) {
@@ -439,10 +435,14 @@ public class BAPIUtils {
     	}
 	}
 	
-	protected ConditionSource readConditionSource(JCoTable table) {
+	protected ConditionSource readConditionSource(JCoTable table, GlobalDependency condition, Model vcmlModel) {
+		StringParser stringParser = new StringParser();
 		StringBuffer source = readSourceLines(table);
 		ConditionSourceElements elements = ((org.vclipse.vcml.services.VCMLGrammarAccess)grammarAccess).getConditionSourceAccess();
     	IParseResult result = parser.parse(elements.getRule(), new StringReader(source.toString()));
+    	if(result.getRootASTElement() instanceof ConditionSource) {
+    		stringParser.parse(condition, source.toString(), vcmlModel);
+    	}
     	Iterator<INode> iterator = result.getSyntaxErrors().iterator();
     	if(iterator.hasNext()) {
     		printParseErrors(iterator, source);
