@@ -58,7 +58,7 @@ public class StringParser {
 				}
 			});
 	
-	private final PolymorphicDispatcher<EObject> creationDispatcher = new PolymorphicDispatcher<EObject>("create", 5, 5,
+	private final PolymorphicDispatcher<EObject> creationDispatcher = new PolymorphicDispatcher<EObject>("create", 5, 6,
 			Collections.singletonList(this), new ErrorHandler<EObject>() {
 				public EObject handle(Object[] params, Throwable e) {
 					return null;
@@ -94,6 +94,10 @@ public class StringParser {
 	
 	public EObject create(EObject object, String text, Model vcmlModel, Set<String> seenObjects, int tokenType) {
 		return creationDispatcher.invoke(object, text, vcmlModel, seenObjects, tokenType);
+	}
+	
+	public EObject create(EObject object, String text, Model vcmlModel, Set<String> seenObjects, List<Token> seenTokens, int tokenType) {
+		return creationDispatcher.invoke(object, text, vcmlModel, seenObjects, seenTokens, tokenType);
 	}
 	
 	protected void parse(Procedure procedure, String textRepresentation, Model vcmlModel) {
@@ -154,21 +158,21 @@ public class StringParser {
     				if(canSkip(token)) {
     					continue;
     				} else {
-    					create(object, text, vcmlModel, seenObjects, token.getType());
+    					create(object, text, vcmlModel, seenObjects, tokens, token.getType());
     				}
     			}
     		}
     	}
 	}
 	
-	protected EObject create(ConditionalStatement object, String text, Model vcmlModel, Set<String> seenObjects, int tokenType) {
+	protected EObject create(ConditionalStatement object, String text, Model vcmlModel, Set<String> seenObjects, List<Token> seenTokens, int tokenType) {
 		if(tokenType == InternalVCMLLexer.KEYWORD_100) {
 			return createCharacteristic(text, vcmlModel, seenObjects);
 		}
 		return null;
 	}
 	
-	protected EObject create(PFunction object, String text, Model vcmlModel, Set<String> seenObjects, int tokenType) {
+	protected EObject create(PFunction object, String text, Model vcmlModel, Set<String> seenObjects, List<Token> seenTokens, int tokenType) {
 		switch(tokenType) {
 			case InternalVCMLLexer.KEYWORD_2 :
 			case InternalVCMLLexer.KEYWORD_6 :
@@ -193,7 +197,7 @@ public class StringParser {
 		}
 	}
 	
-	protected EObject create(Condition condition, String text, Model vcmlModel, Set<String> seenObjects, int tokenType) {
+	protected EObject create(Condition condition, String text, Model vcmlModel, Set<String> seenObjects, List<Token> seenTokens, int tokenType) {
 		switch(tokenType) {
 			case InternalVCMLLexer.KEYWORD_13 :
 				return createCharacteristic(text, vcmlModel, seenObjects);
@@ -208,7 +212,7 @@ public class StringParser {
 		}
 	}
 	
-	protected EObject create(ConstraintSource source, String text, Model vcmlModel, Set<String> seenObjects, int tokenType) {
+	protected EObject create(ConstraintSource source, String text, Model vcmlModel, Set<String> seenObjects, List<Token> seenTokens, int tokenType) {
 		switch(tokenType) {
 			case InternalVCMLLexer.KEYWORD_2 : 
 			case InternalVCMLLexer.KEYWORD_6 : 
@@ -216,6 +220,14 @@ public class StringParser {
 			case InternalVCMLLexer.KEYWORD_100 :
 				return createCharacteristic(text, vcmlModel, seenObjects);
 			case InternalVCMLLexer.KEYWORD_94 :
+				for(int i=seenTokens.size()-1; i>-1; i--) {
+					int type = seenTokens.get(i).getType();
+					if(type == InternalVCMLLexer.KEYWORD_15) {
+						return null;
+					} else if(type == InternalVCMLLexer.KEYWORD_94) {
+						break;
+					}
+				}
 				return createClass("(300)" + text, vcmlModel, seenObjects);
 			case InternalVCMLLexer.KEYWORD_108 :
 				return createVariantTable(text, vcmlModel, seenObjects);
