@@ -33,11 +33,11 @@ public class DependencyNetReader extends BAPIUtils {
 	private static final ConstraintReader CONSTRAINT_READER = new ConstraintReader();
 
 	public DependencyNet read(String depNetName, Model vcmlModel, IProgressMonitor monitor, Set<String> seenObjects, boolean recurse) throws JCoException {
-		if (!seenObjects.add(depNetName)) {
+		if(!seenObjects.add(depNetName)) {
 			return null;
 		}
 		DependencyNet object = VCML.createDependencyNet();
-		vcmlModel.getObjects().add(object);
+		object.setName(depNetName);
 		JCoFunction function = getJCoFunction("CARD_CONSTRAINT_NET_READ", monitor);
 		function.getImportParameterList().setValue("CONSTRAINT_NET", depNetName);
 		try {
@@ -70,6 +70,7 @@ public class DependencyNetReader extends BAPIUtils {
 		} catch (AbapException e) {
 			handleAbapException(e);
 		}
+		vcmlModel.getObjects().add(object);
 		return object;
 	}
 
