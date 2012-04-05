@@ -177,12 +177,10 @@ public class CharacteristicReader extends BAPIUtils {
 				if (!languageBlocks.isEmpty())
 					object.setDocumentation(multipleLanguageDocumentation);
 			}
-		}
-		if(object.getName() == null) {
-			// ignore characteristic
 		} else {
-			vcmlModel.getObjects().add(object);			
+			object.setName(csticName);
 		}
+		vcmlModel.getObjects().add(object);
 		return object;
 	}
 		
