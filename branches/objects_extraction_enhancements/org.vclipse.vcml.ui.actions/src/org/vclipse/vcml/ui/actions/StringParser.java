@@ -39,6 +39,7 @@ import org.vclipse.vcml.vcml.PFunction;
 import org.vclipse.vcml.vcml.Precondition;
 import org.vclipse.vcml.vcml.Procedure;
 import org.vclipse.vcml.vcml.ProcedureSource;
+import org.vclipse.vcml.vcml.SelectionCondition;
 import org.vclipse.vcml.vcml.Statement;
 import org.vclipse.vcml.vcml.VariantFunction;
 import org.vclipse.vcml.vcml.VariantTable;
@@ -98,6 +99,10 @@ public class StringParser {
 	
 	public EObject create(EObject object, String text, Model vcmlModel, Set<String> seenObjects, List<Token> seenTokens, int tokenType) {
 		return creationDispatcher.invoke(object, text, vcmlModel, seenObjects, seenTokens, tokenType);
+	}
+	
+	protected void parse(SelectionCondition condtion, String textRepresentation, Model vcmlModel) {
+		parseText(condtion, textRepresentation, vcmlModel);
 	}
 	
 	protected void parse(Procedure procedure, String textRepresentation, Model vcmlModel) {
@@ -163,6 +168,10 @@ public class StringParser {
     			}
     		}
     	}
+	}
+	
+	protected EObject create(SelectionCondition selectionCondition, String text, Model vcmlModel, Set<String> seenObjects, List<Token> seenTokens, int tokenType) {
+		return createCharacteristic(text, vcmlModel, seenObjects);
 	}
 	
 	protected EObject create(ConditionalStatement object, String text, Model vcmlModel, Set<String> seenObjects, List<Token> seenTokens, int tokenType) {
