@@ -44,14 +44,14 @@ import com.sap.conn.jco.JCoTable;
 public class CharacteristicReader extends BAPIUtils {
 
 	public Characteristic read(String csticName, Model vcmlModel, final IProgressMonitor monitor, Set<String> seenObjects, boolean recurse) throws JCoException {
-		if (!seenObjects.add(csticName))
-			return null;
+		if(!seenObjects.add(csticName)) {
+			return null;			
+		}
 		final Characteristic object = VCML.createCharacteristic();
-		vcmlModel.getObjects().add(object);
 		JCoFunction function = getJCoFunction("BAPI_CHARACT_GETDETAIL", monitor);
 		function.getImportParameterList().setValue("CHARACTNAME", csticName);
 		execute(function, monitor, csticName);
-		if (processReturnTable(function)) {
+		if(processReturnTable(function)) {
 			JCoParameterList epl = function.getExportParameterList();
 			JCoParameterList tpl = function.getTableParameterList();
 
@@ -177,6 +177,11 @@ public class CharacteristicReader extends BAPIUtils {
 				if (!languageBlocks.isEmpty())
 					object.setDocumentation(multipleLanguageDocumentation);
 			}
+		}
+		if(object.getName() == null) {
+			// ignore characteristic
+		} else {
+			vcmlModel.getObjects().add(object);			
 		}
 		return object;
 	}
