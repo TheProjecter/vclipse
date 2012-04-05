@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.vclipse.vcml.ui.outline.actions.IVCMLOutlineActionHandler;
 import org.vclipse.vcml.vcml.DependencyNet;
+import org.vclipse.vcml.vcml.Model;
 
 import com.sap.conn.jco.JCoException;
 
@@ -26,7 +27,7 @@ public class DependencyNetExtractActionHandler extends DependencyNetReader imple
 	}
 
 	public void run(DependencyNet depnet, Resource resource, IProgressMonitor monitor) throws JCoException {
-		read(depnet.getName(), resource, monitor, new HashSet<String>(), true);
+		read(depnet.getName(), (Model)resource.getContents().get(0), monitor, new HashSet<String>(), true);
 	}
 
 }

@@ -13,14 +13,13 @@ package org.vclipse.vcml.ui.actions.dependencynet;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.vclipse.vcml.vcml.Constraint;
-import org.vclipse.vcml.vcml.DependencyNet;
-import org.vclipse.vcml.vcml.Model;
 import org.vclipse.vcml.ui.actions.BAPIUtils;
 import org.vclipse.vcml.ui.actions.constraint.ConstraintReader;
 import org.vclipse.vcml.utils.VCMLProxyFactory;
 import org.vclipse.vcml.utils.VcmlUtils;
+import org.vclipse.vcml.vcml.Constraint;
+import org.vclipse.vcml.vcml.DependencyNet;
+import org.vclipse.vcml.vcml.Model;
 
 import com.sap.conn.jco.AbapException;
 import com.sap.conn.jco.JCoException;
@@ -33,12 +32,12 @@ public class DependencyNetReader extends BAPIUtils {
 
 	private static final ConstraintReader CONSTRAINT_READER = new ConstraintReader();
 
-	public DependencyNet read(String depNetName, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, boolean recurse) throws JCoException {
+	public DependencyNet read(String depNetName, Model vcmlModel, IProgressMonitor monitor, Set<String> seenObjects, boolean recurse) throws JCoException {
 		if (!seenObjects.add(depNetName)) {
 			return null;
 		}
 		DependencyNet object = VCML.createDependencyNet();
-		((Model)resource.getContents().get(0)).getObjects().add(object);
+		vcmlModel.getObjects().add(object);
 		JCoFunction function = getJCoFunction("CARD_CONSTRAINT_NET_READ", monitor);
 		function.getImportParameterList().setValue("CONSTRAINT_NET", depNetName);
 		try {
@@ -60,10 +59,10 @@ public class DependencyNetReader extends BAPIUtils {
 					String constraintName = constraints.getString("DEPENDENCY");
 					Constraint constraint = null;
 					if (recurse) {
-						constraint = CONSTRAINT_READER.read(constraintName, resource, monitor, seenObjects, recurse);
+						constraint = CONSTRAINT_READER.read(constraintName, vcmlModel.eResource(), monitor, seenObjects, recurse);
 					}
 					if (constraint==null) {
-						constraint = VCMLProxyFactory.createConstraintProxy(resource, constraintName);
+						constraint = VCMLProxyFactory.createConstraintProxy(vcmlModel.eResource(), constraintName);
 					}
 					object.getConstraints().add(constraint);
 				}

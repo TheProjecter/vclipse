@@ -23,6 +23,7 @@ import org.vclipse.vcml.vcml.ConfigurationProfileEntry;
 import org.vclipse.vcml.vcml.DependencyNet;
 import org.vclipse.vcml.vcml.InterfaceDesign;
 import org.vclipse.vcml.vcml.Material;
+import org.vclipse.vcml.vcml.Model;
 import org.vclipse.vcml.vcml.Procedure;
 import org.vclipse.vcml.ui.actions.BAPIUtils;
 import org.vclipse.vcml.ui.actions.dependencynet.DependencyNetReader;
@@ -119,7 +120,7 @@ public class ConfigurationProfileReader extends BAPIUtils {
 				} else if ("CNET".equals(depType)) {
 					DependencyNet dependencyNet = null;
 					if (recurse) {
-						dependencyNet = DEPENDENCYNET_READER.read(depName, resource, monitor, seenObjects, recurse);
+						dependencyNet = DEPENDENCYNET_READER.read(depName, (Model)resource.getContents().get(0), monitor, seenObjects, recurse);
 					}
 					if (dependencyNet==null) {
 						dependencyNet = VCMLProxyFactory.createDependencyNetProxy(resource, depName);
