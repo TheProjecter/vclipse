@@ -208,7 +208,7 @@ public class StringParser {
 			case InternalVCMLLexer.KEYWORD_100 :
 				return createCharacteristic(text, vcmlModel, seenObjects);
 			default :
-				return null;
+				return createCharacteristic(text, vcmlModel, seenObjects);
 		}
 	}
 	
