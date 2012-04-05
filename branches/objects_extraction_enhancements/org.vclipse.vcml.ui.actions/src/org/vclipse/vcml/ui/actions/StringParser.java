@@ -40,7 +40,6 @@ import org.vclipse.vcml.vcml.Precondition;
 import org.vclipse.vcml.vcml.Procedure;
 import org.vclipse.vcml.vcml.ProcedureSource;
 import org.vclipse.vcml.vcml.Statement;
-import org.vclipse.vcml.vcml.Table;
 import org.vclipse.vcml.vcml.VariantFunction;
 import org.vclipse.vcml.vcml.VariantTable;
 
@@ -155,7 +154,6 @@ public class StringParser {
     				if(canSkip(token)) {
     					continue;
     				} else {
-    					System.out.println("Token text: " + token.getText() + " token type: " + token.getType() + " object: " + object.getClass().getSimpleName());
     					create(object, text, vcmlModel, seenObjects, token.getType());
     				}
     			}
@@ -171,45 +169,43 @@ public class StringParser {
 	}
 	
 	protected EObject create(PFunction object, String text, Model vcmlModel, Set<String> seenObjects, int tokenType) {
-		VariantFunction variantFunction = null;
-		if(tokenType == InternalVCMLLexer.KEYWORD_138) {
-			variantFunction = createVariantFunction(text, vcmlModel, seenObjects);
-			object.setFunction(variantFunction);
-		} else if(tokenType == InternalVCMLLexer.KEYWORD_2 
-				|| tokenType == InternalVCMLLexer.KEYWORD_6) {
-			createCharacteristic(text, vcmlModel, seenObjects);
-		} else if(tokenType == InternalVCMLLexer.KEYWORD_13) {
-			Iterator<Literal> filter = Iterables.filter(object.getValues(), new Predicate<Literal>() {
-				@Override
-				public boolean apply(Literal input) {
-					if(input instanceof CharacteristicReference_P) {
-						return ((CharacteristicReference_P)input).getCharacteristic() == null;
+		switch(tokenType) {
+			case InternalVCMLLexer.KEYWORD_2 :
+			case InternalVCMLLexer.KEYWORD_6 :
+				return createCharacteristic(text, vcmlModel, seenObjects);
+			case InternalVCMLLexer.KEYWORD_13 :
+				Iterator<Literal> filter = Iterables.filter(object.getValues(), new Predicate<Literal>() {
+					@Override
+					public boolean apply(Literal input) {
+						if(input instanceof CharacteristicReference_P) {
+							return ((CharacteristicReference_P)input).getCharacteristic() == null;
+						}
+						return false;
 					}
-					return false;
+				}).iterator();
+				if(filter.hasNext()) {
+					return createCharacteristic(text, vcmlModel, seenObjects);
 				}
-			}).iterator();
-			if(filter.hasNext()) {
-				Literal literal = filter.next();
-				try {
-					Characteristic characteristic = csticReader.read(text, vcmlModel, new NullProgressMonitor(), seenObjects, true);
-					((CharacteristicReference_P)literal).setCharacteristic(characteristic);
-				} catch(JCoException exception) {
-					exception.printStackTrace();
-				}
-			}
+			case InternalVCMLLexer.KEYWORD_138 :
+				return createVariantFunction(text, vcmlModel, seenObjects);
+			default :
+				return null;
 		}
-		return variantFunction;
 	}
 	
 	protected EObject create(Condition condition, String text, Model vcmlModel, Set<String> seenObjects, int tokenType) {
-		if(tokenType == InternalVCMLLexer.KEYWORD_100) {
-			return createCharacteristic(text, vcmlModel, seenObjects);			
-		} else if(condition instanceof IsSpecified_C && tokenType == InternalVCMLLexer.KEYWORD_94) {
-			return createClass("(300)" + text, vcmlModel, seenObjects);	
-		} else if(tokenType == InternalVCMLLexer.KEYWORD_13) {
-			return createCharacteristic(text, vcmlModel, seenObjects);
+		switch(tokenType) {
+			case InternalVCMLLexer.KEYWORD_13 :
+				return createCharacteristic(text, vcmlModel, seenObjects);
+			case InternalVCMLLexer.KEYWORD_94 :
+				if(condition instanceof IsSpecified_C) {
+					return createClass("(300)" + text, vcmlModel, seenObjects);	
+				}
+			case InternalVCMLLexer.KEYWORD_100 :
+				return createCharacteristic(text, vcmlModel, seenObjects);
+			default :
+				return null;
 		}
-		return null;
 	}
 	
 	protected EObject create(ConstraintSource source, String text, Model vcmlModel, Set<String> seenObjects, int tokenType) {
@@ -226,13 +222,6 @@ public class StringParser {
 			default :
 				return null;
 		}
-	}
-	
-	protected EObject create(Table table, String text, Model vcmlModel, Set<String> seenObjects, int tokenType) {
-		if(tokenType == InternalVCMLLexer.KEYWORD_108) {
-			return createCharacteristic(text, vcmlModel, seenObjects);
-		}
-		return null;
 	}
 	
 	protected VariantTable createVariantTable(String text, Model vcmlModel, Set<String> seenObjects) {
