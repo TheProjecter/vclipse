@@ -14,15 +14,14 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.vclipse.vcml.vcml.Characteristic;
-import org.vclipse.vcml.vcml.Model;
-import org.vclipse.vcml.vcml.VariantTable;
-import org.vclipse.vcml.vcml.VariantTableArgument;
 import org.vclipse.vcml.ui.actions.BAPIUtils;
 import org.vclipse.vcml.ui.actions.characteristic.CharacteristicReader;
 import org.vclipse.vcml.utils.VCMLProxyFactory;
 import org.vclipse.vcml.utils.VcmlUtils;
+import org.vclipse.vcml.vcml.Characteristic;
+import org.vclipse.vcml.vcml.Model;
+import org.vclipse.vcml.vcml.VariantTable;
+import org.vclipse.vcml.vcml.VariantTableArgument;
 
 import com.sap.conn.jco.AbapException;
 import com.sap.conn.jco.JCoException;
@@ -35,12 +34,12 @@ public class VariantTableReader extends BAPIUtils {
 
 	private static final CharacteristicReader CHARACTERISTIC_READER = new CharacteristicReader(); // must not be abstract
 	
-	public VariantTable read(String variantTableName, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, boolean recurse) throws JCoException {
+	public VariantTable read(String variantTableName, Model vcmlModel, IProgressMonitor monitor, Set<String> seenObjects, boolean recurse) throws JCoException {
 		if (!seenObjects.add(variantTableName))
 			return null;
 		VariantTable object = VCML.createVariantTable();
 		object.setName(variantTableName);
-		((Model)resource.getContents().get(0)).getObjects().add(object);
+		vcmlModel.getObjects().add(object);
 		JCoFunction function = getJCoFunction("CARD_TABLE_READ_STRUCTURE", monitor);
 		JCoParameterList ipl = function.getImportParameterList();
 		ipl.setValue("VAR_TAB", variantTableName);
@@ -61,10 +60,10 @@ public class VariantTableReader extends BAPIUtils {
 				// TODO move this read / proxy mechanism to CharacteristicReader
 				Characteristic cstic = null;
 				if (recurse) {
-					cstic = CHARACTERISTIC_READER.read(csticName, (Model)resource.getContents().get(0), monitor, seenObjects, recurse);
+					cstic = CHARACTERISTIC_READER.read(csticName, vcmlModel, monitor, seenObjects, recurse);
 				}
 				if (cstic==null) {
-					cstic = VCMLProxyFactory.createCharacteristicProxy(resource, csticName);
+					cstic = VCMLProxyFactory.createCharacteristicProxy(vcmlModel.eResource(), csticName);
 				}
 				VariantTableArgument variantTableArgument = VCML.createVariantTableArgument();
 				variantTableArgument.setCharacteristic(cstic);

@@ -45,7 +45,8 @@ public class MaterialReader extends BAPIUtils {
 		}
 		Material object = VCML.createMaterial();
 		object.setName(materialName);
-		((Model)resource.getContents().get(0)).getObjects().add(object);
+		Model model = (Model)resource.getContents().get(0);
+		model.getObjects().add(object);
 		JCoFunction function = getJCoFunction("BAPI_MATERIAL_GET_DETAIL", monitor);
 		JCoParameterList ipl = function.getImportParameterList();
 		ipl.setValue("MATERIAL", materialName);
@@ -82,7 +83,7 @@ public class MaterialReader extends BAPIUtils {
 					String className = "(" + allocList.getInt("CLASSTYPE") + ")" + allocList.getString("CLASSNUM");
 					Class cls = null;
 					if (recurse) {
-						cls = CLASS_READER.read(className, resource, monitor, seenObjects, recurse);
+						cls = CLASS_READER.read(className, model, monitor, seenObjects, recurse);
 					}
 					if (cls==null) {
 						cls = VCMLProxyFactory.createClassProxy(resource, className);

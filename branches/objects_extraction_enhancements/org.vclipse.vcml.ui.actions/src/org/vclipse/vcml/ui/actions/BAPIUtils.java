@@ -45,6 +45,7 @@ import org.vclipse.vcml.utils.DocumentationHandler;
 import org.vclipse.vcml.utils.ISapConstants;
 import org.vclipse.vcml.utils.VcmlUtils;
 import org.vclipse.vcml.vcml.ConditionSource;
+import org.vclipse.vcml.vcml.Constraint;
 import org.vclipse.vcml.vcml.ConstraintSource;
 import org.vclipse.vcml.vcml.Description;
 import org.vclipse.vcml.vcml.Documentation;
@@ -452,10 +453,14 @@ public class BAPIUtils {
     	}
 	}
 	
-	protected ConstraintSource readConstraintSource(JCoTable table) {
+	protected ConstraintSource readConstraintSource(JCoTable table, Constraint constraint, Model vcmlModel) {
+		StringParser stringParser = new StringParser();
 		StringBuffer source = readSourceLines(table);
 		ConstraintSourceElements elements = ((org.vclipse.vcml.services.VCMLGrammarAccess)grammarAccess).getConstraintSourceAccess();
     	IParseResult result = parser.parse(elements.getRule(), new StringReader(source.toString()));
+    	if(result.getRootASTElement() instanceof ConstraintSource) {
+    		stringParser.parse(constraint, source.toString(), vcmlModel);
+    	}
     	Iterator<INode> it = result.getSyntaxErrors().iterator();
     	if(it.hasNext()) {
     		printParseErrors(it, source);

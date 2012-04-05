@@ -14,14 +14,13 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.vclipse.vcml.vcml.Characteristic;
-import org.vclipse.vcml.vcml.Class;
-import org.vclipse.vcml.vcml.Model;
 import org.vclipse.vcml.ui.actions.BAPIUtils;
 import org.vclipse.vcml.ui.actions.characteristic.CharacteristicReader;
 import org.vclipse.vcml.utils.VCMLProxyFactory;
 import org.vclipse.vcml.utils.VcmlUtils;
+import org.vclipse.vcml.vcml.Characteristic;
+import org.vclipse.vcml.vcml.Class;
+import org.vclipse.vcml.vcml.Model;
 
 import com.sap.conn.jco.JCoException;
 import com.sap.conn.jco.JCoFunction;
@@ -33,13 +32,13 @@ public class ClassReader extends BAPIUtils {
 
 	private static final CharacteristicReader CHARACTERISTIC_READER = new CharacteristicReader(); // must not be abstract
 
-	public Class read(String classSpec, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, boolean recurse) throws JCoException {
+	public Class read(String classSpec, Model model, IProgressMonitor monitor, Set<String> seenObjects, boolean recurse) throws JCoException {
 		if (!seenObjects.add(classSpec)) {
 			return null;
 		}
 		Class object = VCML.createClass();
 		object.setName(classSpec);
-		((Model)resource.getContents().get(0)).getObjects().add(object);
+		model.getObjects().add(object);
 		JCoFunction function = getJCoFunction("BAPI_CLASS_GETDETAIL", monitor);
 		JCoParameterList ipl = function.getImportParameterList();
 		ipl.setValue("CLASSNUM", VcmlUtils.getClassName(classSpec));
@@ -59,10 +58,10 @@ public class ClassReader extends BAPIUtils {
 					// TODO move this read / proxy mechanism to CharacteristicReader
 					Characteristic cstic = null;
 					if (recurse) {
-						cstic = CHARACTERISTIC_READER.read(csticName, (Model)resource.getContents().get(0), monitor, seenObjects, recurse);
+						cstic = CHARACTERISTIC_READER.read(csticName, model, monitor, seenObjects, recurse);
 					}
 					if (cstic==null) {
-						cstic = VCMLProxyFactory.createCharacteristicProxy(resource, csticName);
+						cstic = VCMLProxyFactory.createCharacteristicProxy(model.eResource(), csticName);
 					}
 					characteristics.add(cstic);
 				}

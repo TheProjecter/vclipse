@@ -18,15 +18,21 @@ import org.vclipse.vcml.parser.antlr.VCMLParser;
 import org.vclipse.vcml.parser.antlr.lexer.InternalVCMLLexer;
 import org.vclipse.vcml.services.VCMLGrammarAccess;
 import org.vclipse.vcml.services.VCMLGrammarAccess.ConditionSourceElements;
+import org.vclipse.vcml.services.VCMLGrammarAccess.ConstraintSourceElements;
 import org.vclipse.vcml.services.VCMLGrammarAccess.ProcedureSourceElements;
 import org.vclipse.vcml.ui.actions.characteristic.CharacteristicReader;
+import org.vclipse.vcml.ui.actions.classes.ClassReader;
 import org.vclipse.vcml.ui.actions.variantfunction.VariantFunctionReader;
+import org.vclipse.vcml.ui.actions.varianttable.VariantTableReader;
 import org.vclipse.vcml.ui.internal.VCMLActivator;
-import org.vclipse.vcml.vcml.BinaryCondition;
 import org.vclipse.vcml.vcml.Characteristic;
 import org.vclipse.vcml.vcml.CharacteristicReference_P;
+import org.vclipse.vcml.vcml.Condition;
 import org.vclipse.vcml.vcml.ConditionSource;
 import org.vclipse.vcml.vcml.ConditionalStatement;
+import org.vclipse.vcml.vcml.Constraint;
+import org.vclipse.vcml.vcml.ConstraintSource;
+import org.vclipse.vcml.vcml.IsSpecified_C;
 import org.vclipse.vcml.vcml.Literal;
 import org.vclipse.vcml.vcml.Model;
 import org.vclipse.vcml.vcml.PFunction;
@@ -34,7 +40,9 @@ import org.vclipse.vcml.vcml.Precondition;
 import org.vclipse.vcml.vcml.Procedure;
 import org.vclipse.vcml.vcml.ProcedureSource;
 import org.vclipse.vcml.vcml.Statement;
+import org.vclipse.vcml.vcml.Table;
 import org.vclipse.vcml.vcml.VariantFunction;
+import org.vclipse.vcml.vcml.VariantTable;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -59,8 +67,11 @@ public class StringParser {
 			});
 	
 	private InternalVCMLLexer internalVcmlLexer; 
+	
 	private CharacteristicReader csticReader;
 	private VariantFunctionReader variantFunctionReader;
+	private VariantTableReader variantTableReader;
+	private ClassReader classReader;
 	
 	private VCMLParser vcmlParser;
 	
@@ -71,8 +82,11 @@ public class StringParser {
     	internalVcmlLexer = injector.getInstance(InternalVCMLLexer.class);
     	vcmlGrammarAccess = injector.getInstance(VCMLGrammarAccess.class);
     	vcmlParser = injector.getInstance(VCMLParser.class);
+    	
     	csticReader = new CharacteristicReader();
     	variantFunctionReader = new VariantFunctionReader();
+    	variantTableReader = new VariantTableReader();
+    	classReader = new ClassReader();
 	}
 	
 	public void parse(EObject parent, String textRepresentation, Model vcmlModel) {
@@ -111,6 +125,19 @@ public class StringParser {
 		parseText(source.getCondition(), textRepresentation, vcmlModel);
 	}
 	
+	protected void parse(Constraint constraint, String textRepresentation, Model vcmlModel) {
+		ConstraintSource source = constraint.getSource();
+		if(source == null) {
+			ConstraintSourceElements elements = vcmlGrammarAccess.getConstraintSourceAccess();
+			IParseResult result = vcmlParser.parse(elements.getRule(), new StringReader(textRepresentation));
+	    	EObject rootASTElement = result.getRootASTElement();
+	    	if(rootASTElement instanceof ConstraintSource) {
+	    		source = (ConstraintSource)rootASTElement;
+	    	}
+		}
+		parseText(source, textRepresentation, vcmlModel);
+	}
+	
 	protected void parse(PFunction function, String textRepresentation, Model vcmlModel) {
 		parseText(function, textRepresentation, vcmlModel);
 	}
@@ -128,6 +155,7 @@ public class StringParser {
     				if(canSkip(token)) {
     					continue;
     				} else {
+    					System.out.println("Token text: " + token.getText() + " token type: " + token.getType() + " object: " + object.getClass().getSimpleName());
     					create(object, text, vcmlModel, seenObjects, token.getType());
     				}
     			}
@@ -173,11 +201,49 @@ public class StringParser {
 		return variantFunction;
 	}
 	
-	protected EObject create(BinaryCondition precondition, String text, Model vcmlModel, Set<String> seenObjects, int tokenType) {
+	protected EObject create(Condition condition, String text, Model vcmlModel, Set<String> seenObjects, int tokenType) {
 		if(tokenType == InternalVCMLLexer.KEYWORD_100) {
 			return createCharacteristic(text, vcmlModel, seenObjects);			
+		} else if(condition instanceof IsSpecified_C && tokenType == InternalVCMLLexer.KEYWORD_94) {
+			return createClass("(300)" + text, vcmlModel, seenObjects);	
+		} else if(tokenType == InternalVCMLLexer.KEYWORD_13) {
+			return createCharacteristic(text, vcmlModel, seenObjects);
 		}
 		return null;
+	}
+	
+	protected EObject create(ConstraintSource source, String text, Model vcmlModel, Set<String> seenObjects, int tokenType) {
+		switch(tokenType) {
+			case InternalVCMLLexer.KEYWORD_2 : 
+			case InternalVCMLLexer.KEYWORD_6 : 
+			case InternalVCMLLexer.KEYWORD_13 :
+			case InternalVCMLLexer.KEYWORD_100 :
+				return createCharacteristic(text, vcmlModel, seenObjects);
+			case InternalVCMLLexer.KEYWORD_94 :
+				return createClass("(300)" + text, vcmlModel, seenObjects);
+			case InternalVCMLLexer.KEYWORD_108 :
+				return createVariantTable(text, vcmlModel, seenObjects);
+			default :
+				return null;
+		}
+	}
+	
+	protected EObject create(Table table, String text, Model vcmlModel, Set<String> seenObjects, int tokenType) {
+		if(tokenType == InternalVCMLLexer.KEYWORD_108) {
+			return createCharacteristic(text, vcmlModel, seenObjects);
+		}
+		return null;
+	}
+	
+	protected VariantTable createVariantTable(String text, Model vcmlModel, Set<String> seenObjects) {
+		try {
+			VariantTable variantTable = variantTableReader.read(text, vcmlModel, new NullProgressMonitor(), seenObjects, true);
+			seenObjects.add(variantTable.getName());
+			return variantTable;
+		} catch(JCoException exception) {
+			exception.printStackTrace();
+			return null;
+		}
 	}
 	
 	protected VariantFunction createVariantFunction(String text, Model vcmlModel, Set<String> seenObjects) {
@@ -204,6 +270,15 @@ public class StringParser {
 		}
 	}
 
+	protected org.vclipse.vcml.vcml.Class createClass(String text, Model vcmlModel, Set<String> seenObjects) {
+		try {
+			return classReader.read(text, vcmlModel, new NullProgressMonitor(), seenObjects, true);
+		} catch (JCoException exception) {
+			exception.printStackTrace();
+			return null;
+		}
+	}
+	
 	private boolean canSkip(Token token) {
 		return token.getType() == InternalVCMLLexer.RULE_WS 
 				|| token.getType() == InternalVCMLLexer.RULE_DEPENDENCY_COMMENT;

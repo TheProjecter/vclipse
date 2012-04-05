@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.vclipse.vcml.ui.outline.actions.IVCMLOutlineActionHandler;
 import org.vclipse.vcml.vcml.Class;
+import org.vclipse.vcml.vcml.Model;
 
 import com.sap.conn.jco.JCoException;
 
@@ -26,7 +27,7 @@ public class ClassDisplayActionHandler extends ClassReader implements IVCMLOutli
 	}
 
 	public void run(Class cls, Resource resource, IProgressMonitor monitor) throws JCoException {
-		read(cls.getName(), resource, monitor, new HashSet<String>(), false);
+		read(cls.getName(), (Model)resource.getContents().get(0), monitor, new HashSet<String>(), false);
 	}
 
 }

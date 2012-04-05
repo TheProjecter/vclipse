@@ -15,6 +15,7 @@ import java.util.HashSet;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.vclipse.vcml.ui.outline.actions.IVCMLOutlineActionHandler;
+import org.vclipse.vcml.vcml.Model;
 import org.vclipse.vcml.vcml.VariantTable;
 
 import com.sap.conn.jco.JCoException;
@@ -26,7 +27,7 @@ public class VariantTableExtractActionHandler extends VariantTableReader impleme
 	}
 
 	public void run(VariantTable variantTable, Resource resource, IProgressMonitor monitor) throws JCoException {
-		read(variantTable.getName(), resource, monitor, new HashSet<String>(), true);
+		read(variantTable.getName(), (Model)resource.getContents().get(0), monitor, new HashSet<String>(), true);
 	}
 
 }
