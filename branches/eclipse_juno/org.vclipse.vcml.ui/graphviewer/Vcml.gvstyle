@@ -9,11 +9,16 @@ import MaterialDiagram.*
 stylesheet MaterialStyleSheet for MaterialDiagram
 
 style MaterialDiagram {
-	autoLayoutManager = new KielerAutoLayout
+	autoLayoutManager = new SpringAutoLayout
 }
 
-style BillOfMaterialNode.Name {
+style MaterialDiagram.MaterialNode.name {
 	font = font("Helvetica", 10, SWT::BOLD)
-	text = element.eClass.name
+	text = element.name
+}
+
+style MaterialDiagram.BomItemNode.name {
+	font = font("Helvetica", 10, SWT::BOLD)
+	text = element.material.name
 }
 

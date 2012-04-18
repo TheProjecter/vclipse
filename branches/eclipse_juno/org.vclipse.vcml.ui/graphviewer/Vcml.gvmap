@@ -1,8 +1,16 @@
 import org.vclipse.vcml.vcml.*
 
 diagram MaterialDiagram type Material {
-	node BillOfMaterialNode for each billofmaterials {
-		label Name for this
+	
+	node MaterialNode for this {
+		label name for this
+		edge Depedency for each this.billofmaterials.iterator.next.items {
+			=> call BomItemNode for this
+		}
+	}
+	
+	node BomItemNode for this.billofmaterials.iterator.next.items {
+		label name for each this
 	}
 }
 
