@@ -10,6 +10,8 @@
  ******************************************************************************/
 package org.vclipse.vcml.ui;
 
+import org.vclipse.vcml.ui.internal.VCMLActivator;
+
 /**
  * Constants used by the {@link VCMLUiPlugin}.
  */
@@ -18,7 +20,7 @@ public interface IUiConstants {
 	/**
 	 * Preference name for storing the sap hierarchy activated/deactivated value
 	 */
-	public static final String SAP_HIERARCHY_ACTIVATED = VCMLUiPlugin.ID + ".sapHierarchyActivated";
+	public static final String SAP_HIERARCHY_ACTIVATED = VCMLActivator.ORG_VCLIPSE_VCML_VCML + ".sapHierarchyActivated";
 	
 	/**
 	 * Name for the image describing document hierarchy
@@ -33,7 +35,7 @@ public interface IUiConstants {
 	/**
 	 * Preference names for presenting/storing the created sap code
 	 */
-	public static final String OUTPUT_TO_FILE = VCMLUiPlugin.ID + ".outputToFile";
-	public static final String OVERWRITE = VCMLUiPlugin.ID + ".overwrite";
+	public static final String OUTPUT_TO_FILE = VCMLActivator.ORG_VCLIPSE_VCML_VCML + ".outputToFile";
+	public static final String OVERWRITE = VCMLActivator.ORG_VCLIPSE_VCML_VCML + ".overwrite";
 
 }

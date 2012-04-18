@@ -15,13 +15,14 @@ import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
 import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.wizards.newresource.BasicNewFolderResourceWizard;
+import org.vclipse.vcml.ui.internal.VCMLActivator;
 
 /**
  * 
  */
 public class VClipsePerspectiveFactory implements IPerspectiveFactory {
 
-	public static final String ID = VCMLUiPlugin.ID + ".perspective";
+	public static final String ID = VCMLActivator.ORG_VCLIPSE_VCML_VCML + ".perspective";
 	
 	/**
 	 * @see org.eclipse.ui.IPerspectiveFactory#createInitialLayout(org.eclipse.ui.IPageLayout)

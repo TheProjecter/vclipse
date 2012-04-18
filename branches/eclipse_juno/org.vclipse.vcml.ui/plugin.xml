@@ -14,6 +14,12 @@
 <plugin>
    <extension-point id="outlinePageActions" name="Outline page actions" schema="schema/outlinePageActions.exsd"/>
 
+	<extension 
+			point="org.eclipse.xtext.graphview.selectionStrategy">
+			<strategy 
+				class="org.vclipse.vcml.ui.VCMLExecutableExtensionFactory:org.eclipse.xtext.graphview.view.selection.XtextEditorSelectionStrategy"/>
+	</extension>
+
     <extension
             point="org.eclipse.ui.editors">
         <editor

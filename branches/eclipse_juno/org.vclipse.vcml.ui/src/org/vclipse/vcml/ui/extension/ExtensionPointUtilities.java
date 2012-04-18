@@ -12,7 +12,7 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.vclipse.vcml.ui.VCMLUiPlugin;
+import org.vclipse.vcml.ui.internal.VCMLActivator;
 import org.vclipse.vcml.ui.outline.actions.VcmlOutlineActionProvider;
 import org.vclipse.vcml.ui.outline.actions.IVCMLOutlineActionHandler;
 import org.vclipse.vcml.ui.outline.actions.VCMLOutlineAction;
@@ -25,7 +25,7 @@ import com.google.inject.Inject;
 
 public class ExtensionPointUtilities implements IExtensionPointUtilities {
 	
-	private static final String EXTENSION_POINT_ID = VCMLUiPlugin.ID + ".outlinePageActions";
+	private static final String EXTENSION_POINT_ID = VCMLActivator.ORG_VCLIPSE_VCML_VCML + ".outlinePageActions";
 	private static final String ELEMENT_ACTION = "action";
 	private static final String ELEMENT_HANDLER = "handler";
 	
