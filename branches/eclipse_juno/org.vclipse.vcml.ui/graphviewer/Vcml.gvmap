@@ -1,0 +1,10 @@
+import org.vclipse.vcml.vcml.*
+
+diagram MaterialDiagram type Material {
+	node BillOfMaterialNode for each billofmaterials {
+		label Name for this
+	}
+}
+
+
+

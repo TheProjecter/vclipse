@@ -1,0 +1,19 @@
+
+import org.eclipse.xtext.graphview.shape.*
+import org.eclipse.xtext.graphview.behavior.layout.*  
+import org.eclipse.draw2d.*
+import org.eclipse.swt.SWT
+
+import MaterialDiagram.*
+
+stylesheet MaterialStyleSheet for MaterialDiagram
+
+style MaterialDiagram {
+	autoLayoutManager = new KielerAutoLayout
+}
+
+style BillOfMaterialNode.Name {
+	font = font("Helvetica", 10, SWT::BOLD)
+	text = element.eClass.name
+}
+
