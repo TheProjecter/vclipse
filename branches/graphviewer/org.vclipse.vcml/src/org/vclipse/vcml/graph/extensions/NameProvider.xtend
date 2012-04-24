@@ -6,19 +6,19 @@ import org.vclipse.vcml.vcml.Class
 import org.vclipse.vcml.vcml.VCObject
 class NameProvider {
 	
-	def static dispatch String provide(VCObject vcobject) {
+	def static dispatch String name(VCObject vcobject) {
 		return vcobject.name
 	}
 	
-	def static dispatch String provide(Material material) {
+	def static dispatch String name(Material material) {
 		return material.name
 	}
 	
-	def static dispatch String provide(Class klass) {
+	def static dispatch String name(Class klass) {
 		return klass.name
 	}
 	 
-	def static dispatch String provide(Classification classification) {
+	def static dispatch String name(Classification classification) {
 		return classification.cls.name
 	}
 }
