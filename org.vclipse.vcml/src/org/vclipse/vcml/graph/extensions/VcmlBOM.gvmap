@@ -1,0 +1,22 @@
+import org.vclipse.vcml.vcml.*
+import org.vclipse.vcml.graph.extensions.EdgesProvider
+import org.vclipse.vcml.graph.extensions.NodesProvider
+
+import VCObjectDiagram
+ 
+diagram BOMDiagram type VCObject {
+	
+	node VCObjectNode for this {
+		label name for this
+		
+		edge VCObjectEdge for each EdgesProvider::edges(this) {
+			=> call VCObjectNode for this
+		}
+
+		node VCObjectChildNode for each NodesProvider::nodes(this) {
+			label name for this
+		}
+	}
+	
+}
+
