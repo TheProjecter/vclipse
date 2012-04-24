@@ -1,0 +1,26 @@
+import org.eclipse.xtext.graphview.shape.*
+import org.eclipse.xtext.graphview.behavior.layout.*  
+import org.eclipse.draw2d.*
+import org.eclipse.swt.SWT
+
+import BOMDiagram.*
+
+import org.vclipse.vcml.graph.extensions.DescriptionProvider
+import org.vclipse.vcml.graph.extensions.NameProvider
+
+stylesheet BOMStyleSheet for BOMDiagram
+
+style BOMDiagram {
+	autoLayoutManager = new KielerAutoLayout
+	//autoLayoutManager = new SpringAutoLayout
+} 
+    
+style BOMDiagram.VCObjectNode.name { 
+	font = font("Helvetica", 10, SWT::BOLD)
+	text = DescriptionProvider::description(element) + "\n" + NameProvider::name(element)
+}     
+  
+style BOMDiagram.VCObjectNode.VCObjectChildNode.name {
+	font = font("Helvetica", 10, SWT::BOLD)
+	text = NameProvider::name(element)
+}
