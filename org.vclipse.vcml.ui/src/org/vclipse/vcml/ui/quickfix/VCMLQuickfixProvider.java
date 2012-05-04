@@ -12,16 +12,10 @@ package org.vclipse.vcml.ui.quickfix;
 
 import java.util.List;
 
-import org.eclipse.compare.CompareUI;
 import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.team.internal.ui.history.CompareFileRevisionEditorInput;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
-import org.eclipse.xtext.resource.XtextResourceSet;
 import org.eclipse.xtext.ui.editor.model.IXtextDocument;
 import org.eclipse.xtext.ui.editor.model.edit.IModificationContext;
 import org.eclipse.xtext.ui.editor.model.edit.ISemanticModification;
@@ -30,7 +24,6 @@ import org.eclipse.xtext.ui.editor.quickfix.Fix;
 import org.eclipse.xtext.ui.editor.quickfix.IssueResolution;
 import org.eclipse.xtext.ui.editor.quickfix.IssueResolutionAcceptor;
 import org.eclipse.xtext.validation.Issue;
-import org.vclipse.vcml.diff.storage.EObjectTypedElement;
 import org.vclipse.vcml.formatting.VCMLPrettyPrinter;
 import org.vclipse.vcml.vcml.CharacteristicGroup;
 import org.vclipse.vcml.vcml.DependencyNet;
@@ -40,7 +33,6 @@ import org.vclipse.vcml.vcml.VcmlPackage;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
-@SuppressWarnings("restriction")
 public class VCMLQuickfixProvider extends DefaultQuickfixProvider {
 	
 	@Inject VCMLPrettyPrinter prettyPrinter;
@@ -139,26 +131,6 @@ public class VCMLQuickfixProvider extends DefaultQuickfixProvider {
 		String linkText = issue.getData()[0];
 		acceptor.accept(issue, "Create variant function " + linkText, "Create rule", null, 
 				new DefaultSemanticModification("variantfunction " + linkText));
-	}
-	
-	@Fix("Compare_Issue")
-	public void fixCompareIssue(final Issue issue, IssueResolutionAcceptor acceptor) {
-		acceptor.accept(issue, "Show change in compare editor", "Opens the compare editor for objects where the change is applied.", null, new ISemanticModification() {
-			public void apply(EObject element, IModificationContext context) throws Exception {
-				String[] data = issue.getData();
-				XtextResourceSet resourceSet = new XtextResourceSet();
-				EObject leftObject = resourceSet.getEObject(URI.createURI(data[0]), true);
-				EObject rightObject = resourceSet.getEObject(URI.createURI(data[1]), true);
-				
-				IWorkbenchPage activePage = 
-						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-				
-				CompareUI.openCompareEditor(
-						new CompareFileRevisionEditorInput(
-							new EObjectTypedElement(leftObject, prettyPrinter, workspaceRoot), 
-								new EObjectTypedElement(rightObject, prettyPrinter, workspaceRoot), activePage), true);
-			}
-		});
 	}
 	
 	@Fix("MultipleUsage_DependencyNet_Constraint")
