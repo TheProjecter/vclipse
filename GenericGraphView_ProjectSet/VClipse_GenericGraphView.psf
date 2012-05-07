@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<psf version="2.0">
+<provider id="org.tigris.subversion.subclipse.core.svnnature">
+<project reference="0.9.3,https://svn.codespot.com/a/eclipselabs.org/vclipse/branches/graphviewer/org.vclipse.base,org.vclipse.base"/>
+<project reference="0.9.3,https://svn.codespot.com/a/eclipselabs.org/vclipse/branches/graphviewer/org.vclipse.base.ui,org.vclipse.base.ui"/>
+<project reference="0.9.3,https://svn.codespot.com/a/eclipselabs.org/vclipse/branches/graphviewer/org.vclipse.console,org.vclipse.console"/>
+<project reference="0.9.3,https://svn.codespot.com/a/eclipselabs.org/vclipse/branches/graphviewer/org.vclipse.jpplib,org.vclipse.jpplib"/>
+<project reference="0.9.3,https://svn.codespot.com/a/eclipselabs.org/vclipse/branches/graphviewer/org.vclipse.vcml,org.vclipse.vcml"/>
+<project reference="0.9.3,https://svn.codespot.com/a/eclipselabs.org/vclipse/branches/graphviewer/org.vclipse.vcml.diff,org.vclipse.vcml.diff"/>
+<project reference="0.9.3,https://svn.codespot.com/a/eclipselabs.org/vclipse/trunk/plugins/org.vclipse.vcml.mm,org.vclipse.vcml.mm"/>
+<project reference="0.9.3,https://svn.codespot.com/a/eclipselabs.org/vclipse/branches/graphviewer/org.vclipse.vcml.ui,org.vclipse.vcml.ui"/>
+<project reference="0.9.3,https://svn2.hosted-projects.com/webxcerpt/ConfigModeler/trunk/plugins/org.vclipse.vcml.ui_sapicons,org.vclipse.vcml.ui_sapicons"/>
+</provider>
+</psf>
