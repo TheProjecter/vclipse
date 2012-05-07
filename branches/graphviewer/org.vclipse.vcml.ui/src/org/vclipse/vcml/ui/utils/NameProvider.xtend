@@ -14,7 +14,7 @@ import static org.vclipse.vcml.ui.utils.NameProvider.*
 class NameProvider {
 	 
 	def static dispatch String display(VCObject vcobject) {
-		val description = DescriptionProvider::description(vcobject)
+		val description = DescriptionProvider::description(vcobject) + "\n"
 		val classstring = " (" + vcobject.eClass.name.toLowerCase + ")" + "\n"
 		val name = name(vcobject)
 		if(description == null) {
