@@ -2,5 +2,15 @@
 <bookmarks>
    <site url="http://subclipse.tigris.org/update_1.8.x" selected="true" name="subclipse"/>
    <site url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/" selected="true" name="Xtext All In One - Releases"/>
-   <site url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/milestones/" selected="true" name="Xtext Milestones"/>
+   <site url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/milestones/" selected="true" name="Xtext Milestones"/><site
+   	url="http://download.itemis.de/updates/" selected="true" name="Xtext Milestones">
+</site>
+	<site name="swtbot"
+		url="http://download.eclipse.org/technology/swtbot/helios/dev-build/update-site"
+		selected="true">
+	</site>
+	<site
+		url="http://xtext-utils.eclipselabs.org.codespot.com/git.distribution/releases/unittesting-0.9.x/"
+		name="xtext utils" selected="true">
+	</site>
 </bookmarks>
