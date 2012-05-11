@@ -1,9 +1,8 @@
 import org.vclipse.vcml.vcml.*
-import org.vclipse.vcml.ui.utils.EdgesProvider
-import org.vclipse.vcml.ui.utils.NodesProvider
 
-import org.eclipse.xtext.util.SimpleAttributeResolver
- 
+import org.vclipse.vcml.ui.generic_graph_view.utils.EdgesProvider
+import org.vclipse.vcml.ui.generic_graph_view.utils.NodesProvider
+
 diagram VCObjectDiagram type VCObject {
 	
 	node Node for this {
@@ -13,8 +12,7 @@ diagram VCObjectDiagram type VCObject {
 
 		call Node for each NodesProvider::nodes(this) 
 		
-		hidden call SimpleNode for each 
-			NodesProvider::hiddenNodes(this) 
+		hidden call SimpleNode for each NodesProvider::hiddenNodes(this) 
 
 		edge Edge for each EdgesProvider::edges(this) {
 			=> call Node for this
