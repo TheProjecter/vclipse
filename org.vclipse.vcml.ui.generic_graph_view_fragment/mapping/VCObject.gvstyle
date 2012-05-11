@@ -1,0 +1,41 @@
+import org.eclipse.xtext.graphview.shape.*
+import org.eclipse.xtext.graphview.behavior.layout.*  
+import org.eclipse.draw2d.*
+import org.eclipse.swt.SWT
+
+import VCObjectDiagram.*
+
+import org.vclipse.vcml.ui.generic_graph_view.utils.DescriptionProvider
+import org.vclipse.vcml.ui.generic_graph_view.utils.NameProvider
+import org.vclipse.vcml.ui.generic_graph_view.utils.ImageProvider
+
+import org.eclipse.draw2d.PositionConstants
+import org.eclipse.draw2d.Button
+ 
+stylesheet VCObjectStyleSheet for VCObjectDiagram
+ 
+style VCObjectDiagram { 
+	autoLayoutManager = new KielerAutoLayout
+} 
+     
+style VCObjectDiagram.Node.Image {
+	this.add(ImageProvider::instance().imageFigure(element))
+	outline = false
+}
+ 
+style VCObjectDiagram.SimpleNode.Image {
+	this.add(ImageProvider::instance().imageFigure(element))
+	outline = false
+}
+  
+style VCObjectDiagram.Node.name { 
+	font = font("Helvetica", 10, SWT::BOLD)
+	text = NameProvider::display(element) 
+	labelAlignment = PositionConstants::LEFT
+} 
+
+style VCObjectDiagram.SimpleNode.name { 
+	font = font("Helvetica", 10, SWT::BOLD)
+	text = NameProvider::display(element) 
+	labelAlignment = PositionConstants::LEFT
+}
