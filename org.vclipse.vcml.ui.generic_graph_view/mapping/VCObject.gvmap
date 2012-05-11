@@ -1,0 +1,35 @@
+import org.vclipse.vcml.vcml.VCObject
+import org.vclipse.vcml.vcml.*
+
+import org.vclipse.vcml.ui.generic_graph_view.utils.EdgesProvider
+import org.vclipse.vcml.ui.generic_graph_view.utils.NodesProvider
+
+import org.eclipse.xtext.util.SimpleAttributeResolver
+
+diagram VCObjectDiagram type org.vclipse.vcml.vcml.VCObject {
+	
+	node Node for this {
+		node Image for this {}
+		
+		label name for this
+
+		call Node for each NodesProvider::nodes(this) 
+		
+		call SimpleNode for each 
+			NodesProvider::hiddenNodes(this) 
+
+		edge Edge for each EdgesProvider::edges(this) {
+			=> call Node for this
+		}
+
+		edge HiddenEdge for each EdgesProvider::hiddenEdges(this) {
+			=> call Node for this
+		}
+	}
+	 
+	node SimpleNode for this {
+		node Image for this {}
+		label name for this
+	}
+}
+
