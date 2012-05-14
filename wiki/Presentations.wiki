@@ -69,7 +69,7 @@ We will present as an example for this approach the solution built in a customer
 We examine various aspects of the architecture of a product-modeling environment tailored to your needs. Finally, we discuss whether it is worth the effort to build your own product-modeling environment and point out the preconditions for this approach and describe its benefits.
 
 
-== [http://vclipse.eclipselabs.org.codespot.com/files/webXcerpt-TimGeisler-Fysbee-ChristopheFaure-ToolsForTestDrivenProductModelingCWG-2012-05-08.pdf Tools for Test-Driven Product Modeling] ==
+== [http://vclipse.eclipselabs.org.codespot.com/files/webXcerpt-TimGeisler-Fysbee-ChristopheFaure-ToolsForTestDrivenProductModeling-CWG-2012-05-08.pdf Tools for Test-Driven Product Modeling] ==
 
 2012 CWG European Conference - Berlin, Germany (Tim Geisler, webXcerpt Software GmbH, Christophe Faure, Fysbee SAS)
 
