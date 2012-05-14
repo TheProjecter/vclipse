@@ -1,4 +1,5 @@
 #summary VClipse presentations at CWG conferences.
+#labels Featured
 #sidebar TableOfContents
 
 = Introduction =
