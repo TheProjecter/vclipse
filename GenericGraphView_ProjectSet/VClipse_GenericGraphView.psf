@@ -20,7 +20,6 @@
 <project reference="0.9.3,http://rtsys.informatik.uni-kiel.de/svn/kieler/trunk/plugins/de.cau.cs.kieler.kiml.graphviz.layouter,de.cau.cs.kieler.kiml.graphviz.layouter"/>
 <project reference="0.9.3,http://rtsys.informatik.uni-kiel.de/svn/kieler/trunk/plugins/de.cau.cs.kieler.kiml.ogdf,de.cau.cs.kieler.kiml.ogdf"/>
 <project reference="0.9.3,http://rtsys.informatik.uni-kiel.de/svn/kieler/trunk/plugins/de.cau.cs.kieler.kiml.service,de.cau.cs.kieler.kiml.service"/>
-<project reference="0.9.3,https://svn.codespot.com/a/eclipselabs.org/vclipse/branches/graphviewer/GenericGraphView_ProjectSet,GenericGraphView_ProjectSet"/>
 <project reference="0.9.3,http://rtsys.informatik.uni-kiel.de/svn/kieler/trunk/plugins/net.ogdf.bin,net.ogdf.bin"/>
 <project reference="0.9.3,http://rtsys.informatik.uni-kiel.de/svn/kieler/trunk/plugins/net.ogdf.ogml,net.ogdf.ogml"/>
 <project reference="0.9.3,https://svn.codespot.com/a/eclipselabs.org/vclipse/trunk/plugins/org.vclipse.base,org.vclipse.base"/>
