@@ -48,3 +48,35 @@ An integration of the automatic testing tool [http://www.fysbee.com ConfigScan] 
 We will give a demonstration of the two development environments and give an outlook to current and future developments.
 
 We sketch what has to be done when you consider to take a similar approach for product modeling in your domain.
+
+
+== [http://vclipse.eclipselabs.org.codespot.com/files/webXcerpt-TimGeisler-HowToBuildYourOwnProductModelingEnvironment-CWG-2012-05-08.pdf How to Build Your Own Product-Modeling Environment?] ==
+
+2012 CWG European Conference - Berlin, Germany (Tim Geisler, webXcerpt Software GmbH)
+
+VC and IPC are very generic configuration engines which are suited to many SAP customers. Product models are implemented in generic languages for dependencies with the use of tools like PMEVC and various different transactions each of which allows to maintain a certain object type.
+
+However, usually an SAP customer has its own specific way of using VC and IPC. Special coding patterns are used to achieve desired functionality, there may be restrictions of using some configurator features, and there might be additional functionality added to the configurator. Furthermore, an SAP customer uses its own specific way of specifying product models - which typically happens outside of the modeling environment.
+
+There are no integrated tools for specifying product models. Furthermore, a systematic way of obtaining the implementation of the product model in VC from its specification is missing. For the implementation of product models, generic (and sometimes ancient) tools have to be used.
+
+As product modeling has several common aspects with programming, it helps to look for approaches to these problems in the software-development area. In Model-Driven Software Development domain-specific languages are used to create models which express application structure and behaviour in a concise and domain-specific way. Subsequently, these models are transformed into executable code using model transformations.
+
+We propose to create your own domain-specific language to specify your product models. By using powerful modern open-source frameworks like Eclipse, Xtext, and Xtend2 it is now possible to develop an integrated-development environment for your domain-specific language - your product-modeling environment - with reasonable effort. With the open-source project VClipse as well as with the solution-modeling environment from SAP now two backend systems for the interaction with an SAP system exist which drastically simplify the task of implementing model transformations from your own domain-specific language to a product model in VC or IPC.
+
+We will present as an example for this approach the solution built in a customer project at Nokia Siemens Networks and also give a demonstration.
+
+We examine various aspects of the architecture of a product-modeling environment tailored to your needs. Finally, we discuss whether it is worth the effort to build your own product-modeling environment and point out the preconditions for this approach and describe its benefits.
+
+
+== [http://vclipse.eclipselabs.org.codespot.com/files/webXcerpt-TimGeisler-Fysbee-ChristopheFaure-ToolsForTestDrivenProductModelingCWG-2012-05-08.pdf Tools for Test-Driven Product Modeling] ==
+
+2012 CWG European Conference - Berlin, Germany (Tim Geisler, webXcerpt Software GmbH, Christophe Faure, Fysbee SAS)
+
+Test-driven product modeling is a methodology of product modeling which leads to quick development of high-quality product models. Automatizable test case(s) are written before the product model is implemented. Subsequently the product model is modified until no test cases fail. With subsequent refactoring steps the design and implementation is improved.
+
+To apply this development process, product modelers need to write test cases themselves while implementing the product model. The test cases have to be created and maintained easily and tests have to be executed very quickly. After running the tests, it must be very easy to analyze test results. Furthermore, support for refactoring the product model and test cases is required.
+
+Special tool support is essential to model products in a test-driven way. As an example of such tool support, we present the integration of the ConfigScan test engine into the Eclipse-based modeling environments VClipse and !ConfigModeler.
+
+VClipse is an open-source product-modeling environment. Product models can be specified using the textual language VCML. !ConfigModeler is a customer-specific product-modeling environment built in a customer project at Nokia Siemens Networks. Product models can be specified in a high-level and customer-specific language.
