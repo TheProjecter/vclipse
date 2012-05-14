@@ -29,7 +29,7 @@ class NameProvider {
 	def static dispatch String display(ConfigurationProfileEntry entry) {
 		return "" + entry.sequence + " " + entry.dependency.name
 	}
-
+ 
 	def static dispatch String display(NumericCharacteristicValue value) {
 		val entry = value.entry
 		if(entry instanceof NumericInterval) {
