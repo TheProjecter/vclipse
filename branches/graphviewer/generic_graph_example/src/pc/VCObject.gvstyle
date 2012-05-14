@@ -17,7 +17,7 @@ stylesheet VCObjectStyleSheet for VCObjectDiagram
 style VCObjectDiagram { 
 	autoLayoutManager = new KielerAutoLayout
 } 
-    
+     
 style VCObjectDiagram.Node.Image {
 	this.add(ImageProvider::instance().imageFigure(element))
 	outline = false
