@@ -101,7 +101,7 @@ UnaryPrimaryExpression returns Expression
 	:	UnaryExpression
 	|	PrimaryExpression
 	;
-	
+
 UnaryExpression returns UnaryExpression
 	:	operator=UnaryExpressionOperator expression=UnaryPrimaryExpression
 	;
@@ -136,7 +136,7 @@ CountParts
 MDataCharacteristic returns MDataCharacteristic_P
 	:	'mdata' characteristic=CharacteristicReference
 	;
-	
+
 NumericLiteral :
 	value=NUMBER
 	;
@@ -276,10 +276,6 @@ terminal ID	// Xtext standard without ^
 
 terminal DEPENDENCY_COMMENT
 	:	(' '|'\t')* ('\r'? '\n*') !('\n'|'\r')*
-	;
-
-terminal STRING	// Xtext standard, but only enclosed in double quotes
-	:	'"' ( '\\' ('b'|'t'|'n'|'f'|'r'|'"'|'\\') | !('\\'|'"') )* '"'
 	;
 
 terminal SYMBOL // enclosed in single quotes, no escapes, no line breaks, no tabs
