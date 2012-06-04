@@ -1,0 +1,358 @@
+grammar org.vclipse.vcml.Procedure with org.eclipse.xtext.common.Terminals
+
+import "platform:/resource/org.vclipse.vcml.mm/src/org/vclipse/vcml/mm/VCML.ecore"
+import "http://www.eclipse.org/emf/2002/Ecore" as ecore
+
+ProcedureSource hidden (WS, DEPENDENCY_COMMENT):
+	statements+=Statement (',' statements+=Statement)* '.'?
+	;
+
+Statement
+	:	(SimpleStatement | CompoundStatement) ({ConditionalStatement.statement=current} 'if' condition=Condition_P)?
+	;
+
+CompoundStatement
+	:	'(' statements+=SimpleStatement (',' statements+=SimpleStatement)* ')'
+	;
+
+SimpleStatement
+	:	Assignment
+	|	Function_P
+	|	PFunction
+	|	Table_P
+	|	SetOrDelDefault
+	|	IsInvisible
+	|	SetPricingFactor
+	;
+
+Assignment
+	:	'$self' '.' characteristic=[Characteristic | XID] '=' expression=Expression_P
+    ;
+
+FunctionOrTable
+	:	Function_P
+	|	PFunction
+	|	Table_P
+	;
+
+Function_P returns Function
+	:	'function' function=[VariantFunction|XID]
+		'('
+			characteristics+=[Characteristic|XID] '=' values+=Literal_P
+			(',' characteristics+=[Characteristic|XID] '=' values+=Literal_P)*
+		')'
+	;
+
+PFunction
+	:	'pfunction' function=[VariantFunction|XID]
+		'('
+			characteristics+=[Characteristic|XID] '=' values+=Literal_P
+			(',' characteristics+=[Characteristic|XID] '=' values+=Literal_P)*
+		')'
+	;
+
+Table_P returns Table
+	:	'table' table=[VariantTable|XID]
+		'('
+			characteristics+=[Characteristic|XID] '=' values+=Literal_P
+			(',' characteristics+=[Characteristic|XID] '=' values+=Literal_P)*
+		')'
+	;
+
+SetOrDelDefault
+	:	SetDefault
+	|	DelDefault
+	;
+
+SetDefault
+	:	'$set_default' '(' '$self' ',' characteristic=[Characteristic | XID] ',' expression=Expression_P ')'
+	|	'$self' '.' characteristic=[Characteristic | XID] '?=' expression=Expression_P
+    ;
+
+DelDefault
+	:	'$del_default' '(' '$self' ',' characteristic=[Characteristic | XID] ',' expression=Expression_P ')'
+    ;
+
+IsInvisible
+	:	'$self' '.' characteristic=[Characteristic | XID] 'is' 'invisible'
+	;
+	
+SetPricingFactor
+	:	'$set_pricing_factor' '(' location=ProcedureLocation ',' characteristic=[Characteristic|XID] ',' arg1=Expression_P ',' arg2=Expression_P ')'
+	;
+
+CharacteristicReference_P :
+	(location=ProcedureLocation '.')? characteristic=[Characteristic|XID]
+	;
+
+///////////////////////////////////////////////////////////////////////////////
+// Expressions
+///////////////////////////////////////////////////////////////////////////////
+
+Expression_P returns Expression
+    :	MultiplicativeExpression_P ({BinaryExpression.left=current} operator=("+" | '-') right=MultiplicativeExpression_P)*
+	;
+	
+MultiplicativeExpression_P returns Expression
+	:	UnaryPrimaryExpression_P ({BinaryExpression.left=current} operator=('*' | '/' | '||') right=UnaryPrimaryExpression_P)*
+    ;
+
+UnaryPrimaryExpression_P returns Expression
+	:	UnaryExpression_P
+	|	PrimaryExpression_P
+	;
+	
+UnaryExpression_P returns UnaryExpression
+	:	operator=UnaryExpressionOperator expression=UnaryPrimaryExpression_P
+	;
+	
+PrimaryExpression_P returns Expression
+	:	'(' Expression_P ')'
+	|	Literal_P
+	|	FunctionCall_P
+	|	SumParts
+	|	CountParts
+	;	
+
+Literal_P returns Literal
+	:	CharacteristicReference_P
+	|	MDataCharacteristic_P
+	|	NumericLiteral
+	|	SymbolicLiteral
+	;
+
+FunctionCall_P returns FunctionCall
+	:	function=FunctionName '(' argument=Expression_P ')'
+	;
+
+SumParts
+	:	'$sum_parts' '(' location=ProcedureLocation ',' characteristic=[Characteristic|XID] ')'
+	;
+
+CountParts
+	:	'$count_parts' '(' location=ProcedureLocation ')'
+	; 
+
+MDataCharacteristic_P
+	:	'mdata' characteristic=CharacteristicReference_P
+	;
+	
+NumericLiteral :
+	value=NUMBER
+	;
+
+SymbolicLiteral :
+	value=SYMBOL
+	;
+
+///////////////////////////////////////////////////////////////////////////////
+// Conditions
+///////////////////////////////////////////////////////////////////////////////
+
+Condition_P returns Condition
+	:	Conjunction_P ({BinaryCondition.left=current} operator='or' right=Conjunction_P)* 
+	; 
+
+Conjunction_P returns Condition
+	:	Negation_P ({BinaryCondition.left=current} operator='and' right=Negation_P)*
+	; 
+
+Negation_P returns Condition
+	:	UnaryCondition_P
+	|	PrimaryCondition_P
+	;
+
+UnaryCondition_P returns UnaryCondition
+	:	'not' condition=PrimaryCondition_P
+	;
+
+// TODO not must not be used around specified, part_of and subpart_of - put into validation
+
+PrimaryCondition_P returns Condition
+	:	Comparison_P
+	|	'(' Condition_P ')'
+ 	|	InCondition_P
+ 	|	IsSpecified_P
+ 	|   TypeOf
+	;
+
+Comparison_P returns Comparison
+	:	left=Expression_P operator=ComparisonOperator right=Expression_P
+	;
+
+IsSpecified_P
+	:	characteristic=CharacteristicReference_P 'specified'
+	|	'specified' characteristic=CharacteristicReference_P
+    ;
+
+TypeOf
+	:	'type_of' '(' location=ProcedureLocation ',' variantclass=ObjectType ')'
+	;
+	 
+InCondition_P
+	:	characteristic=CharacteristicReference_P 'in' list=List
+	;
+
+List :
+		NumberList
+	|	SymbolList
+	;
+
+NumberList :
+	'(' entries+=NumberListEntry (',' entries+=NumberListEntry)* ')'
+	;
+
+NumberListEntry :
+	  NumericLiteral
+	| NumericInterval
+	;
+	
+NumberListEntryForValues returns NumberListEntry :
+	  NumericLiteral
+	| '(' NumericInterval ')'
+	;
+	
+NumericInterval :
+	lowerBound=NUMBER '-' upperBound=NUMBER
+	;
+
+SymbolList :
+	'(' entries+=SymbolicLiteral (',' entries+=SymbolicLiteral)* ')'
+	;
+
+ObjectType
+	:	'(' type='material' ')' '(' classType=INT ')' '(' attrs+=PartialKey (',' attrs+=PartialKey)* ')'
+	;
+
+// TODO how to handle cross references?
+PartialKey
+	:	name='nr' '=' value=SYMBOL
+	;
+
+enum ProcedureLocation :
+	SELF   = '$self'   |
+	PARENT = '$parent' |
+	ROOT   = '$root'
+	;
+
+enum UnaryExpressionOperator :
+	PLUS  = '+' | 
+	MINUS = '-' | 
+	LC = 'lc' |
+	UC = 'uc'
+	;
+
+enum ComparisonOperator : 
+	EQ = '='  | EQ = 'eq' |
+	NE = '<>' | NE = 'ne' |
+	GT = '>'  | GT = 'gt' |
+    GE = '>=' | GE = '=>' | GE = 'ge' |
+	LT = '<'  | LT = 'lt' |
+	LE = '<=' | LE = '=<' | LE = 'le'
+	;
+	
+enum FunctionName :
+		SIN    = 'sin'
+	|	COS    = 'cos'
+	|	TAN    = 'tan'
+	|	EXP    = 'exp'
+	|	LN     = 'ln'
+	|	ABS    = 'abs'
+	|	SQRT   = 'sqrt'
+	|	LOG10  = 'log10'
+	|	ARCSIN = 'arcsin'
+	|	ARCCOS = 'arccos'
+	|	ARCTAN = 'arctan'
+	|	SIGN   = 'sign'
+	|	FRAC   = 'frac'
+	|	CEIL   = 'ceil'
+	|	TRUNK  = 'trunk'
+	|	FLOOR  = 'floor'
+	;
+
+terminal ID	// Xtext standard without ^ 
+	:	('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*
+	;
+
+terminal DEPENDENCY_COMMENT
+	:	(' '|'\t')* ('\r'? '\n*') !('\n'|'\r')*
+	;
+
+terminal STRING	// Xtext standard, but only enclosed in double quotes
+	:	'"' ( '\\' ('b'|'t'|'n'|'f'|'r'|'"'|'\\') | !('\\'|'"') )* '"'
+	;
+
+terminal SYMBOL // enclosed in single quotes, no escapes, no line breaks, no tabs
+	:	"'" ( !("'"|'\t'|'\n'|'\r') )* "'"
+	; 
+
+XID
+	:	ID
+	|	'AF'
+	|	'AR'
+	|	'BG'
+	|	'CA'
+	|	'CS'
+	|	'DA'
+	|	'DE'
+	|	'EL'
+	|	'EN'
+	|	'ES'
+	|	'ET'
+	|	'FI'
+	|	'FR'
+	|	'HE'
+	|	'HR'
+	|	'HU'
+	|	'ID'
+	|	'IS'
+	|	'IT'
+	|	'JA'
+	|	'KO'
+	|	'LT'
+	|	'LV'
+	|	'MS'
+	|	'NL'
+	|	'NO'
+	|	'PL'
+	|	'PT'
+	|	'RO' 
+	|	'RU'
+	|	'SH'
+	|	'SK'
+	|	'SL'
+	|	'SR'
+	|	'SV'
+	|	'TH'
+	|	'TR'
+	|	'UK'
+	|	'Z1'
+	|	'ZF'
+	|	'ZH'
+	|	'e'
+	;
+
+EXTENDED_ID
+	: XID
+	| SYMBOL
+	;
+//EXTENDED_ID hidden () // no whitespace might be used inside extended ids
+//	:	(INT | ID | '/' | ':' | '-' | '.')+ 
+//	;	
+
+// bug has been filed as Xtext bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=303212
+SHORTVAR // NOTE: due to a bug in Xtext, the following does not work: hidden () // no whitespace might be used inside shortvars // TODO verify this in SAP
+	:	('?' | '#')? XID 
+	;	
+
+// TODO implement size restrictions for a number: e.g., the exponent's maximum value is 99
+NUMBER hidden ()
+	:	('-'|'+')? INT ('.' INT)? ('e' ('-'|'+') INT)? // sign of exponent is mandatory in SAP
+	;
+
+/*
+TODO:
+ * handle characteristics with hyphens in their name. Use in dependencies code as: skey 'cstic-name-with-hyphens'
+ * handle keywords 'INVISIBILITY', 'INV', 'SKEY'
+ * handle intervals with "bound operators", e.g., >1 - <5
+*/
