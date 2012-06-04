@@ -1,4 +1,4 @@
-grammar org.vclipse.vcml.Procedure with org.eclipse.xtext.common.Terminals
+grammar org.vclipse.vcml.Procedure with org.vclipse.vcml.Dependency
 
 import "platform:/resource/org.vclipse.vcml.mm/src/org/vclipse/vcml/mm/VCML.ecore"
 import "http://www.eclipse.org/emf/2002/Ecore" as ecore
@@ -29,30 +29,8 @@ Assignment
 	:	'$self' '.' characteristic=[Characteristic | XID] '=' expression=Expression
     ;
 
-FunctionOrTable
-	:	Function
-	|	PFunction
-	|	Table
-	;
-
-Function returns Function
-	:	'function' function=[VariantFunction|XID]
-		'('
-			characteristics+=[Characteristic|XID] '=' values+=Literal
-			(',' characteristics+=[Characteristic|XID] '=' values+=Literal)*
-		')'
-	;
-
 PFunction
 	:	'pfunction' function=[VariantFunction|XID]
-		'('
-			characteristics+=[Characteristic|XID] '=' values+=Literal
-			(',' characteristics+=[Characteristic|XID] '=' values+=Literal)*
-		')'
-	;
-
-Table returns Table
-	:	'table' table=[VariantTable|XID]
 		'('
 			characteristics+=[Characteristic|XID] '=' values+=Literal
 			(',' characteristics+=[Characteristic|XID] '=' values+=Literal)*
@@ -78,7 +56,7 @@ IsInvisible
 	;
 	
 SetPricingFactor
-	:	'$setricing_factor' '(' location=ProcedureLocation ',' characteristic=[Characteristic|XID] ',' arg1=Expression ',' arg2=Expression ')'
+	:	'$set_pricing_factor' '(' location=ProcedureLocation ',' characteristic=[Characteristic|XID] ',' arg1=Expression ',' arg2=Expression ')'
 	;
 
 CharacteristicReference returns CharacteristicReference_P :
@@ -89,23 +67,6 @@ CharacteristicReference returns CharacteristicReference_P :
 // Expressions
 ///////////////////////////////////////////////////////////////////////////////
 
-Expression returns Expression
-    :	MultiplicativeExpression ({BinaryExpression.left=current} operator=("+" | '-') right=MultiplicativeExpression)*
-	;
-	
-MultiplicativeExpression returns Expression
-	:	UnaryPrimaryExpression ({BinaryExpression.left=current} operator=('*' | '/' | '||') right=UnaryPrimaryExpression)*
-    ;
-
-UnaryPrimaryExpression returns Expression
-	:	UnaryExpression
-	|	PrimaryExpression
-	;
-
-UnaryExpression returns UnaryExpression
-	:	operator=UnaryExpressionOperator expression=UnaryPrimaryExpression
-	;
-	
 PrimaryExpression returns Expression
 	:	'(' Expression ')'
 	|	Literal
@@ -121,50 +82,13 @@ Literal returns Literal
 	|	SymbolicLiteral
 	;
 
-FunctionCall returns FunctionCall
-	:	function=FunctionName '(' argument=Expression ')'
-	;
-
-SumParts
-	:	'$sumarts' '(' location=ProcedureLocation ',' characteristic=[Characteristic|XID] ')'
-	;
-
-CountParts
-	:	'$countarts' '(' location=ProcedureLocation ')'
-	; 
-
 MDataCharacteristic returns MDataCharacteristic_P
 	:	'mdata' characteristic=CharacteristicReference
-	;
-
-NumericLiteral :
-	value=NUMBER
-	;
-
-SymbolicLiteral :
-	value=SYMBOL
 	;
 
 ///////////////////////////////////////////////////////////////////////////////
 // Conditions
 ///////////////////////////////////////////////////////////////////////////////
-
-Condition returns Condition
-	:	Conjunction ({BinaryCondition.left=current} operator='or' right=Conjunction)* 
-	; 
-
-Conjunction returns Condition
-	:	Negation ({BinaryCondition.left=current} operator='and' right=Negation)*
-	; 
-
-Negation returns Condition
-	:	UnaryCondition
-	|	PrimaryCondition
-	;
-
-UnaryCondition returns UnaryCondition
-	:	'not' condition=PrimaryCondition
-	;
 
 // TODO not must not be used around specified, part_of and subpart_of - put into validation
 
@@ -176,179 +100,12 @@ PrimaryCondition returns Condition
  	|   TypeOf
 	;
 
-Comparison returns Comparison
-	:	left=Expression operator=ComparisonOperator right=Expression
-	;
-
 IsSpecified returns IsSpecified_P
 	:	characteristic=CharacteristicReference 'specified'
 	|	'specified' characteristic=CharacteristicReference
     ;
 
-TypeOf
-	:	'type_of' '(' location=ProcedureLocation ',' variantclass=ObjectType ')'
-	;
-	 
 InCondition returns InCondition_P
 	:	characteristic=CharacteristicReference 'in' list=List
 	;
 
-List :
-		NumberList
-	|	SymbolList
-	;
-
-NumberList :
-	'(' entries+=NumberListEntry (',' entries+=NumberListEntry)* ')'
-	;
-
-NumberListEntry :
-	  NumericLiteral
-	| NumericInterval
-	;
-	
-NumberListEntryForValues returns NumberListEntry :
-	  NumericLiteral
-	| '(' NumericInterval ')'
-	;
-	
-NumericInterval :
-	lowerBound=NUMBER '-' upperBound=NUMBER
-	;
-
-SymbolList :
-	'(' entries+=SymbolicLiteral (',' entries+=SymbolicLiteral)* ')'
-	;
-
-ObjectType
-	:	'(' type='material' ')' '(' classType=INT ')' '(' attrs+=PartialKey (',' attrs+=PartialKey)* ')'
-	;
-
-// TODO how to handle cross references?
-PartialKey
-	:	name='nr' '=' value=SYMBOL
-	;
-
-enum ProcedureLocation :
-	SELF   = '$self'   |
-	PARENT = '$parent' |
-	ROOT   = '$root'
-	;
-
-enum UnaryExpressionOperator :
-	PLUS  = '+' | 
-	MINUS = '-' | 
-	LC = 'lc' |
-	UC = 'uc'
-	;
-
-enum ComparisonOperator : 
-	EQ = '='  | EQ = 'eq' |
-	NE = '<>' | NE = 'ne' |
-	GT = '>'  | GT = 'gt' |
-    GE = '>=' | GE = '=>' | GE = 'ge' |
-	LT = '<'  | LT = 'lt' |
-	LE = '<=' | LE = '=<' | LE = 'le'
-	;
-	
-enum FunctionName :
-		SIN    = 'sin'
-	|	COS    = 'cos'
-	|	TAN    = 'tan'
-	|	EXP    = 'exp'
-	|	LN     = 'ln'
-	|	ABS    = 'abs'
-	|	SQRT   = 'sqrt'
-	|	LOG10  = 'log10'
-	|	ARCSIN = 'arcsin'
-	|	ARCCOS = 'arccos'
-	|	ARCTAN = 'arctan'
-	|	SIGN   = 'sign'
-	|	FRAC   = 'frac'
-	|	CEIL   = 'ceil'
-	|	TRUNK  = 'trunk'
-	|	FLOOR  = 'floor'
-	;
-
-terminal ID	// Xtext standard without ^ 
-	:	('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*
-	;
-
-terminal DEPENDENCY_COMMENT
-	:	(' '|'\t')* ('\r'? '\n*') !('\n'|'\r')*
-	;
-
-terminal SYMBOL // enclosed in single quotes, no escapes, no line breaks, no tabs
-	:	"'" ( !("'"|'\t'|'\n'|'\r') )* "'"
-	; 
-
-XID
-	:	ID
-	|	'AF'
-	|	'AR'
-	|	'BG'
-	|	'CA'
-	|	'CS'
-	|	'DA'
-	|	'DE'
-	|	'EL'
-	|	'EN'
-	|	'ES'
-	|	'ET'
-	|	'FI'
-	|	'FR'
-	|	'HE'
-	|	'HR'
-	|	'HU'
-	|	'ID'
-	|	'IS'
-	|	'IT'
-	|	'JA'
-	|	'KO'
-	|	'LT'
-	|	'LV'
-	|	'MS'
-	|	'NL'
-	|	'NO'
-	|	'PL'
-	|	'PT'
-	|	'RO' 
-	|	'RU'
-	|	'SH'
-	|	'SK'
-	|	'SL'
-	|	'SR'
-	|	'SV'
-	|	'TH'
-	|	'TR'
-	|	'UK'
-	|	'Z1'
-	|	'ZF'
-	|	'ZH'
-	|	'e'
-	;
-
-EXTENDED_ID
-	: XID
-	| SYMBOL
-	;
-//EXTENDED_ID hidden () // no whitespace might be used inside extended ids
-//	:	(INT | ID | '/' | ':' | '-' | '.')+ 
-//	;	
-
-// bug has been filed as Xtext bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=303212
-SHORTVAR // NOTE: due to a bug in Xtext, the following does not work: hidden () // no whitespace might be used inside shortvars // TODO verify this in SAP
-	:	('?' | '#')? XID 
-	;	
-
-// TODO implement size restrictions for a number: e.g., the exponent's maximum value is 99
-NUMBER hidden ()
-	:	('-'|'+')? INT ('.' INT)? ('e' ('-'|'+') INT)? // sign of exponent is mandatory in SAP
-	;
-
-/*
-TODO:
- * handle characteristics with hyphens in their name. Use in dependencies code as: skey 'cstic-name-with-hyphens'
- * handle keywords 'INVISIBILITY', 'INV', 'SKEY'
- * handle intervals with "bound operators", e.g., >1 - <5
-*/
