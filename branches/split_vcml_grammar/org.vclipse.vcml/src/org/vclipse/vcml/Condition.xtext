@@ -4,10 +4,10 @@ import "platform:/resource/org.vclipse.vcml.mm/src/org/vclipse/vcml/mm/VCML.ecor
 import "http://www.eclipse.org/emf/2002/Ecore" as ecore
 
 ConditionSource hidden (WS, DEPENDENCY_COMMENT):
-	condition=Condition_P '.'
+	condition=Condition '.'
 	;
 
-CharacteristicReference_P :
+CharacteristicReference returns CharacteristicReference_P:
 	(location=ProcedureLocation '.')? characteristic=[Characteristic|XID]
 	;
 
@@ -15,52 +15,52 @@ CharacteristicReference_P :
 // Expressions
 ///////////////////////////////////////////////////////////////////////////////
 
-Expression_P returns Expression
-    :	MultiplicativeExpression_P ({BinaryExpression.left=current} operator=("+" | '-') right=MultiplicativeExpression_P)*
+Expression returns Expression
+    :	MultiplicativeExpression ({BinaryExpression.left=current} operator=("+" | '-') right=MultiplicativeExpression)*
 	;
 	
-MultiplicativeExpression_P returns Expression
-	:	UnaryPrimaryExpression_P ({BinaryExpression.left=current} operator=('*' | '/' | '||') right=UnaryPrimaryExpression_P)*
+MultiplicativeExpression returns Expression
+	:	UnaryPrimaryExpression ({BinaryExpression.left=current} operator=('*' | '/' | '||') right=UnaryPrimaryExpression)*
     ;
 
-UnaryPrimaryExpression_P returns Expression
-	:	UnaryExpression_P
-	|	PrimaryExpression_P
+UnaryPrimaryExpression returns Expression
+	:	UnaryExpression
+	|	PrimaryExpression
 	;
 	
-UnaryExpression_P returns UnaryExpression
-	:	operator=UnaryExpressionOperator expression=UnaryPrimaryExpression_P
+UnaryExpression returns UnaryExpression
+	:	operator=UnaryExpressionOperator expression=UnaryPrimaryExpression
 	;
 	
-PrimaryExpression_P returns Expression
-	:	'(' Expression_P ')'
-	|	Literal_P
-	|	FunctionCall_P
+PrimaryExpression returns Expression
+	:	'(' Expression ')'
+	|	Literal
+	|	FunctionCall
 	|	SumParts
 	|	CountParts
 	;	
 
-Literal_P returns Literal
-	:	CharacteristicReference_P
-	|	MDataCharacteristic_P
+Literal returns Literal
+	:	CharacteristicReference
+	|	MDataCharacteristic
 	|	NumericLiteral
 	|	SymbolicLiteral
 	;
 
-FunctionCall_P returns FunctionCall
-	:	function=FunctionName '(' argument=Expression_P ')'
+FunctionCall returns FunctionCall
+	:	function=FunctionName '(' argument=Expression ')'
 	;
 
 SumParts
-	:	'$sum_parts' '(' location=ProcedureLocation ',' characteristic=[Characteristic|XID] ')'
+	:	'$sumarts' '(' location=ProcedureLocation ',' characteristic=[Characteristic|XID] ')'
 	;
 
 CountParts
-	:	'$count_parts' '(' location=ProcedureLocation ')'
+	:	'$countarts' '(' location=ProcedureLocation ')'
 	; 
 
-MDataCharacteristic_P
-	:	'mdata' characteristic=CharacteristicReference_P
+MDataCharacteristic returns MDataCharacteristic_P
+	:	'mdata' characteristic=CharacteristicReference
 	;
 	
 NumericLiteral :
@@ -75,48 +75,48 @@ SymbolicLiteral :
 // Conditions
 ///////////////////////////////////////////////////////////////////////////////
 
-Condition_P returns Condition
-	:	Conjunction_P ({BinaryCondition.left=current} operator='or' right=Conjunction_P)* 
+Condition returns Condition
+	:	Conjunction ({BinaryCondition.left=current} operator='or' right=Conjunction)* 
 	; 
 
-Conjunction_P returns Condition
-	:	Negation_P ({BinaryCondition.left=current} operator='and' right=Negation_P)*
+Conjunction returns Condition
+	:	Negation ({BinaryCondition.left=current} operator='and' right=Negation)*
 	; 
 
-Negation_P returns Condition
-	:	UnaryCondition_P
-	|	PrimaryCondition_P
+Negation returns Condition
+	:	UnaryCondition
+	|	PrimaryCondition
 	;
 
-UnaryCondition_P returns UnaryCondition
-	:	'not' condition=PrimaryCondition_P
+UnaryCondition returns UnaryCondition
+	:	'not' condition=PrimaryCondition
 	;
 
 // TODO not must not be used around specified, part_of and subpart_of - put into validation
 
-PrimaryCondition_P returns Condition
-	:	Comparison_P
-	|	'(' Condition_P ')'
- 	|	InCondition_P
- 	|	IsSpecified_P
+PrimaryCondition returns Condition
+	:	Comparison
+	|	'(' Condition ')'
+ 	|	InCondition
+ 	|	IsSpecified
  	|   TypeOf
 	;
 
-Comparison_P returns Comparison
-	:	left=Expression_P operator=ComparisonOperator right=Expression_P
+Comparison returns Comparison
+	:	left=Expression operator=ComparisonOperator right=Expression
 	;
 
-IsSpecified_P
-	:	characteristic=CharacteristicReference_P 'specified'
-	|	'specified' characteristic=CharacteristicReference_P
+IsSpecified returns IsSpecified_P
+	:	characteristic=CharacteristicReference 'specified'
+	|	'specified' characteristic=CharacteristicReference
     ;
 
 TypeOf
 	:	'type_of' '(' location=ProcedureLocation ',' variantclass=ObjectType ')'
 	;
 	 
-InCondition_P
-	:	characteristic=CharacteristicReference_P 'in' list=List
+InCondition returns InCondition_P
+	:	characteristic=CharacteristicReference 'in' list=List
 	;
 
 List :

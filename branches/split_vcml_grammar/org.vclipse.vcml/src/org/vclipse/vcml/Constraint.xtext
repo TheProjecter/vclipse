@@ -3,16 +3,16 @@ grammar org.vclipse.vcml.Constraint with org.eclipse.xtext.common.Terminals
 import "platform:/resource/org.vclipse.vcml.mm/src/org/vclipse/vcml/mm/VCML.ecore"
 import "http://www.eclipse.org/emf/2002/Ecore" as ecore
 
-ConstraintSource hidden (WS, DEPENDENCY_COMMENT)
+ConstraintSource hidden (WS, DEPENDENCYOMMENT)
 	:   'objects' ':'	objects+=ConstraintObject (',' objects+=ConstraintObject)* '.'?
 
-		('condition' ':' condition=Condition_C '.'?)?
+		('condition' ':' condition=Condition '.'?)?
 
 		('restriction' | 'restrictions') ':'
 		restrictions+=ConditionalConstraintRestriction (',' restrictions+=ConditionalConstraintRestriction)*
 		'.'?
 
-		('inferences' ':' inferences+=CharacteristicReference_C (',' inferences+=CharacteristicReference_C)* '.'?)?
+		('inferences' ':' inferences+=CharacteristicReference (',' inferences+=CharacteristicReference)* '.'?)?
     ;
 
 ConstraintObject
@@ -55,7 +55,7 @@ SubpartOfCondition :
 	; 
 
 ConditionalConstraintRestriction returns ConstraintRestriction :
-	ConstraintRestrictionLHS ({ConditionalConstraintRestriction.restriction=current} 'if' condition=Condition_C)?
+	ConstraintRestrictionLHS ({ConditionalConstraintRestriction.restriction=current} 'if' condition=Condition)?
 	;
 
 ConstraintRestrictionFalse
@@ -64,28 +64,28 @@ ConstraintRestrictionFalse
 	;
 
 ConstraintRestrictionLHS returns ConstraintRestriction
-	:	InCondition_C
-	|	IsSpecified_C
+	:	InCondition
+	|	IsSpecified
 	|	PartOfCondition
 	|	SubpartOfCondition
-	|	Comparison_C
-	|	Table_C
-	|	Function_C
+	|	Comparison
+	|	Table
+	|	Function
 	|	NegatedConstraintRestrictionLHS
 	|	ConstraintRestrictionFalse
 	;
 	
 NegatedConstraintRestrictionLHS
-	:	'not' restriction=(Table_C | Function_C)
+	:	'not' restriction=(Table | Function)
 	;
 
 /*
 EqualsRestriction :
-	characteristic=CharacteristicReference_C '=' expression=Expression_C
+	characteristic=CharacteristicReference '=' expression=Expression
 	;
 */
 
-CharacteristicReference_C
+CharacteristicReference returns CharacteristicReference_C
 	:	ObjectCharacteristicReference
 	|	ShortVarReference
 	;
@@ -98,19 +98,19 @@ ShortVarReference
 	:	ref=[ShortVarDefinition | SHORTVAR]
 	;
 
-Function_C returns Function
+Function returns Function
 	:	'function' function=[VariantFunction|XID]
 		'('
-			characteristics+=[Characteristic|XID] '=' values+=Literal_C
-			(',' characteristics+=[Characteristic|XID] '=' values+=Literal_C)*
+			characteristics+=[Characteristic|XID] '=' values+=Literal
+			(',' characteristics+=[Characteristic|XID] '=' values+=Literal)*
 		')'
 	;
 
-Table_C returns Table
+Table returns Table
 	:	'table' table=[VariantTable|XID]
 		'('
-			characteristics+=[Characteristic|XID] '=' values+=Literal_C
-			(',' characteristics+=[Characteristic|XID] '=' values+=Literal_C)*
+			characteristics+=[Characteristic|XID] '=' values+=Literal
+			(',' characteristics+=[Characteristic|XID] '=' values+=Literal)*
 		')'
 	;
 	
@@ -118,42 +118,42 @@ Table_C returns Table
 // Expressions
 ///////////////////////////////////////////////////////////////////////////////
 
-Expression_C returns Expression
-    :	MultiplicativeExpression_C ({BinaryExpression.left=current} operator=("+" | '-') right=MultiplicativeExpression_C)*
+Expression returns Expression
+    :	MultiplicativeExpression ({BinaryExpression.left=current} operator=("+" | '-') right=MultiplicativeExpression)*
 	;
 	
-MultiplicativeExpression_C returns Expression
-	:	UnaryPrimaryExpression_C ({BinaryExpression.left=current} operator=('*' | '/' | '||') right=UnaryPrimaryExpression_C)*
+MultiplicativeExpression returns Expression
+	:	UnaryPrimaryExpression ({BinaryExpression.left=current} operator=('*' | '/' | '||') right=UnaryPrimaryExpression)*
     ;
 
-UnaryPrimaryExpression_C returns Expression
-	:	UnaryExpression_C
-	|	PrimaryExpression_C
+UnaryPrimaryExpression returns Expression
+	:	UnaryExpression
+	|	PrimaryExpression
 	;
 
-UnaryExpression_C returns UnaryExpression
-	:	operator=UnaryExpressionOperator expression=UnaryPrimaryExpression_C
+UnaryExpression returns UnaryExpression
+	:	operator=UnaryExpressionOperator expression=UnaryPrimaryExpression
 	;
 	
-PrimaryExpression_C returns Expression
-	:	'(' Expression_C ')'
-	|	Literal_C
-	|	FunctionCall_C
+PrimaryExpression returns Expression
+	:	'(' Expression ')'
+	|	Literal
+	|	FunctionCall
 	;	
 
-Literal_C returns Literal
-	:	CharacteristicReference_C
-	| 	MDataCharacteristic_C
+Literal returns Literal
+	:	CharacteristicReference
+	| 	MDataCharacteristic
 	|	NumericLiteral
 	|	SymbolicLiteral
 	;
 
-FunctionCall_C returns FunctionCall
-	:	function=FunctionName '(' argument=Expression_C ')'
+FunctionCall returns FunctionCall
+	:	function=FunctionName '(' argument=Expression ')'
 	;
 
-MDataCharacteristic_C
-	:	'mdata' characteristic=CharacteristicReference_C
+MDataCharacteristic returns MDataCharacteristic_C
+	:	'mdata' characteristic=CharacteristicReference
 	;
 
 NumericLiteral :
@@ -168,45 +168,45 @@ SymbolicLiteral :
 // Conditions
 ///////////////////////////////////////////////////////////////////////////////
 
-Condition_C returns Condition
-	:	Conjunction_C ({BinaryCondition.left=current} operator='or' right=Conjunction_C)* 
+Condition returns Condition
+	:	Conjunction ({BinaryCondition.left=current} operator='or' right=Conjunction)* 
 	; 
 
-Conjunction_C returns Condition
-	:	Negation_C ({BinaryCondition.left=current} operator='and' right=Negation_C)*
+Conjunction returns Condition
+	:	Negation ({BinaryCondition.left=current} operator='and' right=Negation)*
 	; 
 
-Negation_C returns Condition
-	:	UnaryCondition_C
-	|	PrimaryCondition_C
+Negation returns Condition
+	:	UnaryCondition
+	|	PrimaryCondition
 	;
 
-UnaryCondition_C returns UnaryCondition
-	:	'not' condition=Negation_C // not may be nested in constraints
+UnaryCondition returns UnaryCondition
+	:	'not' condition=Negation // not may be nested in constraints
 	;
 
 // TODO not must not be used around specified, part_of and subpart_of - put into validation
 
-PrimaryCondition_C returns Condition
-	:	Comparison_C
-	|	'(' Condition_C ')'
- 	|	InCondition_C
- 	|	IsSpecified_C
+PrimaryCondition returns Condition
+	:	Comparison
+	|	'(' Condition ')'
+ 	|	InCondition
+ 	|	IsSpecified
  	|	PartOfCondition
 	|	SubpartOfCondition 
 	;
 
-Comparison_C returns Comparison
-	:	left=Expression_C operator=ComparisonOperator right=Expression_C
+Comparison returns Comparison
+	:	left=Expression operator=ComparisonOperator right=Expression
 	;
 
-IsSpecified_C
-	:	characteristic=CharacteristicReference_C 'specified'
-	|	'specified' characteristic=CharacteristicReference_C
+IsSpecified returns IsSpecified_C
+	:	characteristic=CharacteristicReference 'specified'
+	|	'specified' characteristic=CharacteristicReference
     ;
 
-InCondition_C
-	:	characteristic=CharacteristicReference_C 'in' list=List
+InCondition returns InCondition_C
+	:	characteristic=CharacteristicReference 'in' list=List
 	;
 
 List :
@@ -275,7 +275,7 @@ terminal ID	// Xtext standard without ^
 	:	('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*
 	;
 
-terminal DEPENDENCY_COMMENT
+terminal DEPENDENCYOMMENT
 	:	(' '|'\t')* ('\r'? '\n*') !('\n'|'\r')*
 	;
 
