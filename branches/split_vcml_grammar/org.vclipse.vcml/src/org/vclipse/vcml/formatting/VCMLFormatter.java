@@ -23,9 +23,7 @@ import org.eclipse.xtext.formatting.impl.AbstractDeclarativeFormatter;
 import org.eclipse.xtext.formatting.impl.FormattingConfig;
 import org.vclipse.vcml.vcml.Language;
 import org.vclipse.vcml.services.VCMLGrammarAccess.CharacteristicValueElements;
-import org.vclipse.vcml.services.VCMLGrammarAccess.ConstraintSourceElements;
 import org.vclipse.vcml.services.VCMLGrammarAccess.MultiLanguageDescriptionElements;
-import org.vclipse.vcml.services.VCMLGrammarAccess.ProcedureSourceElements;
 
 
 /**
@@ -127,31 +125,31 @@ public class VCMLFormatter extends AbstractDeclarativeFormatter {
 	    c.setLinewrap(2).before(f.getSelectionConditionAccess().getSelectionconditionKeyword_0());
 	    c.setLinewrap(2).before(f.getVariantFunctionAccess().getVariantfunctionKeyword_0());
 	    c.setLinewrap(2).before(f.getVariantTableAccess().getVarianttableKeyword_0());
-
-	    {
-	    	// constraint source (linewrap after . : ,)
-	    	ConstraintSourceElements elements = f.getConstraintSourceAccess();
-	    	c.setLinewrap().after(elements.getColonKeyword_1());
-	    	c.setLinewrap().after(elements.getColonKeyword_5_1());
-	    	c.setLinewrap().after(elements.getColonKeyword_7());
-	    	c.setLinewrap().after(elements.getColonKeyword_11_1());
-	    	c.setLinewrap().after(elements.getCommaKeyword_3_0());
-	    	c.setLinewrap().after(elements.getCommaKeyword_9_0());
-	    	c.setLinewrap().after(elements.getCommaKeyword_11_3_0());
-	    	c.setLinewrap().after(elements.getFullStopKeyword_4());
-	    	c.setLinewrap().after(elements.getFullStopKeyword_5_3());
-	    	c.setLinewrap().after(elements.getFullStopKeyword_10());
-	    	c.setLinewrap().after(elements.getFullStopKeyword_11_4());
-	    	c.setIndentation(elements.getColonKeyword_1(), elements.getFullStopKeyword_4());
-	    	c.setIndentation(elements.getColonKeyword_5_1(), elements.getFullStopKeyword_5_3());
-	    	c.setIndentation(elements.getColonKeyword_7(), elements.getFullStopKeyword_10());
-	    	c.setIndentation(elements.getColonKeyword_11_1(), elements.getFullStopKeyword_11_4());
-	    }
-	    {
-	    	// procedure source (linewrap after ,)
-	    	ProcedureSourceElements elements = f.getProcedureSourceAccess();
-	    	c.setLinewrap().after(elements.getCommaKeyword_1_0());
-	    }
-    	c.setLinewrap(2).after(f.getDEPENDENCY_COMMENTRule());
+// TODO splitting move to constraint/procedure formatter
+//	    {
+//	    	// constraint source (linewrap after . : ,)
+//	    	ConstraintSourceElements elements = f.getConstraintSourceAccess();
+//	    	c.setLinewrap().after(elements.getColonKeyword_1());
+//	    	c.setLinewrap().after(elements.getColonKeyword_5_1());
+//	    	c.setLinewrap().after(elements.getColonKeyword_7());
+//	    	c.setLinewrap().after(elements.getColonKeyword_11_1());
+//	    	c.setLinewrap().after(elements.getCommaKeyword_3_0());
+//	    	c.setLinewrap().after(elements.getCommaKeyword_9_0());
+//	    	c.setLinewrap().after(elements.getCommaKeyword_11_3_0());
+//	    	c.setLinewrap().after(elements.getFullStopKeyword_4());
+//	    	c.setLinewrap().after(elements.getFullStopKeyword_5_3());
+//	    	c.setLinewrap().after(elements.getFullStopKeyword_10());
+//	    	c.setLinewrap().after(elements.getFullStopKeyword_11_4());
+//	    	c.setIndentation(elements.getColonKeyword_1(), elements.getFullStopKeyword_4());
+//	    	c.setIndentation(elements.getColonKeyword_5_1(), elements.getFullStopKeyword_5_3());
+//	    	c.setIndentation(elements.getColonKeyword_7(), elements.getFullStopKeyword_10());
+//	    	c.setIndentation(elements.getColonKeyword_11_1(), elements.getFullStopKeyword_11_4());
+//	    }
+//	    {
+//	    	// procedure source (linewrap after ,)
+//	    	ProcedureSourceElements elements = f.getProcedureSourceAccess();
+//	    	c.setLinewrap().after(elements.getCommaKeyword_1_0());
+//	    }
+//    	c.setLinewrap(2).after(f.getDEPENDENCY_COMMENTRule());
 	}
 }
