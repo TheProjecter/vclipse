@@ -37,6 +37,7 @@ Workflow {
 		pathTestProject = "${runtimeProject}.tests"
 		projectNameRt = projectName
 		projectNameUi = "${projectName}.ui"
+		
 		language = {
 			uri = grammarURI.vcml
 			fileExtensions = file.extensions.vcml
@@ -138,6 +139,7 @@ Workflow {
 			// provides a preference page for template proposals 
 			fragment = templates.CodetemplatesGeneratorFragment {}
 		}
+		
 		language = {
 			uri = grammarURI.dependency
 			fileExtensions = file.extensions.dependency
@@ -171,17 +173,12 @@ Workflow {
 			}
 
 			// scoping and exporting API
-			fragment = scoping.ImportURIScopingFragment {
-				generateStub = true
-				inheritImplementation = true
-				ignoreCase = true
-			}
 			//fragment = exporting.SimpleNamesFragment {}
 
 			// scoping and exporting API 
-			//fragment = scoping.ImportNamespacesScopingFragment {
-			//	ignoreCase = true
-			//}
+			fragment = scoping.ImportNamespacesScopingFragment {
+				ignoreCase = true
+			}
 			fragment = exporting.QualifiedNamesFragment {}
 			fragment = builder.BuilderIntegrationFragment {}
 
@@ -239,6 +236,7 @@ Workflow {
 			// provides a preference page for template proposals 
 			fragment = templates.CodetemplatesGeneratorFragment {}
 		}
+		
 		language = {
 			uri = grammarURI.procedure
 			fileExtensions = file.extensions.procedure
@@ -272,17 +270,12 @@ Workflow {
 			}
 
 			// scoping and exporting API
-			fragment = scoping.ImportURIScopingFragment {
-				generateStub = true
-				inheritImplementation = true
-				ignoreCase = true
-			}
 			//fragment = exporting.SimpleNamesFragment {}
 
 			// scoping and exporting API 
-			//fragment = scoping.ImportNamespacesScopingFragment {
-			//	ignoreCase = true
-			//}
+			fragment = scoping.ImportNamespacesScopingFragment {
+				ignoreCase = true
+			}
 			fragment = exporting.QualifiedNamesFragment {}
 			fragment = builder.BuilderIntegrationFragment {}
 
@@ -340,6 +333,7 @@ Workflow {
 			// provides a preference page for template proposals 
 			fragment = templates.CodetemplatesGeneratorFragment {}
 		}
+		
 		language = {
 			uri = grammarURI.condition
 			fileExtensions = file.extensions.condition
@@ -373,17 +367,12 @@ Workflow {
 			}
 
 			// scoping and exporting API
-			fragment = scoping.ImportURIScopingFragment {
-				generateStub = true
-				inheritImplementation = true
-				ignoreCase = true
-			}
 			//fragment = exporting.SimpleNamesFragment {}
 
 			// scoping and exporting API 
-			//fragment = scoping.ImportNamespacesScopingFragment {
-			//	ignoreCase = true
-			//}
+			fragment = scoping.ImportNamespacesScopingFragment {
+				ignoreCase = true
+			}
 			fragment = exporting.QualifiedNamesFragment {}
 			fragment = builder.BuilderIntegrationFragment {}
 
@@ -441,6 +430,7 @@ Workflow {
 			// provides a preference page for template proposals 
 			fragment = templates.CodetemplatesGeneratorFragment {}
 		}
+		
 		language = {
 			uri = grammarURI.constraint
 			fileExtensions = file.extensions.constraint
@@ -474,17 +464,12 @@ Workflow {
 			}
 
 			// scoping and exporting API
-			fragment = scoping.ImportURIScopingFragment {
-				generateStub = true
-				inheritImplementation = true
-				ignoreCase = true
-			}
 			//fragment = exporting.SimpleNamesFragment {}
 
 			// scoping and exporting API 
-			//fragment = scoping.ImportNamespacesScopingFragment {
-			//	ignoreCase = true
-			//}
+			fragment = scoping.ImportNamespacesScopingFragment {
+				ignoreCase = true
+			}
 			fragment = exporting.QualifiedNamesFragment {}
 			fragment = builder.BuilderIntegrationFragment {}
 
