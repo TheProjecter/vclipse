@@ -497,12 +497,6 @@ public class VCMLPrettyPrinter extends VcmlSwitch<DataLayouter<NoExceptions>> {
 				doSwitch(object.getDescription());
 				doSwitch(object.getDocumentation());
 				layouter.brk().print("status ").print(object.getStatus().getName());
-				if(object.getSource() != null) {
-					layouter.brk().beginC().print("source {").brk();
-					String source = new ConstraintPrettyPrinter().prettyPrint(object.getSource());
-					layouter.pre(source);
-					layouter.brk(1, -INDENTATION).print("}").end();
-				}
 			}
 			layouter.brk(1,-INDENTATION).print("}");
 		}
@@ -717,12 +711,6 @@ public class VCMLPrettyPrinter extends VcmlSwitch<DataLayouter<NoExceptions>> {
 				if(object.getGroup() != null) {
 					layouter.brk().print("group ").print(doublequote(object.getGroup()));
 				}
-				if(object.getSource() != null) {
-					layouter.brk().beginC().print("source {").brk();
-					String source = new ProcedurePrettyPrinter().prettyPrint(object.getSource());
-					layouter.pre(source);
-					layouter.brk(1, -INDENTATION).print("}").end();
-				}
 			}
 			layouter.brk(1,-INDENTATION).print("}");
 		}
@@ -766,12 +754,6 @@ public class VCMLPrettyPrinter extends VcmlSwitch<DataLayouter<NoExceptions>> {
 				doSwitch(object.getDescription());
 				doSwitch(object.getDocumentation());
 				layouter.brk().print("status ").print(object.getStatus().getName());
-				if(object.getSource() != null) {
-					layouter.brk().beginC().print("source {").brk();
-					String source = new ProcedurePrettyPrinter().prettyPrint(object.getSource());
-					layouter.pre(source);
-					layouter.brk(1, -INDENTATION).print("}").end();
-				}
 			}
 			layouter.brk(1, -INDENTATION).print("}"); 
 		}
@@ -793,12 +775,6 @@ public class VCMLPrettyPrinter extends VcmlSwitch<DataLayouter<NoExceptions>> {
 				layouter.brk().print("status ").print(object.getStatus());
 				if(object.getGroup() != null) {
 					layouter.brk().print("group ").print(doublequote(object.getGroup()));
-				}
-				if(object.getSource() != null) {
-					layouter.brk().beginC().print("source {");
-					String source = new ProcedurePrettyPrinter().prettyPrint(object.getSource());
-					layouter.pre(source);
-					layouter.brk(1, -INDENTATION).print("}").end();
 				}
 			}
 			layouter.brk(1, -INDENTATION).print("}");
