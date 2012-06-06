@@ -11,9 +11,7 @@
 package org.vclipse.vcml.validation;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.emf.common.util.EList;
@@ -23,43 +21,23 @@ import org.eclipse.xtext.validation.CheckType;
 import org.eclipse.xtext.validation.ComposedChecks;
 import org.eclipse.xtext.validation.ValidationMessageAcceptor;
 import org.vclipse.vcml.documentation.VCMLDescriptionProvider;
-import org.vclipse.vcml.utils.ConstraintRestrictionExtensions;
 import org.vclipse.vcml.utils.VcmlUtils;
-import org.vclipse.vcml.vcml.BinaryExpression;
 import org.vclipse.vcml.vcml.Characteristic;
-import org.vclipse.vcml.vcml.CharacteristicReference_C;
-import org.vclipse.vcml.vcml.CharacteristicReference_P;
 import org.vclipse.vcml.vcml.CharacteristicType;
 import org.vclipse.vcml.vcml.CharacteristicValue;
 import org.vclipse.vcml.vcml.Class;
-import org.vclipse.vcml.vcml.Comparison;
-import org.vclipse.vcml.vcml.CompoundStatement;
-import org.vclipse.vcml.vcml.ConditionalConstraintRestriction;
-import org.vclipse.vcml.vcml.ConditionalStatement;
-import org.vclipse.vcml.vcml.Constraint;
-import org.vclipse.vcml.vcml.ConstraintRestriction;
-import org.vclipse.vcml.vcml.ConstraintSource;
-import org.vclipse.vcml.vcml.DelDefault;
 import org.vclipse.vcml.vcml.DependencyNet;
-import org.vclipse.vcml.vcml.Expression;
-import org.vclipse.vcml.vcml.InCondition_C;
-import org.vclipse.vcml.vcml.InCondition_P;
 import org.vclipse.vcml.vcml.InterfaceDesign;
 import org.vclipse.vcml.vcml.Literal;
-import org.vclipse.vcml.vcml.MDataCharacteristic_C;
-import org.vclipse.vcml.vcml.MDataCharacteristic_P;
 import org.vclipse.vcml.vcml.Material;
 import org.vclipse.vcml.vcml.NumberListEntry;
 import org.vclipse.vcml.vcml.NumericCharacteristicValue;
 import org.vclipse.vcml.vcml.NumericLiteral;
 import org.vclipse.vcml.vcml.NumericType;
-import org.vclipse.vcml.vcml.ObjectCharacteristicReference;
 import org.vclipse.vcml.vcml.Row;
-import org.vclipse.vcml.vcml.ShortVarReference;
 import org.vclipse.vcml.vcml.SimpleDescription;
 import org.vclipse.vcml.vcml.SymbolicLiteral;
 import org.vclipse.vcml.vcml.SymbolicType;
-import org.vclipse.vcml.vcml.UnaryExpression;
 import org.vclipse.vcml.vcml.VCObject;
 import org.vclipse.vcml.vcml.VariantFunction;
 import org.vclipse.vcml.vcml.VariantTable;
@@ -67,22 +45,15 @@ import org.vclipse.vcml.vcml.VariantTableArgument;
 import org.vclipse.vcml.vcml.VariantTableContent;
 import org.vclipse.vcml.vcml.VcmlPackage;
 
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
 @ComposedChecks(validators= {VCMLJavaValidatorIssues.class})
 public class VCMLJavaValidator extends AbstractVCMLJavaValidator {
 
-	private static final VcmlPackage VCML_PACKAGE = VcmlPackage.eINSTANCE;
-
 	@Inject
 	private VCMLDescriptionProvider descriptionProvider;
 	
-	@Inject 
-	private ConstraintRestrictionExtensions expressionExtensions;
-	 
 	private static final int MAXLENGTH_CLASS_CHARACTERISTICS = 999; // SAP limit because cstic index in class table has size 3
 	private static final int MAXLENGTH_CLASS_NAME = 18;
 	private static final int MAXLENGTH_INTERFACEDESIGN_NAME = 18;
@@ -130,45 +101,6 @@ public class VCMLJavaValidator extends AbstractVCMLJavaValidator {
 		}
 	}
 	
-	@Check(CheckType.FAST)
-	public void checkConstraint(Constraint object) {
-		ConstraintSource source = object.getSource();
-		if(source!=null) {
-			List<ConstraintRestriction> restrictions = source.getRestrictions();
-			int size = Iterables.size(Iterables.filter(restrictions, ConditionalConstraintRestriction.class));
-			if(size > 0 && restrictions.size() > size) {
-				error("Conditional and unconditional restrictions in the constraint " + object.eGet(VCML_PACKAGE.getVCObject_Name()) + 
-						".", VCML_PACKAGE.getVCObject_Name());
-				// TODO possible quickfix: split this constraint
-			}
-		}
-	}
-	
-	@Check(CheckType.FAST)
-	public void checkNotRestrictedInferences(Constraint constraint) {
-		// Collect the existing characteristics in the inferences part
-		ConstraintSource source = constraint.getSource();
-		Map<Characteristic, CharacteristicReference_C> cstics2Reference = Maps.newHashMap();
-		for(CharacteristicReference_C inference : source.getInferences()) {
-			for(Characteristic cstic : expressionExtensions.getUsedCharacteristics(inference)) {
-				cstics2Reference.put(cstic, inference);
-			}
-		}
-		
-		// Remove the referenced characteristics
-		for(ConstraintRestriction currentRestriction : source.getRestrictions()) {
-			for(Characteristic cstic : expressionExtensions.getUsedCharacteristics(currentRestriction)) {
-				cstics2Reference.remove(cstic);
-			}
-		}
-		
-		// Show errors for not referenced characteristics
-		for(Entry<Characteristic, CharacteristicReference_C> entrySet : cstics2Reference.entrySet()) {
-			error("Inferred characteristic " + entrySet.getKey().getName() + " is not mentioned in the restrictions part.", 
-					entrySet.getValue(), VcmlPackage.eINSTANCE.getObjectCharacteristicReference_Characteristic(), ValidationMessageAcceptor.INSIGNIFICANT_INDEX);
-		}
-	}
-
 	@Check(CheckType.FAST)
 	public void checkClass(Class object) {
 		if(object.getCharacteristics().size() > MAXLENGTH_CLASS_CHARACTERISTICS) {
@@ -280,74 +212,6 @@ public class VCMLJavaValidator extends AbstractVCMLJavaValidator {
 			}
 		} 
 		return false;
-	}
-	
-	@Check
-	public void checkComparison(Comparison comparison) {
-		Expression left = comparison.getLeft();
-		Expression right = comparison.getRight();
-		if (isConstant(left) && isConstant(right)) {
-			error("Simple condition without variables not allowed.", VcmlPackage.Literals.COMPARISON__OPERATOR);
-		}
-	}
-
-	private boolean isConstant(Expression expression) {
-		if (expression instanceof CharacteristicReference_C || expression instanceof CharacteristicReference_P || expression instanceof MDataCharacteristic_C || expression instanceof MDataCharacteristic_P) {
-			return false;
-		}
-		if (expression instanceof NumericLiteral || expression instanceof SymbolicLiteral) {
-			return true;
-		}
-		if (expression instanceof BinaryExpression) {
-			return isConstant(((BinaryExpression)expression).getLeft()) && isConstant(((BinaryExpression)expression).getRight());
-		}
-		if (expression instanceof UnaryExpression) {
-			return isConstant(((UnaryExpression)expression).getExpression());
-		}
-		// TODO add other uses
-		return false;
-	}
-	
-	@Check
-	public void checkCompoundStatement(CompoundStatement cs) {
-		if (!(cs.eContainer() instanceof ConditionalStatement)) {
-			error("Parethenseses around statements can only be used for conditional statements (with an IF).", VcmlPackage.Literals.COMPOUND_STATEMENT__STATEMENTS);
-		}
-	}
-	
-	@Check
-	public void checkInCondition(InCondition_C cond) {
-		CharacteristicReference_C cRef = cond.getCharacteristic();
-		if (cRef instanceof ObjectCharacteristicReference) {
-			checkInCondition_Characteristic(((ObjectCharacteristicReference)cRef).getCharacteristic());
-		} else if (cRef instanceof ShortVarReference) {
-			checkInCondition_Characteristic(((ShortVarReference)cRef).getRef().getCharacteristic());
-		}
-	}
-
-	// TODO does this also hold for procedures?
-	@Check
-	public void checkInCondition(InCondition_P cond) {
-		CharacteristicReference_P cRef = cond.getCharacteristic();
-		checkInCondition_Characteristic(cRef.getCharacteristic());
-	}
-
-	private void checkInCondition_Characteristic(Characteristic characteristic) {
-		if (characteristic.isMultiValue()) {
-			error("Multivalued characteristic " + characteristic.getName() + " must not be used in 'in' condition", VcmlPackage.Literals.IN_CONDITION_C__CHARACTERISTIC);
-		}
-	}
-
-	@Check
-	public void checkDelDefault(DelDefault dd) {
-		Expression expression = dd.getExpression();
-		if (expression instanceof CharacteristicReference_P) {
-			CharacteristicReference_P cRef = (CharacteristicReference_P)expression;
-			Characteristic characteristic = cRef.getCharacteristic();
-			if (characteristic.isMultiValue()) {
-				error("Multivalued characteristic " + characteristic.getName() + " must not be used in 'del_default' statements", VcmlPackage.Literals.SET_OR_DEL_DEFAULT__EXPRESSION);
-			}
-		}
 	}
 	
 	/*****
