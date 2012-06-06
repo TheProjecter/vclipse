@@ -173,7 +173,6 @@ public class VCML2IDocSwitch extends VcmlSwitch<List<IDoc>> {
 			}
 			for(final VCObject vcObject : vcmlModel.getObjects()) {
 				if(vcObject != null && !vcObject.eIsProxy()) {
-					System.err.println(vcObject);
 					final List<IDoc> iDoc = doSwitch(vcObject);
 					if(iDoc != null) {
 						idocs.addAll(iDoc);
