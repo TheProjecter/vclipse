@@ -82,7 +82,7 @@ public class VCMLLabelProvider extends DefaultEObjectLabelProvider {
 		super(delegate);
 	}
 
-	private StyledString createStyledString(String name, Description description) {
+	protected StyledString createStyledString(String name, Description description) {
 		if (description==null) {
 			return new StyledString(name, StyledString.QUALIFIER_STYLER); // assumption: object has no body
 		}

@@ -3,25 +3,19 @@
 */
 package org.vclipse.vcml.ui.labeling;
 
-import org.eclipse.xtext.ui.label.DefaultDescriptionLabelProvider;
+import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
+
+import com.google.inject.Inject;
 
 /**
  * Provides labels for a IEObjectDescriptions and IResourceDescriptions.
  * 
  * see http://www.eclipse.org/Xtext/documentation/latest/xtext.html#labelProvider
  */
-public class ConditionDescriptionLabelProvider extends DefaultDescriptionLabelProvider {
+public class ConditionDescriptionLabelProvider extends VCMLLabelProvider {
 
-/*
-	//Labels and icons can be computed like this:
-	
-	String text(IEObjectDescription ele) {
-	  return "my "+ele.getName();
+	@Inject
+	public ConditionDescriptionLabelProvider(AdapterFactoryLabelProvider delegate) {
+		super(delegate);
 	}
-	 
-    String image(IEObjectDescription ele) {
-      return ele.getEClass().getName() + ".gif";
-    }	 
-*/
-
 }
