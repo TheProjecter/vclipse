@@ -22,13 +22,21 @@ public class VCObjectSourceUtils {
 		} else if(object instanceof Constraint) {
 			path = path.concat(".cons");
 		} else if(object instanceof Condition) {
+			// there are 2 extensions for conditions => we should prove 
+			// if the resource exists
 			path = path.concat(".pre");
 		}
 		path = uri.toString().replace(lastSegment, path);
-		Resource sourceResource = resource.getResourceSet().getResource(URI.createURI(path), true);
-		EList<EObject> contents = sourceResource.getContents();
-		if(!contents.isEmpty()) {
-			return contents.get(0);
+		try {
+			EList<EObject> contents = resource.getResourceSet().getResource(URI.createURI(path), true).getContents();
+			if(!contents.isEmpty()) {
+				return contents.get(0);
+			}
+		} catch(Exception exception) {
+			EList<EObject> contents = resource.getResourceSet().getResource(URI.createURI(path.replace(".pre", ".sel")), true).getContents();
+			if(!contents.isEmpty()) {
+				return contents.get(0);
+			}
 		}
 		return null;
 	}
