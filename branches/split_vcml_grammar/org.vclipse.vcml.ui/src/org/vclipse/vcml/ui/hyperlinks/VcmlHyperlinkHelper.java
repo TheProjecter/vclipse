@@ -6,6 +6,7 @@ import org.eclipse.xtext.resource.EObjectAtOffsetHelper;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.ui.editor.hyperlinking.HyperlinkHelper;
 import org.eclipse.xtext.ui.editor.hyperlinking.IHyperlinkAcceptor;
+import org.eclipse.xtext.util.SimpleAttributeResolver;
 import org.vclipse.vcml.resource.VCObjectSourceUtils;
 import org.vclipse.vcml.vcml.Procedure;
 
@@ -21,11 +22,12 @@ public class VcmlHyperlinkHelper extends HyperlinkHelper {
 	
 	@Override
 	public void createHyperlinksByOffset(XtextResource resource, int offset, IHyperlinkAcceptor acceptor) {
+		super.createHyperlinksByOffset(resource, offset, acceptor);
 		EObject elementAt = eObjectAtOffsetHelper.resolveElementAt(resource, offset);
 		if(elementAt instanceof Procedure) {
 			EObject source = sourceUtils.getSource(elementAt);
 			if(source != null) {
-				createHyperlinksTo(resource, new Region(offset, 0), source, acceptor);				
+				createHyperlinksTo(resource, new Region(offset, SimpleAttributeResolver.NAME_RESOLVER.apply(elementAt).length()), source, acceptor);				
 			}
 		}
 	}
