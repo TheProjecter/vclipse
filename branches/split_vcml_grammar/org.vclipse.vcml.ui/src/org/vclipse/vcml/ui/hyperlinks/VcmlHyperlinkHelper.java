@@ -8,7 +8,6 @@ import org.eclipse.xtext.ui.editor.hyperlinking.HyperlinkHelper;
 import org.eclipse.xtext.ui.editor.hyperlinking.IHyperlinkAcceptor;
 import org.vclipse.vcml.resource.VCObjectSourceUtils;
 import org.vclipse.vcml.vcml.Procedure;
-import org.vclipse.vcml.vcml.ProcedureSource;
 
 import com.google.inject.Inject;
 
@@ -24,7 +23,7 @@ public class VcmlHyperlinkHelper extends HyperlinkHelper {
 	public void createHyperlinksByOffset(XtextResource resource, int offset, IHyperlinkAcceptor acceptor) {
 		EObject elementAt = eObjectAtOffsetHelper.resolveElementAt(resource, offset);
 		if(elementAt instanceof Procedure) {
-			ProcedureSource source = sourceUtils.getSource((Procedure)elementAt);
+			EObject source = sourceUtils.getSource(elementAt);
 			if(source != null) {
 				createHyperlinksTo(resource, new Region(offset, 0), source, acceptor);				
 			}
