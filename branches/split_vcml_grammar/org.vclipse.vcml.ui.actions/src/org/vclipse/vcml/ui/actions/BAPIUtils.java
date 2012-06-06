@@ -35,6 +35,7 @@ import org.vclipse.console.CMConsolePlugin.Kind;
 import org.vclipse.vcml.VCMLRuntimeModule;
 import org.vclipse.vcml.formatting.VCMLPrettyPrinter;
 import org.vclipse.vcml.parser.antlr.VCMLParser;
+import org.vclipse.vcml.resource.DependencySourceUtils;
 import org.vclipse.vcml.services.ConditionGrammarAccess.ConditionSourceElements;
 import org.vclipse.vcml.services.ConstraintGrammarAccess.ConstraintSourceElements;
 import org.vclipse.vcml.services.ProcedureGrammarAccess.ProcedureSourceElements;
@@ -46,6 +47,7 @@ import org.vclipse.vcml.utils.ISapConstants;
 import org.vclipse.vcml.utils.VcmlUtils;
 import org.vclipse.vcml.vcml.ConditionSource;
 import org.vclipse.vcml.vcml.ConstraintSource;
+import org.vclipse.vcml.vcml.Dependency;
 import org.vclipse.vcml.vcml.Description;
 import org.vclipse.vcml.vcml.Documentation;
 import org.vclipse.vcml.vcml.FormattedDocumentationBlock;
@@ -61,6 +63,7 @@ import org.vclipse.vcml.vcml.VcmlFactory;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.inject.Guice;
+import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.sap.conn.jco.AbapException;
 import com.sap.conn.jco.JCoContext;
@@ -98,6 +101,8 @@ public class BAPIUtils {
 	
 	protected IConnectionHandler connectionHandler;
 	
+	private DependencySourceUtils sourceUtils;
+
 	/**
 	 * 
 	 */
@@ -115,7 +120,9 @@ public class BAPIUtils {
 		preferenceStore = VCMLUiPlugin.getDefault().getInjector().getInstance(IPreferenceStore.class);
 		prettyPrinter = new VCMLPrettyPrinter();
 		connectionHandler = VClipseConnectionPlugin.getDefault().getInjector().getInstance(IConnectionHandler.class);
+		sourceUtils = injector.getInstance(DependencySourceUtils.class);
 	}
+	
 	
 	/**
 	 * @param function
@@ -391,7 +398,8 @@ public class BAPIUtils {
 		}.handleDescription(description);
 	}
 
-	protected void writeSourceCode(JCoTable table, EObject source) {
+	protected void writeSourceCode(JCoTable table, Dependency dependency) {
+		EObject source = sourceUtils.getSource(dependency);
 		if(source==null) {
 			return;
 		} else {

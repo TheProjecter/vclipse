@@ -43,7 +43,7 @@ public class ProcedureCreateChangeActionHandler extends BAPIUtils implements IVC
 		JCoParameterList tpl = function.getTableParameterList();
 		writeDescription(tpl.getTable("DESCRIPTION"), object.getDescription());
 		writeDocumentation(tpl.getTable("DOCUMENTATION"), object.getDocumentation());
-		writeSourceCode(tpl.getTable("SOURCE"), object.getSource());
+		writeSourceCode(tpl.getTable("SOURCE"), object);
 		try {
 			execute(function, monitor, object.getName());
 			endTransaction();
