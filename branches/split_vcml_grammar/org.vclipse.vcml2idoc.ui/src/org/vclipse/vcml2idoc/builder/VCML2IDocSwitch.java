@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.vclipse.vcml2idoc.builder;
 
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -24,14 +27,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.xtext.resource.XtextResource;
 import org.vclipse.idoc.iDoc.IDoc;
 import org.vclipse.idoc.iDoc.IDocFactory;
 import org.vclipse.idoc.iDoc.NumberField;
 import org.vclipse.idoc.iDoc.Segment;
 import org.vclipse.idoc.iDoc.StringField;
+import org.vclipse.vcml.resource.DependencySourceUtils;
 import org.vclipse.vcml.ui.VCMLUiPlugin;
 import org.vclipse.vcml.utils.DescriptionHandler;
 import org.vclipse.vcml.utils.DocumentationHandler;
@@ -49,6 +51,7 @@ import org.vclipse.vcml.vcml.ConfigurationProfileEntry;
 import org.vclipse.vcml.vcml.Constraint;
 import org.vclipse.vcml.vcml.DateCharacteristicValue;
 import org.vclipse.vcml.vcml.DateType;
+import org.vclipse.vcml.vcml.Dependency;
 import org.vclipse.vcml.vcml.DependencyNet;
 import org.vclipse.vcml.vcml.Description;
 import org.vclipse.vcml.vcml.Documentation;
@@ -87,6 +90,7 @@ import org.vclipse.vcml2idoc.VCML2IDocUIPlugin;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
+import com.google.common.io.Files;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
@@ -149,6 +153,9 @@ public class VCML2IDocSwitch extends VcmlSwitch<List<IDoc>> {
 	@Named(VCMLUiPlugin.ID)
 	private IPreferenceStore vcmlPreferenceStore;
 
+	@Inject
+	private DependencySourceUtils sourceUtils;
+	
 	/**
 	 * not reentrant!
 	 */
@@ -166,6 +173,7 @@ public class VCML2IDocSwitch extends VcmlSwitch<List<IDoc>> {
 			}
 			for(final VCObject vcObject : vcmlModel.getObjects()) {
 				if(vcObject != null && !vcObject.eIsProxy()) {
+					System.err.println(vcObject);
 					final List<IDoc> iDoc = doSwitch(vcObject);
 					if(iDoc != null) {
 						idocs.addAll(iDoc);
@@ -845,7 +853,7 @@ public class VCML2IDocSwitch extends VcmlSwitch<List<IDoc>> {
 				setValue(segmentE1CUKB5, "DEP_LINENO", "0000"); // TODO number lines?
 
 				addSegmentsForDescription(segmentE1CUKB5, "E1CUKB2", "DESCRIPT", constraint.getDescription());
-				addSegmentsForSource(segmentE1CUKB5, constraint.getSource());
+				addSegmentsForSource(segmentE1CUKB5, constraint);
 				addSegmentsForDependencyDocumentation(segmentE1CUKB5, "E1CUTX1", constraint.getDocumentation());
 			}
 		}
@@ -860,16 +868,21 @@ public class VCML2IDocSwitch extends VcmlSwitch<List<IDoc>> {
 	 * @param parentSegment
 	 * @param source
 	 */
-	private void addSegmentsForSource(final Segment parentSegment, final EObject source) {
-		if(source == null) {
+	private void addSegmentsForSource(final Segment parentSegment, final Dependency dependency) {
+		File file = sourceUtils.getFile(dependency);
+		if(file == null) {
 			return;
 		} else {
-			String sourceCode = "";
-			sourceCode = ((XtextResource)(source.eResource())).getSerializer().serialize(source);
-			for(final String line : sourceCode.split("\\r?\\n|\\r")) {
-				final Segment segmentE1CUKNM = addChildSegment(parentSegment, "E1CUKNM");
-				setValue(segmentE1CUKNM, "MSGFN", "004");
-				setValue(segmentE1CUKNM, "LINE", line);
+			try {
+				List<String> lines = Files.readLines(file, Charset.forName("UTF-8"));
+				for(final String line : lines) {
+					final Segment segmentE1CUKNM = addChildSegment(parentSegment, "E1CUKNM");
+					setValue(segmentE1CUKNM, "MSGFN", "004");
+					setValue(segmentE1CUKNM, "LINE", line);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+				return;
 			}
 		}
 	}
@@ -912,7 +925,7 @@ public class VCML2IDocSwitch extends VcmlSwitch<List<IDoc>> {
 		addSegmentE1DATEM(segmentE1CUKBM);
 
 		addSegmentsForDescription(segmentE1CUKBM, "E1CUKBT", "DESCRIPT", procedure.getDescription());
-		addSegmentsForSource(segmentE1CUKBM, procedure.getSource());
+		addSegmentsForSource(segmentE1CUKBM, procedure);
 		addSegmentsForDependencyDocumentation(segmentE1CUKBM, "E1CUTXM", procedure.getDocumentation());
 
 		addSegmentE1UPSLINK(iDoc, toUpperCase(procedure.getName()), VcmlUtils.DEFAULT_VALIDITY_START);
@@ -944,7 +957,7 @@ public class VCML2IDocSwitch extends VcmlSwitch<List<IDoc>> {
 		addSegmentE1DATEM(segmentE1CUKBM);
 
 		addSegmentsForDescription(segmentE1CUKBM, "E1CUKBT", "DESCRIPT", precondition.getDescription());
-		addSegmentsForSource(segmentE1CUKBM, precondition.getSource());
+		addSegmentsForSource(segmentE1CUKBM, precondition);
 		addSegmentsForDependencyDocumentation(segmentE1CUKBM, "E1CUTXM", precondition.getDocumentation());
 
 		addSegmentE1UPSLINK(iDoc, toUpperCase(precondition.getName()), VcmlUtils.DEFAULT_VALIDITY_START);
@@ -969,7 +982,7 @@ public class VCML2IDocSwitch extends VcmlSwitch<List<IDoc>> {
 		setValue(segmentE1CUKBM, "GROUP", toUpperCase(condition.getGroup()));
 		addSegmentE1DATEM(segmentE1CUKBM);
 		addSegmentsForDescription(segmentE1CUKBM, "E1CUKBT", "DESCRIPT", condition.getDescription());
-		addSegmentsForSource(segmentE1CUKBM, condition.getSource());
+		addSegmentsForSource(segmentE1CUKBM, condition);
 		addSegmentsForDependencyDocumentation(segmentE1CUKBM, "E1CUTXM", condition.getDocumentation());
 		addSegmentE1UPSLINK(iDoc, toUpperCase(condition.getName()), VcmlUtils.DEFAULT_VALIDITY_START);
 		addSegmentE1UPSITM(iDoc, "KNOMAS", "KNO", toUpperCase(condition.getName()), HIELEV_KNOMAS, inslev_KNOMAS++, 1);
