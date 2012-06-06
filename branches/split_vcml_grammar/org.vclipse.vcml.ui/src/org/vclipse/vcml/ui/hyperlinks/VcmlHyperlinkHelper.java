@@ -11,7 +11,7 @@ import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.ui.editor.hyperlinking.HyperlinkHelper;
 import org.eclipse.xtext.ui.editor.hyperlinking.IHyperlinkAcceptor;
 import org.vclipse.vcml.resource.VCObjectSourceUtils;
-import org.vclipse.vcml.vcml.Procedure;
+import org.vclipse.vcml.vcml.Dependency;
 import org.vclipse.vcml.vcml.VcmlPackage;
 
 import com.google.inject.Inject;
@@ -28,8 +28,8 @@ public class VcmlHyperlinkHelper extends HyperlinkHelper {
 	public void createHyperlinksByOffset(XtextResource resource, int offset, IHyperlinkAcceptor acceptor) {
 		super.createHyperlinksByOffset(resource, offset, acceptor);
 		EObject elementAt = eObjectAtOffsetHelper.resolveElementAt(resource, offset);
-		if(elementAt instanceof Procedure) {
-			EObject source = sourceUtils.getSource(elementAt);
+		if(elementAt instanceof Dependency) {
+			EObject source = sourceUtils.getSource((Dependency)elementAt);
 			if(source != null) {
 				List<INode> findNodesForFeature = NodeModelUtils.findNodesForFeature(elementAt, VcmlPackage.eINSTANCE.getVCObject_Name());
 				if(!findNodesForFeature.isEmpty()) {
