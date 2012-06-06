@@ -18,11 +18,11 @@ public class VCObjectSourceUtils {
 		String lastSegment = uri.lastSegment();
 		String path = lastSegment.replace(".vcml", "").replace(".cml2", "_cml2").concat("/" + name.toLowerCase());
 		if(object instanceof Procedure) {
-			path.concat(".proc");			
+			path = path.concat(".proc");			
 		} else if(object instanceof Constraint) {
-			path.concat(".cons");
+			path = path.concat(".cons");
 		} else if(object instanceof Condition) {
-			path.concat(".pre");
+			path = path.concat(".pre");
 		}
 		path = uri.toString().replace(lastSegment, path);
 		Resource sourceResource = resource.getResourceSet().getResource(URI.createURI(path), true);
