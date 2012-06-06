@@ -15,6 +15,8 @@ package org.vclipse.vcml.ui.labeling;
 
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 
+import com.google.inject.Inject;
+
 /**
  * Provides labels for a IEObjectDescriptions and IResourceDescriptions.
  * 
@@ -22,6 +24,7 @@ import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
  */
 public class VCMLDescriptionLabelProvider extends VCMLLabelProvider {
 
+	@Inject
 	public VCMLDescriptionLabelProvider(AdapterFactoryLabelProvider delegate) {
 		super(delegate);
 	}
