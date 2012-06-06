@@ -14,7 +14,7 @@ import org.vclipse.vcml.vcml.Procedure;
 import org.vclipse.vcml.vcml.ProcedureSource;
 import org.vclipse.vcml.vcml.SelectionCondition;
 
-public class VCObjectSourceUtils {
+public class DependencySourceUtils {
 	
 	public EObject getSource(Dependency object) {
 		if (object == null) {

@@ -10,7 +10,7 @@ import org.eclipse.xtext.resource.EObjectAtOffsetHelper;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.ui.editor.hyperlinking.HyperlinkHelper;
 import org.eclipse.xtext.ui.editor.hyperlinking.IHyperlinkAcceptor;
-import org.vclipse.vcml.resource.VCObjectSourceUtils;
+import org.vclipse.vcml.resource.DependencySourceUtils;
 import org.vclipse.vcml.vcml.Dependency;
 import org.vclipse.vcml.vcml.VcmlPackage;
 
@@ -22,7 +22,7 @@ public class VcmlHyperlinkHelper extends HyperlinkHelper {
 	private EObjectAtOffsetHelper eObjectAtOffsetHelper;
 	
 	@Inject
-	private VCObjectSourceUtils sourceUtils;
+	private DependencySourceUtils sourceUtils;
 	
 	@Override
 	public void createHyperlinksByOffset(XtextResource resource, int offset, IHyperlinkAcceptor acceptor) {
