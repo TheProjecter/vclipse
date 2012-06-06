@@ -32,8 +32,10 @@ public class VcmlHyperlinkHelper extends HyperlinkHelper {
 			EObject source = sourceUtils.getSource(elementAt);
 			if(source != null) {
 				List<INode> findNodesForFeature = NodeModelUtils.findNodesForFeature(elementAt, VcmlPackage.eINSTANCE.getVCObject_Name());
-				INode nameNode = findNodesForFeature.get(0);
-				createHyperlinksTo(resource, new Region(nameNode.getTotalOffset(), nameNode.getTotalLength()), source, acceptor);				
+				if(!findNodesForFeature.isEmpty()) {
+					INode nameNode = findNodesForFeature.get(0);
+					createHyperlinksTo(resource, new Region(nameNode.getTotalOffset() + 1, nameNode.getTotalLength()), source, acceptor);					
+				}
 			}
 		}
 	}
