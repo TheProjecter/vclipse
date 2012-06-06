@@ -23,6 +23,7 @@ import org.eclipse.xtext.documentation.IEObjectDocumentationProvider;
 import org.eclipse.xtext.documentation.impl.MultiLineCommentDocumentationProvider;
 import org.eclipse.xtext.ui.IImageHelper;
 import org.eclipse.xtext.ui.editor.hover.IEObjectHoverProvider;
+import org.eclipse.xtext.ui.editor.hyperlinking.IHyperlinkHelper;
 import org.eclipse.xtext.ui.editor.outline.IOutlineTreeProvider;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.AbstractAntlrTokenToAttributeIdMapper;
 import org.eclipse.xtext.ui.editor.templates.XtextTemplateContextType;
@@ -30,6 +31,7 @@ import org.vclipse.base.ui.util.ClasspathAwareImageHelper;
 import org.vclipse.vcml.ui.editor.hover.VCMLHoverProvider;
 import org.vclipse.vcml.ui.extension.ExtensionPointUtilities;
 import org.vclipse.vcml.ui.extension.IExtensionPointUtilities;
+import org.vclipse.vcml.ui.hyperlinks.VcmlHyperlinkHelper;
 import org.vclipse.vcml.ui.outline.VCMLOutlinePage;
 import org.vclipse.vcml.ui.outline.VCMLOutlineTreeProvider;
 import org.vclipse.vcml.ui.syntaxcoloring.VCMLAntlrTokenToAttributeIdMapper;
@@ -89,5 +91,12 @@ public class VCMLUiModule extends org.vclipse.vcml.ui.AbstractVCMLUiModule {
 	
 	public Class<? extends XtextTemplateContextType> bindXtextTemplateContextType() {
 		return VcmlTemplateContextType.class;
+	}
+	
+	/**
+	 * Hyperlinks
+	 */
+	public Class<? extends IHyperlinkHelper> bindIHyperlinkHelper() {
+		return VcmlHyperlinkHelper.class;
 	}
 }
