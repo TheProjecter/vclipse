@@ -22,14 +22,12 @@ def testParserRule(CharSequence textToParse, String ruleName) {
         testParserRule(textToParse.toString, ruleName)
 }
 
-
-
-@Ignore
 @Test
 def void fileTest() {
-	testFile("VCML.xtext");
+	setResourceRoot("classpath:/org.vclipse.vcml.tests/resources")
+	//setResourceRoot("file:/resources")
+	testFile("VcmlTest/characteristictest.vcml");
 }
-
 
 @Test
 def void parseImportTest() {
