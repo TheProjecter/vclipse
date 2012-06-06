@@ -151,8 +151,6 @@
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="status" eType="#//Status"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="group" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="source" eType="#//ProcedureSource"
-        containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="SelectionCondition" eSuperTypes="#//VCObject #//GlobalDependency #//GeneralSelectionCondition">
     <eStructuralFeatures xsi:type="ecore:EReference" name="description" eType="#//Description"
@@ -161,8 +159,6 @@
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="status" eType="#//Status"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="group" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="source" eType="#//ConditionSource"
-        containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="LocalSelectionCondition" eSuperTypes="#//LocalDependency #//GeneralSelectionCondition"/>
   <eClassifiers xsi:type="ecore:EClass" name="GeneralSelectionCondition"/>
@@ -173,8 +169,6 @@
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="status" eType="#//Status"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="group" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="source" eType="#//ConditionSource"
-        containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="LocalPrecondition" eSuperTypes="#//LocalDependency #//GeneralPrecondition"/>
   <eClassifiers xsi:type="ecore:EClass" name="GeneralPrecondition"/>
@@ -199,8 +193,6 @@
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="status" eType="#//Status"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="group" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="source" eType="#//ConstraintSource"
-        containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ConfigurationProfileEntry">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="sequence" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>

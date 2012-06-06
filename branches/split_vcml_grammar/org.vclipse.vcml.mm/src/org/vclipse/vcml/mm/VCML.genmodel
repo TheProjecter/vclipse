@@ -207,14 +207,12 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference VCML.ecore#//Procedure/documentation"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute VCML.ecore#//Procedure/status"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute VCML.ecore#//Procedure/group"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference VCML.ecore#//Procedure/source"/>
     </genClasses>
     <genClasses ecoreClass="VCML.ecore#//SelectionCondition">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference VCML.ecore#//SelectionCondition/description"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference VCML.ecore#//SelectionCondition/documentation"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute VCML.ecore#//SelectionCondition/status"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute VCML.ecore#//SelectionCondition/group"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference VCML.ecore#//SelectionCondition/source"/>
     </genClasses>
     <genClasses ecoreClass="VCML.ecore#//LocalSelectionCondition"/>
     <genClasses ecoreClass="VCML.ecore#//GeneralSelectionCondition"/>
@@ -223,7 +221,6 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference VCML.ecore#//Precondition/documentation"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute VCML.ecore#//Precondition/status"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute VCML.ecore#//Precondition/group"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference VCML.ecore#//Precondition/source"/>
     </genClasses>
     <genClasses ecoreClass="VCML.ecore#//LocalPrecondition"/>
     <genClasses ecoreClass="VCML.ecore#//GeneralPrecondition"/>
@@ -242,7 +239,6 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference VCML.ecore#//Constraint/documentation"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute VCML.ecore#//Constraint/status"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute VCML.ecore#//Constraint/group"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference VCML.ecore#//Constraint/source"/>
     </genClasses>
     <genClasses ecoreClass="VCML.ecore#//ConfigurationProfileEntry">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute VCML.ecore#//ConfigurationProfileEntry/sequence"/>
