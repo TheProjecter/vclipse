@@ -35,9 +35,9 @@ import org.vclipse.console.CMConsolePlugin.Kind;
 import org.vclipse.vcml.VCMLRuntimeModule;
 import org.vclipse.vcml.formatting.VCMLPrettyPrinter;
 import org.vclipse.vcml.parser.antlr.VCMLParser;
-import org.vclipse.vcml.services.VCMLGrammarAccess.ConditionSourceElements;
-import org.vclipse.vcml.services.VCMLGrammarAccess.ConstraintSourceElements;
-import org.vclipse.vcml.services.VCMLGrammarAccess.ProcedureSourceElements;
+import org.vclipse.vcml.services.ConditionGrammarAccess.ConditionSourceElements;
+import org.vclipse.vcml.services.ConstraintGrammarAccess.ConstraintSourceElements;
+import org.vclipse.vcml.services.ProcedureGrammarAccess.ProcedureSourceElements;
 import org.vclipse.vcml.ui.VCMLUiPlugin;
 import org.vclipse.vcml.ui.outline.actions.OutlineActionCanceledException;
 import org.vclipse.vcml.utils.DescriptionHandler;
@@ -415,7 +415,7 @@ public class BAPIUtils {
 	
 	protected ProcedureSource readProcedureSource(JCoTable table) {
 		StringBuffer source = readSourceLines(table);
-		ProcedureSourceElements elements = ((org.vclipse.vcml.services.VCMLGrammarAccess)grammarAccess).getProcedureSourceAccess();
+		ProcedureSourceElements elements = ((org.vclipse.vcml.services.ProcedureGrammarAccess)grammarAccess).getProcedureSourceAccess();
     	IParseResult result = parser.parse(elements.getRule(), new StringReader(source.toString()));
     	Iterator<INode> iterator = result.getSyntaxErrors().iterator();
     	if(iterator.hasNext()) {
@@ -429,7 +429,7 @@ public class BAPIUtils {
 	
 	protected ConditionSource readConditionSource(JCoTable table) {
 		StringBuffer source = readSourceLines(table);
-		ConditionSourceElements elements = ((org.vclipse.vcml.services.VCMLGrammarAccess)grammarAccess).getConditionSourceAccess();
+		ConditionSourceElements elements = ((org.vclipse.vcml.services.ConditionGrammarAccess)grammarAccess).getConditionSourceAccess();
     	IParseResult result = parser.parse(elements.getRule(), new StringReader(source.toString()));
     	Iterator<INode> iterator = result.getSyntaxErrors().iterator();
     	if(iterator.hasNext()) {
@@ -442,7 +442,7 @@ public class BAPIUtils {
 	
 	protected ConstraintSource readConstraintSource(JCoTable table) {
 		StringBuffer source = readSourceLines(table);
-		ConstraintSourceElements elements = ((org.vclipse.vcml.services.VCMLGrammarAccess)grammarAccess).getConstraintSourceAccess();
+		ConstraintSourceElements elements = ((org.vclipse.vcml.services.ConstraintGrammarAccess)grammarAccess).getConstraintSourceAccess();
     	IParseResult result = parser.parse(elements.getRule(), new StringReader(source.toString()));
     	Iterator<INode> it = result.getSyntaxErrors().iterator();
     	if(it.hasNext()) {
