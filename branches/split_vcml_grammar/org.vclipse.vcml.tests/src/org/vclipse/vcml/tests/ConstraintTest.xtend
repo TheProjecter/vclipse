@@ -33,4 +33,18 @@ def void parseConstraintTest1() {
 	'''.testParserRule("ConstraintSource")
 }
 
+@Test
+def void parseConstraintTest2() {
+	testParserRule('''
+    objects: Obj is_a (300)MyClass . 
+    restrictions:
+      MyClass.Param1 in ('A', 'B') if
+        MyClass.POWER = 'AC',
+      MyClass.CORE in ('A', 'B') if
+        MyClass.POWER = 'DC'. 
+    inferences: MyClass.CORE. 
+	'''.toString, "Constraint")
+}
+
+
 }
