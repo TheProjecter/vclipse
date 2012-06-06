@@ -18,5 +18,4 @@ public class ConstraintDescriptionLabelProvider extends VCMLLabelProvider {
 	public ConstraintDescriptionLabelProvider(AdapterFactoryLabelProvider delegate) {
 		super(delegate);
 	}
-	
 }

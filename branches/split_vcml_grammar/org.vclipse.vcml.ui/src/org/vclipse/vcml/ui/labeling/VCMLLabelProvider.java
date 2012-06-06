@@ -34,7 +34,8 @@ import org.vclipse.vcml.vcml.ConditionalStatement;
 import org.vclipse.vcml.vcml.ConfigurationProfile;
 import org.vclipse.vcml.vcml.ConfigurationProfileEntry;
 import org.vclipse.vcml.vcml.Constraint;
-import org.vclipse.vcml.vcml.ConstraintSource;
+import org.vclipse.vcml.vcml.ConstraintClass;
+import org.vclipse.vcml.vcml.ConstraintMaterial;
 import org.vclipse.vcml.vcml.DateType;
 import org.vclipse.vcml.vcml.DelDefault;
 import org.vclipse.vcml.vcml.DependencyNet;
@@ -55,6 +56,7 @@ import org.vclipse.vcml.vcml.MultiLanguageDescriptions;
 import org.vclipse.vcml.vcml.MultipleLanguageDocumentation;
 import org.vclipse.vcml.vcml.MultipleLanguageDocumentation_LanguageBlock;
 import org.vclipse.vcml.vcml.NumericType;
+import org.vclipse.vcml.vcml.ObjectCharacteristicReference;
 import org.vclipse.vcml.vcml.Option;
 import org.vclipse.vcml.vcml.Precondition;
 import org.vclipse.vcml.vcml.Procedure;
@@ -62,6 +64,7 @@ import org.vclipse.vcml.vcml.ProcedureLocation;
 import org.vclipse.vcml.vcml.ProcedureSource;
 import org.vclipse.vcml.vcml.SelectionCondition;
 import org.vclipse.vcml.vcml.SetDefault;
+import org.vclipse.vcml.vcml.ShortVarReference;
 import org.vclipse.vcml.vcml.SymbolicType;
 import org.vclipse.vcml.vcml.Table;
 import org.vclipse.vcml.vcml.VariantFunction;
@@ -265,9 +268,10 @@ public class VCMLLabelProvider extends DefaultEObjectLabelProvider {
 		return createStyledString(element.getName(), element.getDescription());
 	}
 	
-	public String text(ConstraintSource element) {
-		return "source";
-	}
+//	public String text(ConstraintSource element) {
+//		
+//		return "source";
+//	}
 	
 	public String text(DelDefault element) {
 		return "$del_default " + text(element.getCharacteristic());
@@ -412,5 +416,20 @@ public class VCMLLabelProvider extends DefaultEObjectLabelProvider {
 	public StyledString text(VariantTable element) {
 		return createStyledString(element.getName(), element.getDescription());
 	}
-
+	
+	public String text(ConstraintClass constraintClass) {
+		return constraintClass.getName() + " is_a " + constraintClass.getClass_().getName();
+	}	
+	
+	public String text(ConstraintMaterial constraintMaterial) {
+		return constraintMaterial.getName() + " is_a " + constraintMaterial.getObjectType().getType();
+	}
+	
+	public String text(ObjectCharacteristicReference reference) {
+		return reference.getLocation().getName() + "." + reference.getCharacteristic().getName();
+	}
+	
+	public String text(ShortVarReference reference) {
+		return reference.getRef().getName();
+	}
 }

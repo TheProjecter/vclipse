@@ -3,7 +3,20 @@
 */
 package org.vclipse.vcml.ui.outline;
 
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.viewers.StyledString;
+import org.eclipse.xtext.ui.editor.outline.IOutlineNode;
+import org.eclipse.xtext.ui.editor.outline.impl.DocumentRootNode;
+import org.vclipse.vcml.vcml.BinaryCondition;
+import org.vclipse.vcml.vcml.CharacteristicReference_C;
+import org.vclipse.vcml.vcml.Comparison;
+import org.vclipse.vcml.vcml.Condition;
+import org.vclipse.vcml.vcml.ConditionalConstraintRestriction;
+import org.vclipse.vcml.vcml.ConstraintObject;
+import org.vclipse.vcml.vcml.ConstraintRestriction;
+import org.vclipse.vcml.vcml.ConstraintRestrictionFalse;
+import org.vclipse.vcml.vcml.ConstraintSource;
 
 import com.google.inject.Inject;
 
@@ -17,4 +30,67 @@ public class ConstraintOutlineTreeProvider extends VCMLOutlineTreeProvider {
 	public ConstraintOutlineTreeProvider(IPreferenceStore preferenceStore) {
 		super(preferenceStore);
 	}
+	
+	String text(EObject object) {
+		Object returnedText = textDispatcher.invoke(object);
+		if(returnedText instanceof String) {
+			return (String)returnedText;
+		} else {
+			return ((StyledString)returnedText).getString();
+		}
+	}
+	
+	void _createChildren(DocumentRootNode parentNode, ConstraintSource constraintSource) {
+		for(ConstraintObject constraintObject : constraintSource.getObjects()) {
+			createNode(parentNode, constraintObject);
+		}
+		Condition condition = constraintSource.getCondition();
+		if(condition != null) {
+			createNode(parentNode, constraintSource.getCondition());			
+		}
+		for(ConstraintRestriction constraintRestriction : constraintSource.getRestrictions()) {
+			createNode(parentNode, constraintRestriction);
+		}
+		for(CharacteristicReference_C reference : constraintSource.getInferences()) {
+			createNode(parentNode, reference);
+		}
+	}
+	
+	void _createNode(IOutlineNode parentNode, ConditionalConstraintRestriction restriction) {
+		createNode(parentNode, restriction.getRestriction());
+		createNode(parentNode, restriction.getCondition());
+	}
+	
+	
+	boolean _isLeaf(ConditionalConstraintRestriction restriction) {
+		return restriction.eContainer() instanceof Condition;
+	}
+	
+	String _text(ConditionalConstraintRestriction conditionalConstraintRestriction) {
+		return "Restriction";
+	}
+	
+	
+	boolean _isLeaf(Comparison comparison) {
+		return true;
+	}
+	
+	String _text(Comparison comparison) {
+		return text(comparison.getLeft()) + " " + comparison.getOperator().getLiteral() + " " + text(comparison.getRight());
+	}
+	
+	
+	boolean _isLeaf(BinaryCondition condition) {
+		return true;
+	}
+	
+	String _text(BinaryCondition condition) {
+		return text(condition.getLeft()) + " " + condition.getOperator() + " " + text(condition.getRight()); 
+	}
+	
+	
+	String _text(ConstraintRestrictionFalse restriction) {
+		return "false";
+	}
+	
 }

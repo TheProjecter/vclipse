@@ -55,7 +55,7 @@ import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 import org.vclipse.console.CMConsolePlugin;
 import org.vclipse.console.CMConsolePlugin.Kind;
 import org.vclipse.vcml.ui.IUiConstants;
-import org.vclipse.vcml.ui.outline.SapRequestObjectLinker;
+import org.vclipse.vcml.ui.outline.actions.utils.SapRequestObjectLinker;
 import org.vclipse.vcml.vcml.Import;
 import org.vclipse.vcml.vcml.Model;
 import org.vclipse.vcml.vcml.VCObject;

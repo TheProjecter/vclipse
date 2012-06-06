@@ -1,4 +1,4 @@
-package org.vclipse.vcml.ui.outline;
+package org.vclipse.vcml.ui.outline.actions.utils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

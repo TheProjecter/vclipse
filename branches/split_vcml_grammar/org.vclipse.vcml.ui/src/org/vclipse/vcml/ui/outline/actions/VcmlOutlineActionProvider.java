@@ -3,7 +3,7 @@ package org.vclipse.vcml.ui.outline.actions;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eclipse.xtext.resource.IResourceFactory;
-import org.vclipse.vcml.ui.outline.SapRequestObjectLinker;
+import org.vclipse.vcml.ui.outline.actions.utils.SapRequestObjectLinker;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;

@@ -13,25 +13,17 @@
 */
 package org.vclipse.vcml.ui.labeling;
 
-import org.eclipse.xtext.ui.label.DefaultDescriptionLabelProvider;
+import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 
 /**
  * Provides labels for a IEObjectDescriptions and IResourceDescriptions.
  * 
  * see http://www.eclipse.org/Xtext/documentation/latest/xtext.html#labelProvider
  */
-public class VCMLDescriptionLabelProvider extends DefaultDescriptionLabelProvider {
+public class VCMLDescriptionLabelProvider extends VCMLLabelProvider {
 
-/*
-	//Labels and icons can be computed like this:
-	
-	String text(IEObjectDescription ele) {
-	  return "my "+ele.getName();
+	public VCMLDescriptionLabelProvider(AdapterFactoryLabelProvider delegate) {
+		super(delegate);
 	}
-	 
-    String image(IEObjectDescription ele) {
-      return ele.getEClass().getName() + ".gif";
-    }	 
-*/
-
+	
 }

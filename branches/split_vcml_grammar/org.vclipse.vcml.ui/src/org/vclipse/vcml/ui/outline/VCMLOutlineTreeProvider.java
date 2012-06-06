@@ -18,9 +18,11 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.xtext.ui.editor.outline.IOutlineNode;
 import org.eclipse.xtext.ui.editor.outline.impl.DefaultOutlineTreeProvider;
 import org.eclipse.xtext.ui.editor.outline.impl.DocumentRootNode;
+import org.eclipse.xtext.ui.editor.outline.impl.EObjectNode;
 import org.vclipse.vcml.ui.IUiConstants;
 import org.vclipse.vcml.vcml.BOMItem;
 import org.vclipse.vcml.vcml.BillOfMaterial;
@@ -222,5 +224,12 @@ public class VCMLOutlineTreeProvider extends DefaultOutlineTreeProvider {
 			return super._text(modelElement.getMaterial()) + " [cyclic]";
 		}			
 		return super._text(modelElement);
+	}
+	
+	@Override
+	protected EObjectNode createEObjectNode(IOutlineNode parentNode, EObject modelElement, Image image, Object text, boolean isLeaf) {
+		EObjectNode eObjectNode = super.createEObjectNode(parentNode, modelElement, image, text, isLeaf);
+		eObjectNode.setShortTextRegion(locationInFileProvider.getFullTextRegion(modelElement));
+		return eObjectNode;
 	}
 }
