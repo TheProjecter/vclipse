@@ -49,7 +49,7 @@ public class ConstraintReader extends BAPIUtils {
 			JCoParameterList tpl = function.getTableParameterList();
 			object.setDescription(readDescription(tpl.getTable("DESCRIPTION"), "LANGUAGE_ISO", "LANGUAGE", "DESCRIPT"));
 			object.setDocumentation(readMultiLanguageDocumentations(tpl.getTable("DOCUMENTATION")));
-			object.setSource(readConstraintSource(tpl.getTable("SOURCE")));
+			// FIXME splitting object.setSource(readConstraintSource(tpl.getTable("SOURCE")));
 		} catch (AbapException e) {
 			handleAbapException(e);
 		} 

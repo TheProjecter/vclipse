@@ -10,23 +10,19 @@
  ******************************************************************************/
 package org.vclipse.vcml.ui.actions;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.PrintStream;
-import java.io.StringReader;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.xtext.IGrammarAccess;
-import org.eclipse.xtext.nodemodel.INode;
-import org.eclipse.xtext.parser.IParseResult;
-import org.eclipse.xtext.resource.XtextResource;
-import org.eclipse.xtext.serializer.ISerializer;
 import org.eclipse.xtext.util.Strings;
 import org.vclipse.connection.IConnectionHandler;
 import org.vclipse.connection.VClipseConnectionPlugin;
@@ -36,17 +32,12 @@ import org.vclipse.vcml.VCMLRuntimeModule;
 import org.vclipse.vcml.formatting.VCMLPrettyPrinter;
 import org.vclipse.vcml.parser.antlr.VCMLParser;
 import org.vclipse.vcml.resource.DependencySourceUtils;
-import org.vclipse.vcml.services.ConditionGrammarAccess.ConditionSourceElements;
-import org.vclipse.vcml.services.ConstraintGrammarAccess.ConstraintSourceElements;
-import org.vclipse.vcml.services.ProcedureGrammarAccess.ProcedureSourceElements;
 import org.vclipse.vcml.ui.VCMLUiPlugin;
 import org.vclipse.vcml.ui.outline.actions.OutlineActionCanceledException;
 import org.vclipse.vcml.utils.DescriptionHandler;
 import org.vclipse.vcml.utils.DocumentationHandler;
 import org.vclipse.vcml.utils.ISapConstants;
 import org.vclipse.vcml.utils.VcmlUtils;
-import org.vclipse.vcml.vcml.ConditionSource;
-import org.vclipse.vcml.vcml.ConstraintSource;
 import org.vclipse.vcml.vcml.Dependency;
 import org.vclipse.vcml.vcml.Description;
 import org.vclipse.vcml.vcml.Documentation;
@@ -56,14 +47,14 @@ import org.vclipse.vcml.vcml.MultiLanguageDescription;
 import org.vclipse.vcml.vcml.MultiLanguageDescriptions;
 import org.vclipse.vcml.vcml.MultipleLanguageDocumentation;
 import org.vclipse.vcml.vcml.MultipleLanguageDocumentation_LanguageBlock;
-import org.vclipse.vcml.vcml.ProcedureSource;
 import org.vclipse.vcml.vcml.SimpleDescription;
 import org.vclipse.vcml.vcml.VcmlFactory;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import com.google.common.io.Files;
+import com.google.common.io.LineProcessor;
 import com.google.inject.Guice;
-import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.sap.conn.jco.AbapException;
 import com.sap.conn.jco.JCoContext;
@@ -383,7 +374,9 @@ public class BAPIUtils {
 	}
 
 	protected void writeDocumentation(JCoTable table, Documentation documentation) {
-		new BAPIDocumentationHandler(table).doSwitch(documentation);
+		if (documentation!=null) {
+			new BAPIDocumentationHandler(table).doSwitch(documentation);
+		}
 	}
 	
 	protected void writeDescription(final JCoTable table, Description description) {
@@ -398,89 +391,56 @@ public class BAPIUtils {
 		}.handleDescription(description);
 	}
 
-	protected void writeSourceCode(JCoTable table, Dependency dependency) {
-		EObject source = sourceUtils.getSource(dependency);
-		if(source==null) {
-			return;
-		} else {
-			String sourceCode = "";
-			if(preferenceStore.getBoolean(ISapConstants.USE_PRETTY_PRINTER)) {
-				sourceCode = prettyPrinter.prettyPrint(source);
-			} else {
-				ISerializer serializer = ((XtextResource)(source.eResource())).getSerializer();
-				sourceCode = serializer.serialize(source);
-			}
-			int lineNo = 1;
-			String[] lines = sourceCode.split("\n");
-			table.appendRows(lines.length);
-			for(String line : lines) {
-				table.setValue("LINE_NO", lineNo++);
-				table.setValue("LINE", line);
-				table.nextRow();
+	protected void writeSource(final JCoTable table, Dependency dependency) {
+		File file = sourceUtils.getFile(dependency);
+		if (file!=null) {
+			try {
+				Files.readLines(file, Charset.forName("UTF-8"), new LineProcessor<Void>() {
+					int lineNo = 1;
+					@Override
+					public boolean processLine(String line) throws IOException {
+						table.appendRow();
+						table.setValue("LINE_NO", lineNo++);
+						table.setValue("LINE", line);
+						table.nextRow();
+						return true;
+					}
+					@Override
+					public Void getResult() {
+						return null;
+					}});
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 	}
 	
-	protected ProcedureSource readProcedureSource(JCoTable table) {
+	protected void readSource(JCoTable table, Dependency dependency) {
 		StringBuffer source = readSourceLines(table);
-		ProcedureSourceElements elements = ((org.vclipse.vcml.services.ProcedureGrammarAccess)grammarAccess).getProcedureSourceAccess();
-    	IParseResult result = parser.parse(elements.getRule(), new StringReader(source.toString()));
-    	Iterator<INode> iterator = result.getSyntaxErrors().iterator();
-    	if(iterator.hasNext()) {
-    		printParseErrors(iterator, source);
-			err.println(source);
-			return null;
-    	} else {
-    		return (ProcedureSource)result.getRootASTElement();
-    	}
+		File file = sourceUtils.getFile(dependency);
+		if (file!=null) {
+			try {
+				Files.createParentDirs(file);
+				file.createNewFile();
+				Files.write(source, file, Charset.forName("UTF-8"));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 	
-	protected ConditionSource readConditionSource(JCoTable table) {
-		StringBuffer source = readSourceLines(table);
-		ConditionSourceElements elements = ((org.vclipse.vcml.services.ConditionGrammarAccess)grammarAccess).getConditionSourceAccess();
-    	IParseResult result = parser.parse(elements.getRule(), new StringReader(source.toString()));
-    	Iterator<INode> iterator = result.getSyntaxErrors().iterator();
-    	if(iterator.hasNext()) {
-    		printParseErrors(iterator, source);
-    		return null;
-    	} else {
-    		return (ConditionSource)result.getRootASTElement();
-    	}
-	}
-	
-	protected ConstraintSource readConstraintSource(JCoTable table) {
-		StringBuffer source = readSourceLines(table);
-		ConstraintSourceElements elements = ((org.vclipse.vcml.services.ConstraintGrammarAccess)grammarAccess).getConstraintSourceAccess();
-    	IParseResult result = parser.parse(elements.getRule(), new StringReader(source.toString()));
-    	Iterator<INode> it = result.getSyntaxErrors().iterator();
-    	if(it.hasNext()) {
-    		printParseErrors(it, source);
-			return null;
-    	} else {
-    		return (ConstraintSource)result.getRootASTElement();
-    	}
-	}
-
 	private StringBuffer readSourceLines(JCoTable table) {
 		StringBuffer source = new StringBuffer();
 		if (table.getNumRows() > 0) {
 			for (int i = 0; i < table.getNumRows(); i++) {
 				table.setRow(i);
-				source.append("\n"); // must start with newline since SAP comments start with newline!
+				source.append("\n"); // must start with newline since SAP comments start with newline! // FIXME this has to be fixed
 				source.append(table.getString("LINE"));
 			}
 		}
 		return source;
-	}
-	
-	private void printParseErrors(Iterator<INode> parseErrors, StringBuffer source) {
-		while(parseErrors.hasNext()) {
-			INode node = parseErrors.next();
-			err.println("// syntax error: " + node.getText() + " in line " + node.getStartLine());
-		}
-		err.println("/*");
-		err.println(source);
-		err.println("*/");
 	}
 	
 	public boolean isConnected() {

@@ -91,6 +91,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.io.Files;
+import com.google.common.io.LineProcessor;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
@@ -869,19 +870,22 @@ public class VCML2IDocSwitch extends VcmlSwitch<List<IDoc>> {
 	 */
 	private void addSegmentsForSource(final Segment parentSegment, final Dependency dependency) {
 		File file = sourceUtils.getFile(dependency);
-		if(file == null) {
-			return;
-		} else {
+		if(file != null) {
 			try {
-				List<String> lines = Files.readLines(file, Charset.forName("UTF-8"));
-				for(final String line : lines) {
-					final Segment segmentE1CUKNM = addChildSegment(parentSegment, "E1CUKNM");
-					setValue(segmentE1CUKNM, "MSGFN", "004");
-					setValue(segmentE1CUKNM, "LINE", line);
-				}
+				Files.readLines(file, Charset.forName("UTF-8"), new LineProcessor<Void>() {
+					@Override
+					public boolean processLine(String line) throws IOException {
+						final Segment segmentE1CUKNM = addChildSegment(parentSegment, "E1CUKNM");
+						setValue(segmentE1CUKNM, "MSGFN", "004");
+						setValue(segmentE1CUKNM, "LINE", line);
+						return true;
+					}
+					@Override
+					public Void getResult() {
+						return null;
+					}});
 			} catch (IOException e) {
 				e.printStackTrace();
-				return;
 			}
 		}
 	}

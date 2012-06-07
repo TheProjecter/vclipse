@@ -57,7 +57,7 @@ public class PreconditionReader extends BAPIUtils {
 			JCoParameterList tpl = function.getTableParameterList();
 			object.setDescription(readDescription(tpl.getTable("DESCRIPTION"), "LANGUAGE_ISO", "LANGUAGE", "DESCRIPT"));
 			object.setDocumentation(readMultiLanguageDocumentations(tpl.getTable("DOCUMENTATION")));
-			object.setSource(readConditionSource(tpl.getTable("SOURCE")));
+			readSource(tpl.getTable("SOURCE"), object);
 		} catch (AbapException e) {
 			handleAbapException(e);
 		}

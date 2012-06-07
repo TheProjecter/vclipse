@@ -43,7 +43,7 @@ public class SelectionConditionCreateChangeActionHandler extends BAPIUtils imple
 		JCoParameterList tpl = function.getTableParameterList();
 		writeDescription(tpl.getTable("DESCRIPTION"), object.getDescription());
 		writeDocumentation(tpl.getTable("DOCUMENTATION"), object.getDocumentation());
-		writeSourceCode(tpl.getTable("SOURCE"), object);
+		readSource(tpl.getTable("SOURCE"), object);
 		try {
 			execute(function, monitor, object.getName());
 			endTransaction();
