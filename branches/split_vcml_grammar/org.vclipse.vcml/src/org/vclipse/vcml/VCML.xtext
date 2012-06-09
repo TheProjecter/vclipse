@@ -253,7 +253,7 @@ InterfaceDesign :
 
 CharacteristicGroup :
 	'characteristicgroup' name=EXTENDED_ID '{'
-		description=Description
+		description=Description?
 		(characteristics+=[Characteristic | XID])*
 	'}'
 	;    
