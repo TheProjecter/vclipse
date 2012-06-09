@@ -10,10 +10,12 @@
  ******************************************************************************/
 package org.vclipse.vcml.ui.actions;
 
-import java.io.File;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.PrintStream;
-import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
@@ -22,15 +24,12 @@ import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.xtext.IGrammarAccess;
 import org.eclipse.xtext.util.Strings;
 import org.vclipse.connection.IConnectionHandler;
 import org.vclipse.connection.VClipseConnectionPlugin;
 import org.vclipse.console.CMConsolePlugin;
 import org.vclipse.console.CMConsolePlugin.Kind;
 import org.vclipse.vcml.VCMLRuntimeModule;
-import org.vclipse.vcml.formatting.VCMLPrettyPrinter;
-import org.vclipse.vcml.parser.antlr.VCMLParser;
 import org.vclipse.vcml.resource.DependencySourceUtils;
 import org.vclipse.vcml.ui.VCMLUiPlugin;
 import org.vclipse.vcml.ui.outline.actions.OutlineActionCanceledException;
@@ -52,8 +51,6 @@ import org.vclipse.vcml.vcml.VcmlFactory;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import com.google.common.io.Files;
-import com.google.common.io.LineProcessor;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.sap.conn.jco.AbapException;
@@ -78,15 +75,7 @@ public class BAPIUtils {
 	 */
 	protected static final VcmlFactory VCML = VcmlFactory.eINSTANCE;
 
-
-	private VCMLParser parser;
-	
-
-	private IGrammarAccess grammarAccess;
-
 	private JCoFunction currentFunction;
-
-	private VCMLPrettyPrinter prettyPrinter;
 
 	private IPreferenceStore preferenceStore;
 	
@@ -106,12 +95,9 @@ public class BAPIUtils {
 	
 		// injection TODO injection should be simplified
 		Injector injector = Guice.createInjector(new VCMLRuntimeModule());
-		parser = injector.getInstance(VCMLParser.class);
-		grammarAccess = injector.getInstance(IGrammarAccess.class);
-		preferenceStore = VCMLUiPlugin.getDefault().getInjector().getInstance(IPreferenceStore.class);
-		prettyPrinter = new VCMLPrettyPrinter();
-		connectionHandler = VClipseConnectionPlugin.getDefault().getInjector().getInstance(IConnectionHandler.class);
 		sourceUtils = injector.getInstance(DependencySourceUtils.class);
+		preferenceStore = VCMLUiPlugin.getDefault().getInjector().getInstance(IPreferenceStore.class);
+		connectionHandler = VClipseConnectionPlugin.getDefault().getInjector().getInstance(IConnectionHandler.class);
 	}
 	
 	
@@ -392,42 +378,32 @@ public class BAPIUtils {
 	}
 
 	protected void writeSource(final JCoTable table, Dependency dependency) {
-		File file = sourceUtils.getFile(dependency);
-		if (file!=null) {
-			try {
-				Files.readLines(file, Charset.forName("UTF-8"), new LineProcessor<Void>() {
-					int lineNo = 1;
-					@Override
-					public boolean processLine(String line) throws IOException {
-						table.appendRow();
-						table.setValue("LINE_NO", lineNo++);
-						table.setValue("LINE", line);
-						table.nextRow();
-						return true;
-					}
-					@Override
-					public Void getResult() {
-						return null;
-					}});
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		try {
+			InputStream is = sourceUtils.getInputStream(dependency);;
+			BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+			String line;
+			int lineNo = 1;
+			while ((line = br.readLine()) != null) {
+				table.appendRow();
+				table.setValue("LINE_NO", lineNo++);
+				table.setValue("LINE", line);
+				table.nextRow();
 			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	
 	protected void readSource(JCoTable table, Dependency dependency) {
 		StringBuffer source = readSourceLines(table);
-		File file = sourceUtils.getFile(dependency);
-		if (file!=null) {
-			try {
-				Files.createParentDirs(file);
-				file.createNewFile();
-				Files.write(source, file, Charset.forName("UTF-8"));
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		try {
+			OutputStream os = sourceUtils.getOutputStream(dependency);
+			os.write(source.toString().getBytes("UTF-8"));
+			os.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	
@@ -436,8 +412,8 @@ public class BAPIUtils {
 		if (table.getNumRows() > 0) {
 			for (int i = 0; i < table.getNumRows(); i++) {
 				table.setRow(i);
-				source.append("\n"); // must start with newline since SAP comments start with newline! // FIXME this has to be fixed
 				source.append(table.getString("LINE"));
+				source.append(System.getProperty("line.separator"));
 			}
 		}
 		return source;

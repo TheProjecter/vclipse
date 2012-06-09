@@ -10,8 +10,11 @@
  *******************************************************************************/
 package org.vclipse.vcml2idoc.builder;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.text.ParseException;
@@ -869,24 +872,18 @@ public class VCML2IDocSwitch extends VcmlSwitch<List<IDoc>> {
 	 * @param source
 	 */
 	private void addSegmentsForSource(final Segment parentSegment, final Dependency dependency) {
-		File file = sourceUtils.getFile(dependency);
-		if(file != null) {
-			try {
-				Files.readLines(file, Charset.forName("UTF-8"), new LineProcessor<Void>() {
-					@Override
-					public boolean processLine(String line) throws IOException {
-						final Segment segmentE1CUKNM = addChildSegment(parentSegment, "E1CUKNM");
-						setValue(segmentE1CUKNM, "MSGFN", "004");
-						setValue(segmentE1CUKNM, "LINE", line);
-						return true;
-					}
-					@Override
-					public Void getResult() {
-						return null;
-					}});
-			} catch (IOException e) {
-				e.printStackTrace();
+		try {
+			InputStream is = sourceUtils.getInputStream(dependency);;
+			BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+			String line;
+			while ((line = br.readLine()) != null) {
+				final Segment segmentE1CUKNM = addChildSegment(parentSegment, "E1CUKNM");
+				setValue(segmentE1CUKNM, "MSGFN", "004");
+				setValue(segmentE1CUKNM, "LINE", line);
 			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 

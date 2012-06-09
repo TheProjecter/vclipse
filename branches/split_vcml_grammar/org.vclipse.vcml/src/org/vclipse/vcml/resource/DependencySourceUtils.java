@@ -1,12 +1,18 @@
 package org.vclipse.vcml.resource;
 
-import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.common.util.WrappedException;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.xtext.util.SimpleAttributeResolver;
+import org.eclipse.emf.ecore.resource.URIConverter;
+import org.eclipse.xtext.EcoreUtil2;
 import org.vclipse.vcml.vcml.ConditionSource;
 import org.vclipse.vcml.vcml.Constraint;
 import org.vclipse.vcml.vcml.ConstraintSource;
@@ -18,46 +24,17 @@ import org.vclipse.vcml.vcml.SelectionCondition;
 
 public class DependencySourceUtils {
 	
+	public static final String EXTENSION_CONSTRAINT = "cons";
+	public static final String EXTENSION_PRECONDITION = "pre";
+	public static final String EXTENSION_PROCEDURE = "proc";
+	public static final String EXTENSION_SELECTIONCONDITION = "sel";
+	public static final String EXTENSION_VCML = "vcml";
+
+	public static final String SUFFIX_SOURCEFOLDER = "-dep";
+
 	public EObject getSource(Dependency object) {
-		if (object == null) {
-			return null;
-		} else if (object instanceof Procedure) {
-			return getSource((Procedure)object);
-		} else if (object instanceof Constraint) {
-			return getSource((Constraint)object);
-		} else if (object instanceof Precondition) {
-			return getSource((Precondition)object);
-		} else if (object instanceof SelectionCondition) {
-			return getSource((SelectionCondition)object);
-		} else {
-			throw new IllegalArgumentException("unknown dependency " + object);
-		}
-	}
-	
-	public ProcedureSource getSource(Procedure object) {
-		return (ProcedureSource)getSource(object, ".proc");
-	}
-	
-	public ConstraintSource getSource(Constraint object) {
-		return (ConstraintSource)getSource(object, ".cons");
-	}
-	
-	public ConditionSource getSource(Precondition object) {
-		return (ConditionSource)getSource(object, ".pre");
-	}
-	
-	public ConditionSource getSource(SelectionCondition object) {
-		return (ConditionSource)getSource(object, ".sel");
-	}
-	
-	private EObject getSource(Dependency object, String suffix) {
-		String name = SimpleAttributeResolver.NAME_RESOLVER.apply(object);
 		Resource resource = object.eResource();
-		URI uri = resource.getURI();
-		String lastSegment = uri.lastSegment();
-		String path = lastSegment.replace(".vcml", "").replace(".cml2", "_cml2").concat("/" + name.toLowerCase()).concat(suffix);
-		path = uri.toString().replace(lastSegment, path);
-		EList<EObject> contents = resource.getResourceSet().getResource(URI.createURI(path), true).getContents();
+		EList<EObject> contents = resource.getResourceSet().getResource(getSourceURI(object), true).getContents();
 		if(!contents.isEmpty()) {
 			return contents.get(0);
 		}
@@ -65,48 +42,83 @@ public class DependencySourceUtils {
 		
 	}
 	
-	public File getFile(Dependency object) {
-		if (object == null) {
-			return null;
-		} else if (object instanceof Procedure) {
-			return getFile((Procedure)object);
+	public ProcedureSource getProcedureSource(Procedure object) {
+		return (ProcedureSource)getSource(object);
+	}
+	
+	public ConstraintSource getConstraintSource(Constraint object) {
+		return (ConstraintSource)getSource(object);
+	}
+	
+	public ConditionSource getPreconditionSource(Precondition object) {
+		return (ConditionSource)getSource(object);
+	}
+	
+	public ConditionSource getSelectionConditionSource(SelectionCondition object) {
+		return (ConditionSource)getSource(object);
+	}
+	
+	public InputStream getInputStream(Dependency object) throws IOException {
+		URIConverter uriConverter = URIConverter.INSTANCE;
+		return uriConverter.createInputStream(getSourceURI(object));
+	}
+	
+	public OutputStream getOutputStream(Dependency object) throws IOException {
+		URIConverter uriConverter = URIConverter.INSTANCE;
+		return uriConverter.createOutputStream(getSourceURI(object));
+	}
+	
+	public String getFilename(Dependency object) {
+		if (object instanceof Procedure) {
+			return getFilename((Procedure)object);
 		} else if (object instanceof Constraint) {
-			return getFile((Constraint)object);
+			return getFilename((Constraint)object);
 		} else if (object instanceof Precondition) {
-			return getFile((Precondition)object);
+			return getFilename((Precondition)object);
 		} else if (object instanceof SelectionCondition) {
-			return getFile((SelectionCondition)object);
+			return getFilename((SelectionCondition)object);
 		} else {
 			throw new IllegalArgumentException("unknown dependency " + object);
 		}
 	}
 	
-	public File getFile(Procedure object) {
-		return getFile(object, ".proc");
+	private String getFilename(Constraint object) {
+		return encode(object.getName()) + "." + EXTENSION_CONSTRAINT;
 	}
-	
-	public File getFile(Constraint object) {
-		return getFile(object, ".cons");
+
+	private String getFilename(Precondition object) {
+		return encode(object.getName()) + "." + EXTENSION_PRECONDITION;
 	}
-	
-	public File getFile(Precondition object) {
-		return getFile(object, ".pre");
+
+	private String getFilename(Procedure object) {
+		return encode(object.getName()) + "." + EXTENSION_PROCEDURE;
 	}
-	
-	public File getFile(SelectionCondition object) {
-		return getFile(object, ".sel");
+
+	private String getFilename(SelectionCondition object) {
+		return encode(object.getName()) + "." + EXTENSION_SELECTIONCONDITION;
 	}
-	
-	private File getFile(Dependency object, String suffix) {
-		String name = SimpleAttributeResolver.NAME_RESOLVER.apply(object);
-		Resource resource = object.eResource();
-		URI uri = resource.getURI();
-		if (uri.isFile()) {
-			String lastSegment = uri.lastSegment();
-			String path = lastSegment.replace(".vcml", "").replace(".cml2", "_cml2").concat("/" + name).concat(suffix);
-			path = uri.toFileString().replace(lastSegment, path);
-			return new File(path);
+
+	private String encode(String s) {
+		try {
+			// Hack: we need to encode the encoded URL again. Otherwise, a new folder A would be created for a dependency with name A/B.
+			return URLEncoder.encode(URLEncoder.encode(s, "UTF-8"), "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			throw new WrappedException(e);
 		}
-		return null;
 	}
+	
+	public URI getSourceURI(Dependency object) {
+		URI baseUri = EcoreUtil2.getNormalizedResourceURI(object).trimFileExtension();
+		return baseUri.trimSegments(1).appendSegment(baseUri.lastSegment() + SUFFIX_SOURCEFOLDER).appendSegment(getFilename(object));
+	}
+	
+	public URI getVcmlResourceURI(URI dependencySourceUri) {
+		URI folderURI = dependencySourceUri.trimSegments(1);
+		String folderName = folderURI.lastSegment();
+		if (folderName.endsWith(SUFFIX_SOURCEFOLDER)) {
+			return folderURI.trimSegments(1).appendSegment(folderName.substring(0,folderName.length() - SUFFIX_SOURCEFOLDER.length())).appendFileExtension(EXTENSION_VCML);
+		}
+		return URI.createURI(folderName); // TODO currently not clear what to do in this situation
+	}
+	
 }

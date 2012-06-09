@@ -14,10 +14,10 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.vclipse.vcml.vcml.Model;
-import org.vclipse.vcml.vcml.Precondition;
 import org.vclipse.vcml.ui.actions.BAPIUtils;
 import org.vclipse.vcml.utils.VcmlUtils;
+import org.vclipse.vcml.vcml.Model;
+import org.vclipse.vcml.vcml.Precondition;
 
 import com.sap.conn.jco.AbapException;
 import com.sap.conn.jco.JCoException;

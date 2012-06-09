@@ -11,9 +11,9 @@ var grammarURI.condition = "classpath:/org/vclipse/vcml/Condition.xtext"
 var grammarURI.constraint = "classpath:/org/vclipse/vcml/Constraint.xtext"
 var file.extensions.vcml = "vcml"
 var file.extensions.dependency = "vcmlbase" // should not be used
-var file.extensions.procedure = "proc"
+var file.extensions.procedure = "proc,sapprocedure"
 var file.extensions.condition = "pre,sel"
-var file.extensions.constraint = "cons"
+var file.extensions.constraint = "cons,sapconstraint"
 var projectName = "org.vclipse.vcml"
 var runtimeProject = "../${projectName}"
 
