@@ -12,7 +12,7 @@ import com.google.inject.Inject;
  * 
  * see http://www.eclipse.org/Xtext/documentation/latest/xtext.html#labelProvider
  */
-public class ConditionLabelProvider extends VCMLLabelProvider {
+public class ConditionLabelProvider extends DependencyLabelProvider {
 
 	@Inject
 	public ConditionLabelProvider(AdapterFactoryLabelProvider delegate) {

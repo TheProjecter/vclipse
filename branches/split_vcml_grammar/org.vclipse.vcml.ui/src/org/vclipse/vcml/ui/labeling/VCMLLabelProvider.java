@@ -78,30 +78,13 @@ import com.google.inject.Inject;
  * 
  * see http://www.eclipse.org/Xtext/documentation/latest/xtext.html#labelProvider
  */
-public class VCMLLabelProvider extends DefaultEObjectLabelProvider {
+public class VCMLLabelProvider extends AbstractVClipseLabelProvider {
 
 	@Inject
 	public VCMLLabelProvider(AdapterFactoryLabelProvider delegate) {
 		super(delegate);
 	}
 
-	protected StyledString createStyledString(String name, Description description) {
-		if (description==null) {
-			return new StyledString(name, StyledString.QUALIFIER_STYLER); // assumption: object has no body
-		}
-		final StyledString result = new StyledString(name); 
-		new DescriptionHandler() {
-			private Language defaultLanguage = VcmlUtils.getDefaultLanguage(); 
-			@Override
-			public void handleSingleDescription(Language language, String value) {
-				if (defaultLanguage.equals(language)) {
-					result.append(new StyledString(" " + value, StyledString.DECORATIONS_STYLER)); 
-				}
-			}
-		}.handleDescription(description);
-		return result;
-	}
-	
 	public String image(BillOfMaterial element) {
 		return "b_slis.gif";
 	}
@@ -110,10 +93,6 @@ public class VCMLLabelProvider extends DefaultEObjectLabelProvider {
 		return "b_slip.gif";
 	}
 	
-	public String image(Characteristic element) {
-		return "s_chaa.gif";
-	}
-
 	public String image(CharacteristicGroup element) {
 		return "b_aboa.gif";
 	}
@@ -126,10 +105,6 @@ public class VCMLLabelProvider extends DefaultEObjectLabelProvider {
 		return "b_kons.gif";
 	}
 	
-	public String image(Class element) {
-		return "b_clas.gif";
-	}
-
 	public String image(ConfigurationProfile element) {
 		return "b_conf.gif";
 	}
@@ -215,20 +190,12 @@ public class VCMLLabelProvider extends DefaultEObjectLabelProvider {
 		}
 	}
 	
-	public String text(Assignment element) {
-		return text(element.getCharacteristic()) + " = ...";
-	}
-	
 	public String text(BillOfMaterial element) {
 		return "BOM";
 	}
 	
 	public StyledString text(BOMItem element) {
 		return new StyledString(element.getItemnumber() + " ", StyledString.COUNTER_STYLER).append(getStyledText(element.getMaterial()));
-	}
-	
-	public StyledString text(Characteristic element) {
-		return createStyledString(element.getName(), element.getDescription());
 	}
 	
 	public StyledString text(CharacteristicGroup element) {
@@ -239,42 +206,12 @@ public class VCMLLabelProvider extends DefaultEObjectLabelProvider {
 		return "dependencies";
 	}
 	
-	public String text(CharacteristicReference_P element) {
-		ProcedureLocation location = element.getLocation();
-		return (location!=null ? location.getLiteral() + "." : "") + text(element.getCharacteristic());
-	}
-	
-	public StyledString text(Class element) {
-		return createStyledString(element.getName(), element.getDescription());
-	}
-	
-	public String text(CompoundStatement element) {
-		return "(..., ...)";
-	}
-	
-	public String text(ConditionalStatement element) {
-		return "... if ...";
-	}
-	
-	public String text(ConditionSource element) {
-		return "source";
-	}
-	
 	public StyledString text(ConfigurationProfileEntry element) {
 		return new StyledString(element.getSequence() + " ", StyledString.COUNTER_STYLER).append(getStyledText(element.getDependency()));
 	}
 	
 	public StyledString text(Constraint element) {
 		return createStyledString(element.getName(), element.getDescription());
-	}
-	
-//	public String text(ConstraintSource element) {
-//		
-//		return "source";
-//	}
-	
-	public String text(DelDefault element) {
-		return "$del_default " + text(element.getCharacteristic());
 	}
 	
 	public StyledString text(DependencyNet element) {
@@ -284,30 +221,6 @@ public class VCMLLabelProvider extends DefaultEObjectLabelProvider {
 	public String text(FormattedDocumentationBlock element) {
 		String format = element.getFormat();
 		return (format==null ? "" : (format + " ")) + element.getValue();
-	}
-	
-	public String text(Function element) {
-		return text(element.getFunction()) + " (...)";
-	}
-
-	public String text(IsInvisible element) {
-		return text(element.getCharacteristic()) + "is invisible ";
-	}
-	
-	public String text(IsSpecified_C element) {
-		return text(element.getCharacteristic()) + "is specified";
-	}
-	
-	public String text(IsSpecified_P element) {
-		return text(element.getCharacteristic()) + "is specified";
-	}
-	
-	public String text(LocalPrecondition element) {
-		return "local precondition";
-	}
-	
-	public String text(LocalSelectionCondition element) {
-		return "local selection condition";
 	}
 	
 	public StyledString text(Material element) {
@@ -385,16 +298,8 @@ public class VCMLLabelProvider extends DefaultEObjectLabelProvider {
 		return createStyledString(element.getName(), element.getDescription());
 	}
 
-	public String text(ProcedureSource element) {
-		return "source";
-	}
-	
 	public StyledString text(SelectionCondition element) {
 		return createStyledString(element.getName(), element.getDescription());
-	}
-
-	public String text(SetDefault element) {
-		return text(element.getCharacteristic()) + " ?= ...";
 	}
 
 	public String text(SymbolicType element) {
@@ -405,10 +310,6 @@ public class VCMLLabelProvider extends DefaultEObjectLabelProvider {
 		return "DATE";
 	}
 
-	public String text(Table element) {
-		return text(element.getTable()) + " (...)";
-	}
-	
 	public StyledString text(VariantFunction element) {
 		return createStyledString(element.getName(), element.getDescription());
 	}
@@ -417,19 +318,4 @@ public class VCMLLabelProvider extends DefaultEObjectLabelProvider {
 		return createStyledString(element.getName(), element.getDescription());
 	}
 	
-	public String text(ConstraintClass constraintClass) {
-		return constraintClass.getName() + " is_a " + constraintClass.getClass_().getName();
-	}	
-	
-	public String text(ConstraintMaterial constraintMaterial) {
-		return constraintMaterial.getName() + " is_a " + constraintMaterial.getObjectType().getType();
-	}
-	
-	public String text(ObjectCharacteristicReference reference) {
-		return reference.getLocation().getName() + "." + reference.getCharacteristic().getName();
-	}
-	
-	public String text(ShortVarReference reference) {
-		return reference.getRef().getName();
-	}
 }

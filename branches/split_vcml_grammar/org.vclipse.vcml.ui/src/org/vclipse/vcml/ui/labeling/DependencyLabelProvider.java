@@ -4,6 +4,9 @@
 package org.vclipse.vcml.ui.labeling;
 
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
+import org.vclipse.vcml.vcml.Function;
+import org.vclipse.vcml.vcml.IsInvisible;
+import org.vclipse.vcml.vcml.Table;
 
 import com.google.inject.Inject;
 
@@ -12,10 +15,23 @@ import com.google.inject.Inject;
  * 
  * see http://www.eclipse.org/Xtext/documentation/latest/xtext.html#labelProvider
  */
-public class DependencyLabelProvider extends VCMLLabelProvider {
+public abstract class DependencyLabelProvider extends AbstractVClipseLabelProvider {
 
 	@Inject
 	public DependencyLabelProvider(AdapterFactoryLabelProvider delegate) {
 		super(delegate);
 	}
+
+	public String text(IsInvisible element) {
+		return text(element.getCharacteristic()) + "is invisible ";
+	}
+	
+	public String text(Function element) {
+		return text(element.getFunction()) + " (...)";
+	}
+
+	public String text(Table element) {
+		return text(element.getTable()) + " (...)";
+	}
+	
 }
