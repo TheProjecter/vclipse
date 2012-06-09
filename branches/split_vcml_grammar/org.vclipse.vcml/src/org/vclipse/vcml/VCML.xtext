@@ -489,8 +489,9 @@ SymbolicLiteral :
 	;
 
 // TODO implement size restrictions for a number: e.g., the exponent's maximum value is 99
+// TODO use value converter
 NUMBER hidden ()
-	:	('-'|'+')? INT ('.' INT)? ('e' ('-'|'+') INT)? // sign of exponent is mandatory in SAP
+	:	('-'|'+')? INT ('.' INT)? ('e' ('-'|'+') INT)?
 	;
 
 NumberListEntryForValues returns NumberListEntry :

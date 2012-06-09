@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.vclipse.vcml.ui.actions.characteristic;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
@@ -88,12 +89,12 @@ public class CharacteristicReader extends BAPIUtils {
 						// FIXME: the following decision is not correct. There is a flag. 
 						if (from.equals(to)) {
 							NumericLiteral literal = VCML.createNumericLiteral();
-							literal.setValue(from);
+							literal.setValue(new BigDecimal(from).toPlainString());
 							value.setEntry(literal);
 						} else {
 							NumericInterval interval = VCML.createNumericInterval();
-							interval.setLowerBound(from);
-							interval.setUpperBound(to);
+							interval.setLowerBound(new BigDecimal(from).toPlainString());
+							interval.setUpperBound(new BigDecimal(to).toPlainString());
 							value.setEntry(interval);
 							
 						}
