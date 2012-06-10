@@ -12,6 +12,7 @@ package org.vclipse.idoc.formatting;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
+import org.vclipse.base.VClipseStrings;
 import org.vclipse.idoc.iDoc.Field;
 import org.vclipse.idoc.iDoc.IDoc;
 import org.vclipse.idoc.iDoc.Import;
@@ -116,6 +117,6 @@ public class IDocPrettyPrinter extends IDocSwitch<DataLayouter<NoExceptions>> {
 	}
 
 	private String quote(final String string) {
-		return "\"" + string + "\"";
+		return '"' + VClipseStrings.convertToJavaString(string) + '"';
 	}
 }
