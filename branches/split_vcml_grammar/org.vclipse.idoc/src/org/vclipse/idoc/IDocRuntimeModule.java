@@ -32,6 +32,7 @@ public class IDocRuntimeModule extends AbstractIDocRuntimeModule {
 		return IDocValueConverter.class;
 	}
 
+	// use own serializer since this is much more performant
 	@Override
 	public Class<? extends ISerializer> bindISerializer() {
 		return IDocSerializer.class;
@@ -45,9 +46,4 @@ public class IDocRuntimeModule extends AbstractIDocRuntimeModule {
 		return IDocFactory.eINSTANCE;
 	}
 	
-	// FIXME workaround for a bug in Xtext 2.1 (https://bugs.eclipse.org/bugs/show_bug.cgi?id=362655)
-	// contributed by org.eclipse.xtext.generator.exporting.SimpleNamesFragment
-	public Class<? extends org.eclipse.xtext.naming.IQualifiedNameProvider> bindIQualifiedNameProvider() {
-		return org.eclipse.xtext.naming.SimpleNameProvider.class;
-	}
 }
