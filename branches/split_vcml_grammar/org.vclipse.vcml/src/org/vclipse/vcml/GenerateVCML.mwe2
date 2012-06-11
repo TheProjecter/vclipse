@@ -38,6 +38,7 @@ Workflow {
 		projectNameRt = projectName
 		projectNameUi = "${projectName}.ui"
 		
+		// VCML
 		language = {
 			uri = grammarURI.vcml
 			fileExtensions = file.extensions.vcml
@@ -56,6 +57,9 @@ Workflow {
 			// The antlr parser generator fragment.
 			fragment = parser.antlr.ex.rt.AntlrGeneratorFragment {
               antlrParam = "-Xconversiontimeout" antlrParam = "10000"
+			}
+			
+			fragment = parser.antlr.DebugAntlrGeneratorFragment {
 			}
 
 			// java-based API for validation 
@@ -120,7 +124,7 @@ Workflow {
 			// provides a preference page for template proposals 
 			fragment = templates.CodetemplatesGeneratorFragment {}
 		}
-		
+		// dependency
 		language = {
 			uri = grammarURI.dependency
 			fileExtensions = file.extensions.dependency
@@ -146,6 +150,9 @@ Workflow {
 				}
 			}
 
+			fragment = parser.antlr.DebugAntlrGeneratorFragment {
+			}
+
 			// java-based API for validation 
 			fragment = validation.JavaValidatorFragment {
 				composedCheck = "org.eclipse.xtext.validation.NamesAreUniqueValidator"
@@ -203,7 +210,7 @@ Workflow {
 			// provides a preference page for template proposals 
 			fragment = templates.CodetemplatesGeneratorFragment {}
 		}
-		
+		// procedure		
 		language = {
 			uri = grammarURI.procedure
 			fileExtensions = file.extensions.procedure
@@ -227,6 +234,9 @@ Workflow {
 					memoize = true
 					ignoreCase = true
 				}
+			}
+
+			fragment = parser.antlr.DebugAntlrGeneratorFragment {
 			}
 
 			// java-based API for validation 
@@ -286,7 +296,7 @@ Workflow {
 			// provides a preference page for template proposals 
 			fragment = templates.CodetemplatesGeneratorFragment {}
 		}
-		
+		// condition
 		language = {
 			uri = grammarURI.condition
 			fileExtensions = file.extensions.condition
@@ -310,6 +320,9 @@ Workflow {
 					memoize = true
 					ignoreCase = true
 				}
+			}
+
+			fragment = parser.antlr.DebugAntlrGeneratorFragment {
 			}
 
 			// java-based API for validation 
@@ -370,7 +383,7 @@ Workflow {
 			// provides a preference page for template proposals 
 			fragment = templates.CodetemplatesGeneratorFragment {}
 		}
-		
+		// constraint
 		language = {
 			uri = grammarURI.constraint
 			fileExtensions = file.extensions.constraint
@@ -394,6 +407,9 @@ Workflow {
 					memoize = true
 					ignoreCase = true
 				}
+			}
+
+			fragment = parser.antlr.DebugAntlrGeneratorFragment {
 			}
 
 			// java-based API for validation 
