@@ -5,8 +5,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.List;
 
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.common.util.WrappedException;
 import org.eclipse.emf.ecore.EObject;
@@ -22,6 +22,7 @@ import org.vclipse.vcml.vcml.Procedure;
 import org.vclipse.vcml.vcml.ProcedureSource;
 import org.vclipse.vcml.vcml.SelectionCondition;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class DependencySourceUtils {
@@ -37,7 +38,13 @@ public class DependencySourceUtils {
 	public EObject getSource(Dependency object) {
 		Resource resource = object.eResource();
 		URI sourceURI = getSourceURI(object);
-		EList<EObject> contents = resource.getResourceSet().getResource(sourceURI, true).getContents();
+		List<EObject> contents = Lists.newArrayList();
+		try {
+			contents = resource.getResourceSet().getResource(sourceURI, true).getContents();
+		} catch(Exception exception) {
+			// resource does not exists
+			return null;
+		}
 		if(!contents.isEmpty()) {
 			return contents.get(0);
 		}
