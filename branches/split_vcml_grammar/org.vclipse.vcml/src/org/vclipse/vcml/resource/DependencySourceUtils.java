@@ -22,6 +22,8 @@ import org.vclipse.vcml.vcml.Procedure;
 import org.vclipse.vcml.vcml.ProcedureSource;
 import org.vclipse.vcml.vcml.SelectionCondition;
 
+import com.google.common.collect.Maps;
+
 public class DependencySourceUtils {
 	
 	public static final String EXTENSION_CONSTRAINT = "cons";
@@ -34,7 +36,8 @@ public class DependencySourceUtils {
 
 	public EObject getSource(Dependency object) {
 		Resource resource = object.eResource();
-		EList<EObject> contents = resource.getResourceSet().getResource(getSourceURI(object), true).getContents();
+		URI sourceURI = getSourceURI(object);
+		EList<EObject> contents = resource.getResourceSet().getResource(sourceURI, true).getContents();
 		if(!contents.isEmpty()) {
 			return contents.get(0);
 		}
@@ -108,8 +111,18 @@ public class DependencySourceUtils {
 	}
 	
 	public URI getSourceURI(Dependency object) {
+		URIConverter uriConverter = URIConverter.INSTANCE;
 		URI baseUri = EcoreUtil2.getNormalizedResourceURI(object).trimFileExtension();
-		return baseUri.trimSegments(1).appendSegment(baseUri.lastSegment() + SUFFIX_SOURCEFOLDER).appendSegment(getFilename(object));
+		baseUri = baseUri.trimSegments(1).appendSegment(baseUri.lastSegment() + SUFFIX_SOURCEFOLDER).appendSegment(getFilename(object));
+		if(!uriConverter.exists(baseUri, Maps.newHashMap())) {
+			String fileName = baseUri.trimFileExtension().lastSegment();
+			if(fileName.equals(fileName.toUpperCase())) {
+				return URI.createURI(baseUri.toString().replace(fileName, fileName.toLowerCase()));
+			} else {
+				return URI.createURI(baseUri.toString().replace(fileName, fileName.toUpperCase()));
+			}
+		}
+		return baseUri;
 	}
 	
 	public URI getVcmlResourceURI(URI dependencySourceUri) {
