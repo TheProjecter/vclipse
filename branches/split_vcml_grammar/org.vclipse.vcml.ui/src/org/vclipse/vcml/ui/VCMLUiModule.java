@@ -36,7 +36,6 @@ import org.vclipse.vcml.ui.extension.IExtensionPointUtilities;
 import org.vclipse.vcml.ui.hyperlinks.VcmlHyperlinkHelper;
 import org.vclipse.vcml.ui.outline.VCMLOutlinePage;
 import org.vclipse.vcml.ui.outline.VCMLOutlineTreeProvider;
-import org.vclipse.vcml.ui.refactoring.VcmlRenameRefactoringExecuter;
 import org.vclipse.vcml.ui.syntaxcoloring.VCMLAntlrTokenToAttributeIdMapper;
 import org.vclipse.vcml.ui.templates.VcmlTemplateContextType;
 
@@ -45,7 +44,6 @@ import com.google.inject.Provider;
 /**
  * Use this class to register components to be used within the IDE.
  */
-@SuppressWarnings("restriction")
 public class VCMLUiModule extends org.vclipse.vcml.ui.AbstractVCMLUiModule {
 	
 	public VCMLUiModule(AbstractUIPlugin plugin) {
@@ -103,7 +101,7 @@ public class VCMLUiModule extends org.vclipse.vcml.ui.AbstractVCMLUiModule {
 	 * Refactoring
 	 */
 	public Provider<? extends RenameRefactoringExecuter> provideRenameRefactoringExecuter() {
-		return Access.provider(VcmlRenameRefactoringExecuter.class);
+		return Access.provider(RenameRefactoringExecuter.class);
 	}
 	
 	/**

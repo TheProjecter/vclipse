@@ -23,7 +23,8 @@ Require-Bundle: org.vclipse.base.ui;visibility:=reexport,
  org.eclipse.xtext.generator;bundle-version="2.2.1",
  org.eclipse.ui.editors,
  org.eclipse.ui,
- org.antlr.runtime
+ org.antlr.runtime,
+ org.eclipse.core.expressions
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.vclipse.vcml.ui,
  org.vclipse.vcml.ui.contentassist,

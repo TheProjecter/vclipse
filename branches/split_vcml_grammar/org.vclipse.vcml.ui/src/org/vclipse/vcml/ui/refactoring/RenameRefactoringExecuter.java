@@ -13,7 +13,6 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.ui.editor.XtextEditor;
 import org.eclipse.xtext.ui.refactoring.impl.RenameElementProcessor;
-import org.eclipse.xtext.ui.refactoring.ui.RenameRefactoringExecuter;
 import org.eclipse.xtext.ui.util.ResourceUtil;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 import org.vclipse.base.ui.BaseUiPlugin;
@@ -22,10 +21,9 @@ import org.vclipse.vcml.vcml.Dependency;
 
 import com.google.inject.Inject;
 
-@SuppressWarnings("restriction")
-public class VcmlRenameRefactoringExecuter extends RenameRefactoringExecuter {
+public class RenameRefactoringExecuter extends org.eclipse.xtext.ui.refactoring.ui.RenameRefactoringExecuter {
 
-	private static final Logger logger = Logger.getLogger(VcmlRenameRefactoringExecuter.class);
+	private static final Logger logger = Logger.getLogger(RenameRefactoringExecuter.class);
 	
 	@Inject
 	private DependencySourceUtils sourceUtils;
