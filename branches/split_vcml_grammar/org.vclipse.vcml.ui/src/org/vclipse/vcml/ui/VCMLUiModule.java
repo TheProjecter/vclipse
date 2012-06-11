@@ -27,6 +27,8 @@ import org.eclipse.xtext.ui.editor.hyperlinking.IHyperlinkHelper;
 import org.eclipse.xtext.ui.editor.outline.IOutlineTreeProvider;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.AbstractAntlrTokenToAttributeIdMapper;
 import org.eclipse.xtext.ui.editor.templates.XtextTemplateContextType;
+import org.eclipse.xtext.ui.refactoring.ui.RenameRefactoringExecuter;
+import org.eclipse.xtext.ui.shared.Access;
 import org.vclipse.base.ui.util.ClasspathAwareImageHelper;
 import org.vclipse.vcml.ui.editor.hover.VCMLHoverProvider;
 import org.vclipse.vcml.ui.extension.ExtensionPointUtilities;
@@ -34,12 +36,16 @@ import org.vclipse.vcml.ui.extension.IExtensionPointUtilities;
 import org.vclipse.vcml.ui.hyperlinks.VcmlHyperlinkHelper;
 import org.vclipse.vcml.ui.outline.VCMLOutlinePage;
 import org.vclipse.vcml.ui.outline.VCMLOutlineTreeProvider;
+import org.vclipse.vcml.ui.refactoring.VcmlRenameRefactoringExecuter;
 import org.vclipse.vcml.ui.syntaxcoloring.VCMLAntlrTokenToAttributeIdMapper;
 import org.vclipse.vcml.ui.templates.VcmlTemplateContextType;
+
+import com.google.inject.Provider;
 
 /**
  * Use this class to register components to be used within the IDE.
  */
+@SuppressWarnings("restriction")
 public class VCMLUiModule extends org.vclipse.vcml.ui.AbstractVCMLUiModule {
 	
 	public VCMLUiModule(AbstractUIPlugin plugin) {
@@ -91,6 +97,13 @@ public class VCMLUiModule extends org.vclipse.vcml.ui.AbstractVCMLUiModule {
 	
 	public Class<? extends XtextTemplateContextType> bindXtextTemplateContextType() {
 		return VcmlTemplateContextType.class;
+	}
+	
+	/**
+	 * Refactoring
+	 */
+	public Provider<? extends RenameRefactoringExecuter> provideRenameRefactoringExecuter() {
+		return Access.provider(VcmlRenameRefactoringExecuter.class);
 	}
 	
 	/**
