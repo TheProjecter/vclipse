@@ -32,6 +32,7 @@ public class VcmlRenameRefactoringExecuter extends RenameRefactoringExecuter {
 	
 	@Override
 	public void execute(IEditorPart editor, ProcessorBasedRefactoring refactoring) throws InterruptedException {
+		super.execute(editor, refactoring);
 		RefactoringProcessor processor = refactoring.getProcessor();
 		if(processor instanceof RenameElementProcessor) {
 			RenameElementProcessor rep = (RenameElementProcessor)processor;
@@ -59,7 +60,6 @@ public class VcmlRenameRefactoringExecuter extends RenameRefactoringExecuter {
 							logger.error("Rename refactoring: dependency source utility returned null for " + sourceObjectUri.toString());
 						}
 					} 
-					super.execute(editor, refactoring);
 				}
 			}
 		}
