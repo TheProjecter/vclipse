@@ -1,4 +1,4 @@
-grammar org.vclipse.vcml.Dependency with org.eclipse.xtext.common.Terminals
+grammar org.vclipse.vcml.Dependency hidden(WS, SL_COMMENT)
 
 import "platform:/resource/org.vclipse.vcml.mm/src/org/vclipse/vcml/mm/VCML.ecore"
 import "http://www.eclipse.org/emf/2002/Ecore" as ecore
@@ -192,13 +192,23 @@ terminal ID	// Xtext standard without ^
 	:	('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*
 	;
 
-terminal DEPENDENCY_COMMENT
+terminal SL_COMMENT
 	:	(' '|'\t')* ('\r'? '\n*') !('\n'|'\r')*
 	;
 
 terminal SYMBOL // enclosed in single quotes, no escapes, no line breaks, no tabs
 	:	"'" ( !("'"|'\t'|'\n'|'\r') )* "'"
 	; 
+
+terminal INT returns ecore::EInt: ('0'..'9')+;
+terminal STRING	: 
+			'"' ( '\\' ('b'|'t'|'n'|'f'|'r'|'u'|'"'|"'"|'\\') | !('\\'|'"') )* '"' |
+			"'" ( '\\' ('b'|'t'|'n'|'f'|'r'|'u'|'"'|"'"|'\\') | !('\\'|"'") )* "'"
+		; 
+
+terminal WS			: (' '|'\t'|'\r'|'\n')+;
+
+terminal ANY_OTHER: .;
 
 XID
 	:	ID
@@ -234,3 +244,4 @@ TODO:
  * handle keywords 'INVISIBILITY', 'INV', 'SKEY'
  * handle intervals with "bound operators", e.g., >1 - <5
 */
+

@@ -3,7 +3,7 @@ grammar org.vclipse.vcml.Procedure with org.vclipse.vcml.Dependency
 import "platform:/resource/org.vclipse.vcml.mm/src/org/vclipse/vcml/mm/VCML.ecore"
 import "http://www.eclipse.org/emf/2002/Ecore" as ecore
 
-ProcedureSource hidden (WS, DEPENDENCY_COMMENT):
+ProcedureSource:
 	statements+=Statement (',' statements+=Statement)* '.'?
 	;
 
