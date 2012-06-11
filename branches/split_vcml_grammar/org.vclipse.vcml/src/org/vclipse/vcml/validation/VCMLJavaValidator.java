@@ -15,17 +15,21 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.EcoreUtil2;
+import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.validation.CheckType;
 import org.eclipse.xtext.validation.ComposedChecks;
 import org.eclipse.xtext.validation.ValidationMessageAcceptor;
 import org.vclipse.vcml.documentation.VCMLDescriptionProvider;
+import org.vclipse.vcml.resource.DependencySourceUtils;
 import org.vclipse.vcml.utils.VcmlUtils;
 import org.vclipse.vcml.vcml.Characteristic;
 import org.vclipse.vcml.vcml.CharacteristicType;
 import org.vclipse.vcml.vcml.CharacteristicValue;
 import org.vclipse.vcml.vcml.Class;
+import org.vclipse.vcml.vcml.Dependency;
 import org.vclipse.vcml.vcml.DependencyNet;
 import org.vclipse.vcml.vcml.InterfaceDesign;
 import org.vclipse.vcml.vcml.Literal;
@@ -53,6 +57,12 @@ public class VCMLJavaValidator extends AbstractVCMLJavaValidator {
 
 	@Inject
 	private VCMLDescriptionProvider descriptionProvider;
+	
+	@Inject
+	private DependencySourceUtils dependencySourceUtils;
+	
+	@Inject
+	private IQualifiedNameProvider nameProvider;
 	
 	private static final int MAXLENGTH_CLASS_CHARACTERISTICS = 999; // SAP limit because cstic index in class table has size 3
 	private static final int MAXLENGTH_CLASS_NAME = 18;
@@ -284,4 +294,14 @@ public class VCMLJavaValidator extends AbstractVCMLJavaValidator {
 //			}
 //		}
 //	}
+	
+	@Check
+	public void checkDependencySource(Dependency dependency) {
+		EObject source = dependencySourceUtils.getSource(dependency);
+		if(source == null) {
+			error("Source element for " + dependency.eClass().getName().toLowerCase() + " " + 
+					nameProvider.getFullyQualifiedName(dependency).getLastSegment() + " does not exist", dependency, 
+						VcmlPackage.eINSTANCE.getVCObject_Name(), ValidationMessageAcceptor.INSIGNIFICANT_INDEX);
+		}
+	}
 }
