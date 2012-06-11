@@ -56,11 +56,6 @@ Workflow {
 			// The antlr parser generator fragment.
 			fragment = parser.antlr.ex.rt.AntlrGeneratorFragment {
               antlrParam = "-Xconversiontimeout" antlrParam = "10000"
-			  options = {
-					backtrack = true
-					memoize = true
-					ignoreCase = true
-				}
 			}
 
 			// java-based API for validation 
@@ -74,14 +69,10 @@ Workflow {
 			fragment = scoping.ImportURIScopingFragment {
 				generateStub = true
 				inheritImplementation = true
-				ignoreCase = true
 			}
-			//fragment = exporting.SimpleNamesFragment {}
 
 			// scoping and exporting API 
-			//fragment = scoping.ImportNamespacesScopingFragment {
-			//	ignoreCase = true
-			//}
+			fragment = exporting.SimpleNamesFragment {}
 			fragment = exporting.QualifiedNamesFragment {}
 			fragment = builder.BuilderIntegrationFragment {}
 
@@ -115,26 +106,16 @@ Workflow {
 			// generates a more lightweight Antlr parser and lexer tailored for content assist  
 			fragment = parser.antlr.ex.ca.ContentAssistParserGeneratorFragment {
               antlrParam = "-Xconversiontimeout" antlrParam = "10000"
-			  options = {
-					backtrack = true
-					memoize = true
-					ignoreCase = true
-					classSplitting = true
-				}
 			}
 
 			// generates junit test support classes into Generator#pathTestProject
 			fragment = junit.Junit4Fragment {}
 
 			// project wizard (optional) 
-			// fragment = projectWizard.SimpleProjectWizardFragment {
-			// 		generatorProjectName = "${projectName}.generator" 
-			//		modelFileExtension = file.extensions
-			// }
-			
-			// fragment = types.TypesGeneratorFragment {}
-			// generates the required bindings only if the grammar inherits from Xbase
-			// fragment = xbase.XbaseGeneratorFragment {}
+			 fragment = projectWizard.SimpleProjectWizardFragment {
+			 		generatorProjectName = "${projectName}.generator" 
+					modelFileExtension = file.extensions.vcml
+			 }
 			
 			// provides a preference page for template proposals 
 			fragment = templates.CodetemplatesGeneratorFragment {}
@@ -167,13 +148,9 @@ Workflow {
 
 			// java-based API for validation 
 			fragment = validation.JavaValidatorFragment {
-				composedCheck = "org.eclipse.xtext.validation.ImportUriValidator"
 				composedCheck = "org.eclipse.xtext.validation.NamesAreUniqueValidator"
 				// registerForImportedPackages = true
 			}
-
-			// scoping and exporting API
-			//fragment = exporting.SimpleNamesFragment {}
 
 			// scoping and exporting API 
 			fragment = scoping.ImportNamespacesScopingFragment {
@@ -223,16 +200,6 @@ Workflow {
 			// generates junit test support classes into Generator#pathTestProject
 			fragment = junit.Junit4Fragment {}
 
-			// project wizard (optional) 
-			// fragment = projectWizard.SimpleProjectWizardFragment {
-			// 		generatorProjectName = "${projectName}.generator" 
-			//		modelFileExtension = file.extensions
-			// }
-			
-			// fragment = types.TypesGeneratorFragment {}
-			// generates the required bindings only if the grammar inherits from Xbase
-			// fragment = xbase.XbaseGeneratorFragment {}
-			
 			// provides a preference page for template proposals 
 			fragment = templates.CodetemplatesGeneratorFragment {}
 		}
@@ -264,13 +231,9 @@ Workflow {
 
 			// java-based API for validation 
 			fragment = validation.JavaValidatorFragment {
-				composedCheck = "org.eclipse.xtext.validation.ImportUriValidator"
 				composedCheck = "org.eclipse.xtext.validation.NamesAreUniqueValidator"
 				// registerForImportedPackages = true
 			}
-
-			// scoping and exporting API
-			//fragment = exporting.SimpleNamesFragment {}
 
 			// scoping and exporting API 
 			fragment = scoping.ImportNamespacesScopingFragment {
@@ -320,16 +283,6 @@ Workflow {
 			// generates junit test support classes into Generator#pathTestProject
 			fragment = junit.Junit4Fragment {}
 
-			// project wizard (optional) 
-			// fragment = projectWizard.SimpleProjectWizardFragment {
-			// 		generatorProjectName = "${projectName}.generator" 
-			//		modelFileExtension = file.extensions
-			// }
-			
-			// fragment = types.TypesGeneratorFragment {}
-			// generates the required bindings only if the grammar inherits from Xbase
-			// fragment = xbase.XbaseGeneratorFragment {}
-			
 			// provides a preference page for template proposals 
 			fragment = templates.CodetemplatesGeneratorFragment {}
 		}
@@ -366,9 +319,6 @@ Workflow {
 				// registerForImportedPackages = true
 			}
 
-			// scoping and exporting API
-			//fragment = exporting.SimpleNamesFragment {}
-
 			// scoping and exporting API 
 			fragment = scoping.ImportNamespacesScopingFragment {
 				ignoreCase = true
@@ -417,16 +367,6 @@ Workflow {
 			// generates junit test support classes into Generator#pathTestProject
 			fragment = junit.Junit4Fragment {}
 
-			// project wizard (optional) 
-			// fragment = projectWizard.SimpleProjectWizardFragment {
-			// 		generatorProjectName = "${projectName}.generator" 
-			//		modelFileExtension = file.extensions
-			// }
-			
-			// fragment = types.TypesGeneratorFragment {}
-			// generates the required bindings only if the grammar inherits from Xbase
-			// fragment = xbase.XbaseGeneratorFragment {}
-			
 			// provides a preference page for template proposals 
 			fragment = templates.CodetemplatesGeneratorFragment {}
 		}
@@ -462,9 +402,6 @@ Workflow {
 				composedCheck = "org.eclipse.xtext.validation.NamesAreUniqueValidator"
 				// registerForImportedPackages = true
 			}
-
-			// scoping and exporting API
-			//fragment = exporting.SimpleNamesFragment {}
 
 			// scoping and exporting API 
 			fragment = scoping.ImportNamespacesScopingFragment {
@@ -514,16 +451,6 @@ Workflow {
 			// generates junit test support classes into Generator#pathTestProject
 			fragment = junit.Junit4Fragment {}
 
-			// project wizard (optional) 
-			// fragment = projectWizard.SimpleProjectWizardFragment {
-			// 		generatorProjectName = "${projectName}.generator" 
-			//		modelFileExtension = file.extensions
-			// }
-			
-			// fragment = types.TypesGeneratorFragment {}
-			// generates the required bindings only if the grammar inherits from Xbase
-			// fragment = xbase.XbaseGeneratorFragment {}
-			
 			// provides a preference page for template proposals 
 			fragment = templates.CodetemplatesGeneratorFragment {}
 		}
