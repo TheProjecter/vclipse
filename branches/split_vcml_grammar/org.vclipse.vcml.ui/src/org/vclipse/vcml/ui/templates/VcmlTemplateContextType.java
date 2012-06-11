@@ -20,5 +20,9 @@ public class VcmlTemplateContextType extends XtextTemplateContextType {
 	public void setDomainValuesResolver(DomainValuesVariableResolver resolver) {
 		addResolver(resolver);
 	}
-
+	
+	@Inject
+	public void setDepdencyResolver(DependencyResolver resolver) {
+		addResolver(resolver);
+	}
 }

@@ -1302,7 +1302,7 @@
   <extension
         point="org.eclipse.ltk.core.refactoring.renameParticipants">
      <renameParticipant
-           class="org.vclipse.vcml.ui.VCMLExecutableExtensionFactory:org.vclipse.vcml.ui.refactoring.RenameDependencyParticipant"
+           class="org.vclipse.vcml.ui.VCMLExecutableExtensionFactory:org.vclipse.vcml.ui.refactoring.VcmlRenameDependencyParticipant"
            id="org.vclipse.vcml.ui.renameDependency"
            name="Rename dependency">
         <enablement>

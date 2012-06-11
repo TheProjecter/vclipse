@@ -25,11 +25,12 @@ import org.vclipse.vcml.vcml.VcmlPackage;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
-public class RenameDependencyParticipant extends RenameParticipant {
+public class VcmlRenameDependencyParticipant extends RenameParticipant {
 
-	// private Logger logger = Logger.getLogger(RenameDependencyParticipant.class);
+	// private Logger logger = Logger.getLogger(VcmlRenameDependencyParticipant.class);
 	
 	@Inject
 	private DependencySourceUtils dependencySourceUtils;
@@ -37,16 +38,19 @@ public class RenameDependencyParticipant extends RenameParticipant {
 	@Inject
 	private VClipseResourceUtil resourceUtil;
 	
-	private static String[] extensions = new String[]{"proc", "cons", "pre", "sel"};
-	
 	@Override
 	protected boolean initialize(Object object) {
-		return isDependencyFile(object);
+		return object instanceof IFile && 
+				Sets.newHashSet(DependencySourceUtils.EXTENSION_CONSTRAINT, 
+						DependencySourceUtils.EXTENSION_PRECONDITION, 
+							DependencySourceUtils.EXTENSION_PROCEDURE,
+								DependencySourceUtils.EXTENSION_SELECTIONCONDITION).
+									contains(((IFile)object).getFileExtension());
 	}
 
 	@Override
 	public String getName() {
-		return RenameDependencyParticipant.class.getSimpleName();
+		return VcmlRenameDependencyParticipant.class.getSimpleName();
 	}
 
 	@Override
@@ -87,17 +91,5 @@ public class RenameDependencyParticipant extends RenameParticipant {
 		// no change is required
 		// the default implementation for resource rename operation do it for us
 		return null;
-	}
-	
-	private boolean isDependencyFile(Object object) {
-		if(object instanceof IFile) {
-			String fileExtension = ((IFile)object).getFileExtension();
-			for(String current : extensions) {
-				if(current.equals(fileExtension)) {
-					return true;
-				}
-			}			
-		}
-		return false;
 	}
 }

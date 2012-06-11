@@ -36,6 +36,7 @@ import org.vclipse.vcml.ui.extension.IExtensionPointUtilities;
 import org.vclipse.vcml.ui.hyperlinks.VcmlHyperlinkHelper;
 import org.vclipse.vcml.ui.outline.VCMLOutlinePage;
 import org.vclipse.vcml.ui.outline.VCMLOutlineTreeProvider;
+import org.vclipse.vcml.ui.refactoring.VcmlRenameRefactoringExecuter;
 import org.vclipse.vcml.ui.syntaxcoloring.VCMLAntlrTokenToAttributeIdMapper;
 import org.vclipse.vcml.ui.templates.VcmlTemplateContextType;
 
@@ -101,7 +102,7 @@ public class VCMLUiModule extends org.vclipse.vcml.ui.AbstractVCMLUiModule {
 	 * Refactoring
 	 */
 	public Provider<? extends RenameRefactoringExecuter> provideRenameRefactoringExecuter() {
-		return Access.provider(RenameRefactoringExecuter.class);
+		return Access.provider(VcmlRenameRefactoringExecuter.class);
 	}
 	
 	/**

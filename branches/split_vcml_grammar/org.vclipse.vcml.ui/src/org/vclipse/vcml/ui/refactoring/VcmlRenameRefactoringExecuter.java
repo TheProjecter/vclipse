@@ -21,9 +21,9 @@ import org.vclipse.vcml.vcml.Dependency;
 
 import com.google.inject.Inject;
 
-public class RenameRefactoringExecuter extends org.eclipse.xtext.ui.refactoring.ui.RenameRefactoringExecuter {
+public class VcmlRenameRefactoringExecuter extends org.eclipse.xtext.ui.refactoring.ui.RenameRefactoringExecuter {
 
-	private static final Logger logger = Logger.getLogger(RenameRefactoringExecuter.class);
+	private static final Logger logger = Logger.getLogger(VcmlRenameRefactoringExecuter.class);
 	
 	@Inject
 	private DependencySourceUtils sourceUtils;
