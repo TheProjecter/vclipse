@@ -1,4 +1,4 @@
-package org.vclipse.vcml.resource;
+package org.vclipse.vcml.utils;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -17,7 +17,7 @@ import org.eclipse.xtext.ui.refactoring.ui.RenameRefactoringExecuter;
 import org.eclipse.xtext.ui.util.ResourceUtil;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 import org.vclipse.base.ui.BaseUiPlugin;
-import org.vclipse.vcml.resource.DependencySourceUtils;
+import org.vclipse.vcml.utils.DependencySourceUtils;
 import org.vclipse.vcml.vcml.Dependency;
 
 import com.google.inject.Inject;

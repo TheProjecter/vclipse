@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.xtext.resource.containers.IAllContainersState;
+import org.vclipse.vcml.utils.DependencySourceUtils;
 
 import com.google.inject.Inject;
 
