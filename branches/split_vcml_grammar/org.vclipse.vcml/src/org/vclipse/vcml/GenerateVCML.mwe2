@@ -239,6 +239,13 @@ Workflow {
 			fragment = parser.antlr.DebugAntlrGeneratorFragment {
 			}
 
+			fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
+				lexerGrammar = "org.vclipse.vcml.lexer.ProcedureLexer"
+				runtime = true
+				antlrParam = "-lib"
+				antlrParam = "${runtimeProject}/src/org/vclipse/vcml/lexer"
+			}
+
 			// java-based API for validation 
 			fragment = validation.JavaValidatorFragment {
 				composedCheck = "org.eclipse.xtext.validation.NamesAreUniqueValidator"
@@ -323,6 +330,13 @@ Workflow {
 			}
 
 			fragment = parser.antlr.DebugAntlrGeneratorFragment {
+			}
+
+			fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
+				lexerGrammar = "org.vclipse.vcml.lexer.ConditionLexer"
+				runtime = true
+				antlrParam = "-lib"
+				antlrParam = "${runtimeProject}/src/org/vclipse/vcml/lexer"
 			}
 
 			// java-based API for validation 
@@ -410,6 +424,13 @@ Workflow {
 			}
 
 			fragment = parser.antlr.DebugAntlrGeneratorFragment {
+			}
+
+			fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
+				lexerGrammar = "org.vclipse.vcml.lexer.ConstraintLexer"
+				runtime = true
+				antlrParam = "-lib"
+				antlrParam = "${runtimeProject}/src/org/vclipse/vcml/lexer"
 			}
 
 			// java-based API for validation 
