@@ -22,8 +22,45 @@ def void fileTest() {
 }
 
 @Test
-def void expressionTest() {
-	
+def void expressionTest1() {
+	'''
+		+ (7 * 3) + (2 * 3) 
+	'''.testParserRule("Expression")
+}
+
+@Test
+def void expressionTest2() {
+	'''
+		++- (7 * 3) + (2 * 3) 
+	'''.testParserRule("Expression")
+}
+
+@Test
+def void expressionTest3() {
+	'''
+		++- (7 * 3) * (2 * 3) 
+	'''.testParserRule("Expression")
+}
+
+@Test
+def void expressionTest4() {
+	'''
+		++- (7 + 3) * (2 * 3) 
+	'''.testParserRule("Expression")
+}
+
+@Test
+def void expressionTest5() {
+	'''
+		('a' * 'b') * ('b' * 7) 
+	'''.testParserRule("Expression")
+}
+
+@Test
+def void expressionTest6() {
+	'''
+		(sin (7) * 'b') * (cos('b') * 7) 
+	'''.testParserRule("Expression")
 }
 
 @Test

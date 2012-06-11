@@ -1,18 +1,15 @@
 package org.vclipse.vcml.tests
 
 import org.eclipse.xtext.junit4.InjectWith
-import org.vclipse.vcml.VCMLInjectorProvider
-import org.junit.runner.RunWith
-import com.google.inject.Inject
-import org.eclipse.xtext.junit4.util.ParseHelper
-import org.vclipse.vcml.vcml.Model
+import org.eclipselabs.xtext.utils.unittesting.XtextRunner2
 import org.eclipselabs.xtext.utils.unittesting.XtextTest
 import org.junit.Test
-import org.eclipselabs.xtext.utils.unittesting.XtextRunner2
-import org.junit.Ignore
+import org.junit.runner.RunWith
+import org.vclipse.vcml.VCMLInjectorProvider
+import java.net.URL
 
-@InjectWith(typeof(VCMLInjectorProvider))
 @RunWith(typeof(XtextRunner2))
+@InjectWith(typeof(VCMLInjectorProvider))
 
 class VcmlTest extends XtextTest {
 
@@ -24,9 +21,18 @@ def testParserRule(CharSequence textToParse, String ruleName) {
 
 @Test
 def void fileTest() {
-	setResourceRoot("classpath:/org.vclipse.vcml.tests/resources")
-	//setResourceRoot("file:/resources")
-	testFile("VcmlTest/characteristictest.vcml");
+	//setResourceRoot("classpath:/org.vclipse.vcml.tests/resources")
+	//System.out.println(getClass.classLoader.getResource("/resources").toString)
+	//setResourceRoot(getClass.classLoader.getResource("/resources").toString)
+	setResourceRoot("file:C:/eclipse/workspace-splitting/org.vclipse.vcml.tests/resources")
+	testFile("VcmlTest/characteristictest.vcml")
+}
+
+@Test
+def void fileTest2() {
+	setResourceRoot("classpath:/resources")
+	//setResourceRoot("file:C:/eclipse/workspace-splitting/org.vclipse.vcml.tests/resources")
+	testFile("characteristictest.vcml")
 }
 
 @Test
@@ -181,6 +187,42 @@ def void parseConfigurationProfileTest() {
 }
 
 @Test
+def void parseProcedureTest() {
+	'''
+		procedure testprocedure {
+			description "procedure test description"
+			documentation "procedure test documentation"
+			status Released
+			group "TestGroup"
+		}
+	'''.testParserRule("Procedure")
+}
+
+@Test
+def void parseSelectionConditionTest() {
+	'''
+		selectioncondition testselectioncondition {
+			description "selection condition test description"
+			documentation "selection condition test documentation"
+			status InPreparation
+			group "TestGroup"
+		}
+	'''.testParserRule("SelectionCondition")
+}
+
+@Test
+def void parsePreconditionTest() {
+	'''
+		precondition testprecondition {
+			description "precondition test description"
+			documentation "precondition test documentation"
+			status Released
+			group "TestGroup"
+		}
+	'''.testParserRule("Precondition")
+}
+
+@Test
 def void parseDependencyNetTest() {
 	'''
 			dependencynet netid {
@@ -195,6 +237,53 @@ def void parseDependencyNetTest() {
 }
 
 @Test
+def void parseMaterialTest() {
+	'''
+		material testmaterial {
+			description "material test description"
+			type typeId
+			
+			billofmaterial {
+				items {
+					1 item1
+					dependencies {
+						2 item2
+						3 item3
+					}
+				}
+			}
+			
+			classes {
+				(300) class300 {
+					characteristicId = 7
+				}
+			}
+			
+			configurationprofile testprofile {
+				status Released
+				bomapplication bomId
+				uidesign uiId
+				netId
+				1 configurationprofileentry
+			}
+		}
+	'''.testParserRule("Material")
+}
+
+@Test
+def void parseInterfaceDesignTest() {
+	'''
+		interfacedesign testdesign {
+			characteristicgroup testcharacteristic {
+				description "test characteristicgroup"
+				DE
+				EN
+			}
+		}
+	'''.testParserRule("InterfaceDesign")
+}
+
+@Test
 def void parseConstraintTest() {
 	'''
 	constraint testconstraint {
@@ -204,6 +293,46 @@ def void parseConstraintTest() {
 		group "Constraint Group"
 	}
 	'''.testParserRule("Constraint")
+}
+
+@Test
+def void parseVariantFunctionTest() {
+	'''
+		variantfunction testfunction {
+			description "variant function test description"
+			status Released
+			group "TestGroup"
+			arguments {
+				in DE
+				AF
+			}
+		}
+	'''.testParserRule("VariantFunction")
+}
+
+@Test
+def void parseVariantTableTest() {
+	'''
+		varianttable testtable {
+			description "variant table test description"
+			status Locked
+			group "TestGroup"
+			arguments {
+				key DE
+				key EN
+				AF
+			}
+		}
+	'''.testParserRule("VariantTable")
+}
+
+@Test
+def void parseVariantTableContentTest() {
+	'''
+		varianttablecontent DE {
+			row 1 2 'three' 'four'
+		}
+	'''.testParserRule("VariantTableContent")
 }
 
 @Test
