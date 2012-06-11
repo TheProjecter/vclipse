@@ -15,7 +15,7 @@ import com.google.inject.Inject;
  * 
  * see http://www.eclipse.org/Xtext/documentation/latest/xtext.html#labelProvider
  */
-public abstract class DependencyLabelProvider extends AbstractVClipseLabelProvider {
+public class DependencyLabelProvider extends AbstractVClipseLabelProvider {
 
 	@Inject
 	public DependencyLabelProvider(AdapterFactoryLabelProvider delegate) {
