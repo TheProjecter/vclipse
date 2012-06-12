@@ -21,14 +21,19 @@ import com.google.inject.Inject;
 
 public class FilteringCrossReferenceResolver extends AbstractTemplateVariableResolver {
 
-	private @Inject CrossReferenceTemplateVariableResolver crossReferenceResolver;
+	public static final String VARIABLE_NAME = "FilteredCrossReference";
+
+	@Inject
+	private CrossReferenceTemplateVariableResolver crossReferenceResolver;
 	
-	private @Inject IQualifiedNameProvider nameProvider;
+	@Inject
+	private IQualifiedNameProvider nameProvider;
 	
-	private @Inject VCMLGrammarAccess grammarAccess;
+	@Inject
+	private VCMLGrammarAccess grammarAccess;
 	
 	public FilteringCrossReferenceResolver() {
-		super("FilteredCrossReference", "Filtered cross reference");
+		super(VARIABLE_NAME, "Filtered cross reference");
 	}
 	
 	@Override
