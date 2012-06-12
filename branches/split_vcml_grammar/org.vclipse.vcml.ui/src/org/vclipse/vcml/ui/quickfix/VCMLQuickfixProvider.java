@@ -32,6 +32,7 @@ import org.eclipse.xtext.ui.editor.quickfix.Fix;
 import org.eclipse.xtext.ui.editor.quickfix.IssueResolution;
 import org.eclipse.xtext.ui.editor.quickfix.IssueResolutionAcceptor;
 import org.eclipse.xtext.validation.Issue;
+import org.vclipse.base.ui.BaseUiPlugin;
 import org.vclipse.vcml.diff.storage.EObjectTypedElement;
 import org.vclipse.vcml.formatting.VCMLPrettyPrinter;
 import org.vclipse.vcml.utils.DependencySourceUtils;
@@ -277,7 +278,7 @@ public class VCMLQuickfixProvider extends DefaultQuickfixProvider {
 	
 	@Fix("Not_Existent_Source")
 	public void fixNotExistentSourceElement(Issue issue, IssueResolutionAcceptor acceptor) {
-		String[] data = issue.getData();
+		final String[] data = issue.getData();
 		String label = "Create a new file " + data[2];
 		String description = "Creates a new source file for the type " + data[1] + " and name " + data[0];
 		acceptor.accept(issue, label, description, null, new ISemanticModification() {
@@ -285,9 +286,15 @@ public class VCMLQuickfixProvider extends DefaultQuickfixProvider {
 				Resource resource = element.eResource();
 				if(element instanceof Dependency) {
 					URI sourceURI = sourceUtils.getSourceURI((Dependency)element);
-					resource.getResourceSet().
-						createResource(sourceURI).save(
-							SaveOptions.defaultOptions().toOptionsMap());
+					try {
+						resource.getResourceSet().
+							createResource(sourceURI).save(
+								SaveOptions.defaultOptions().toOptionsMap());
+					} catch(final Exception exception) {
+						BaseUiPlugin.showErrorDialog(
+							exception, "Error during quick fix", "Can not " +
+								"create a file " + data[2] + " for " + data[1]);
+					}
 				}
 			}
 		});
