@@ -12,12 +12,12 @@ package org.vclipse.base.ui;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.service.AbstractGenericModule;
 import org.osgi.framework.BundleContext;
-import org.vclipse.base.ui.dialogs.ErrorDialog;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -73,7 +73,7 @@ public class BaseUiPlugin extends AbstractUIPlugin {
 	}
 	
 	public static void showErrorDialog(Exception exception, String dialogTitle, String message) {
-		showErrorDialog(exception, dialogTitle, message, null);
+		showErrorDialog(exception, dialogTitle, message, new Status(IStatus.ERROR, BaseUiPlugin.ID, exception.getMessage()));
 	}
 	
 	public static void showErrorDialog(final Exception exception, final String dialogTitle, final String message, final IStatus status) {
@@ -82,7 +82,7 @@ public class BaseUiPlugin extends AbstractUIPlugin {
 		display.syncExec(new Runnable() {
 			@Override
 			public void run() {
-				new ErrorDialog(display.getActiveShell(), dialogTitle, message, status).open();
+				ErrorDialog.openError(display.getActiveShell(), dialogTitle, message, status);
 			}
 		});
 	}
