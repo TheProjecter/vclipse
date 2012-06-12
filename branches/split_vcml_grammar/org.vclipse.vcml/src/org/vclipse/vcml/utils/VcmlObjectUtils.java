@@ -123,7 +123,7 @@ public class VcmlObjectUtils {
 		final EList<PartialKey> attrs = objectType.getAttrs();
 		final PartialKey partialKey = VCML.createPartialKey();
 		attrs.add(partialKey);
-		partialKey.setName("nr");
+		partialKey.setKey("nr");
 		partialKey.setValue(material);
 		return object;
 	}
