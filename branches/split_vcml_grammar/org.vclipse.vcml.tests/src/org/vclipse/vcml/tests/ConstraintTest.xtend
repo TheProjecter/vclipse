@@ -1,6 +1,5 @@
 package org.vclipse.vcml.tests
 
-import org.eclipselabs.xtext.utils.unittesting.XtextTest
 import org.junit.Test
 import org.eclipse.xtext.junit4.InjectWith
 import org.junit.runner.RunWith
@@ -13,12 +12,8 @@ import org.junit.Ignore
 @InjectWith(typeof(ConstraintInjectorProvider))
 @RunWith(typeof(XtextRunner2))
 
-class ConstraintTest extends XtextTest {
+class ConstraintTest extends DependencyTest {
 
-
-def testParserRule(CharSequence textToParse, String ruleName) {	//TODO: move to new class which extends XtextTest
-        testParserRule(textToParse.toString, ruleName)
-}
 
 @Test
 def void parseConstraintTest1() {

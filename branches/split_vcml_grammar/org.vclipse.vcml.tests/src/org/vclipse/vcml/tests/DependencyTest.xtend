@@ -1,14 +1,7 @@
 package org.vclipse.vcml.tests
 
 import org.eclipselabs.xtext.utils.unittesting.XtextTest
-import org.eclipse.xtext.junit4.InjectWith
-import org.junit.runner.RunWith
-import org.vclipse.vcml.DependencyInjectorProvider
-import org.eclipselabs.xtext.utils.unittesting.XtextRunner2
 import org.junit.Test
-
-@InjectWith(typeof(DependencyInjectorProvider))
-@RunWith(typeof(XtextRunner2))
 
 class DependencyTest extends XtextTest {
 
@@ -64,6 +57,60 @@ def void expressionTest6() {
 }
 
 @Test
+def void conditionTest1() {
+	'''
+		not 'a' eq 'b' and not 'b' eq 'a'
+	'''.testParserRule("Condition")
+}
+
+@Test
+def void conditionTest2() {
+	'''
+		(not 'a' eq 'b') and (not ('c' eq 'a' or 'c' eq 'a'))
+	'''.testParserRule("Condition")
+}
+
+@Test
+def void conditionTest3() {
+	'''
+		(not 'a' eq 2) and (not ('c' eq 2 or 'c' eq (2)))
+	'''.testParserRule("Condition")
+}
+
+@Test
+def void listTest1() {
+	'''
+		(1, 2, 3, 4, 5 - 6)
+	'''.testParserRule("NumberList")
+}
+
+@Test
+def void listTest2() {
+	'''
+		('a', 'b', 'c', 'd')
+	'''.testParserRule("List")
+}
+
+@Test
+def void functionTest1() {
+	'''
+		function testfunction (
+			characteristic1 = 'characteristic1'
+		)
+	'''.testParserRule("Function")
+}
+
+@Test
+def void tableTest1() {
+	'''
+		table testtable (
+			characteristic1 = 'characteristic1',
+			characteristic2 = 7
+		)
+	'''.testParserRule("Table")
+}
+
+@Test
 def void idTest() {
 	testTerminal("abc", "ID")
 	testTerminal("abc4", "ID")
@@ -75,12 +122,11 @@ def void idTest() {
 	
 @Test
 def void dependencyCommentTest() {
-	testTerminal('''*asdf
-	'''.toString, "DEPENDENCY_COMMENT")
+	testTerminal("\n*asdf", "SL_COMMENT")
 	
-	testNotTerminal('''foo'''.toString, "DEPENDENCY_COMMENT")
+	testNotTerminal('''foo'''.toString, "SL_COMMENT")
 	
-	testNotTerminal('''\\tbar'''.toString, "DEPENDENCY_COMMENT")
+	testNotTerminal('''\\tbar'''.toString, "SL_COMMENT")
 }
 
 @Test
@@ -90,6 +136,54 @@ def void symbolTest() {
 	testTerminal("'\b'", "SYMBOL")
 	
 	testNotTerminal("'\t'", "SYMBOL")
+}
+
+@Test
+def void intTest() {
+	testTerminal("0123456789", "INT")
+	
+	testNotTerminal("0.123456789", "INT")
+}
+
+@Test
+def void stringTest1() {
+	testTerminal('''" \\\" \\b \\t \\n \\\\ \\' "'''.toString, "STRING")
+}
+
+@Test
+def void stringTest2() {
+	testTerminal("'\\\" \\b \\t \\n \\\\ \\''", "STRING")
+}
+
+@Test
+def void stringTest3() {				// not tested: single quotes in rule STRING are intersecting with single quotes in rule SYMBOL if its only one word   
+	testTerminal("\"foobar\"", "STRING")
+}
+
+
+@Test
+def void stringTest4() {
+	testNotTerminal("foobar", "STRING")
+}
+
+@Test
+def void wsTest1() {
+	testTerminal(" \t \r \n ", "WS")
+}
+
+@Test
+def void numberTest1() {
+	'''+12.34e-56'''.testParserRule("NUMBER")
+}
+
+@Test
+def void numberTest2() {
+	'''12'''.testParserRule("NUMBER")
+}
+
+@Test
+def void numberTest3() {
+	'''12e+3'''.testParserRule("NUMBER")
 }
 
 }
