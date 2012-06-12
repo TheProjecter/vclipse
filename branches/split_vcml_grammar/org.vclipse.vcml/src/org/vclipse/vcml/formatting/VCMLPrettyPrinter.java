@@ -17,8 +17,8 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
-import org.vclipse.vcml.VCMLPlugin;
 import org.vclipse.base.VClipseStrings;
+import org.vclipse.vcml.VCMLPlugin;
 import org.vclipse.vcml.utils.ISapConstants;
 import org.vclipse.vcml.vcml.BOMItem;
 import org.vclipse.vcml.vcml.BillOfMaterial;
@@ -42,7 +42,6 @@ import org.vclipse.vcml.vcml.GlobalDependency;
 import org.vclipse.vcml.vcml.Import;
 import org.vclipse.vcml.vcml.InterfaceDesign;
 import org.vclipse.vcml.vcml.Literal;
-import org.vclipse.vcml.vcml.LocalDependency;
 import org.vclipse.vcml.vcml.LocalPrecondition;
 import org.vclipse.vcml.vcml.LocalSelectionCondition;
 import org.vclipse.vcml.vcml.MDataCharacteristic_P;
@@ -64,6 +63,7 @@ import org.vclipse.vcml.vcml.Row;
 import org.vclipse.vcml.vcml.SelectionCondition;
 import org.vclipse.vcml.vcml.SimpleDescription;
 import org.vclipse.vcml.vcml.SimpleDocumentation;
+import org.vclipse.vcml.vcml.Status;
 import org.vclipse.vcml.vcml.SymbolicLiteral;
 import org.vclipse.vcml.vcml.SymbolicType;
 import org.vclipse.vcml.vcml.VCObject;
@@ -164,11 +164,8 @@ public class VCMLPrettyPrinter extends VcmlSwitch<DataLayouter<NoExceptions>> {
 				doSwitch(object.getDescription());
 				doSwitch(object.getDocumentation());
 				doSwitch(object.getType());
-				layouter.brk().print("status ");
-				printNullsafe(object.getStatus());
-				if(object.getGroup() != null) {
-					layouter.brk().print("group ").print(doublequote(object.getGroup()));
-				}
+				printStatus(object.getStatus());
+				printGroup(object.getGroup());
 				StringBuffer buffer = new StringBuffer();
 				buffer.append("[ ");
 				if(object.isAdditionalValues()) {
@@ -344,14 +341,8 @@ public class VCMLPrettyPrinter extends VcmlSwitch<DataLayouter<NoExceptions>> {
 		layouter.brk().beginC().print("precondition {");
 		doSwitch(object.getDescription());
 		doSwitch(object.getDocumentation());
-		printStatus(object);
-		printGroup(object);
-		if (object.getSource()!=null) {
-			layouter.brk().beginC().print("source {");
-			String source = new ProcedurePrettyPrinter().prettyPrint(object.getSource());
-			layouter.pre(source);
-			layouter.brk(1, -INDENTATION).print("}").end();
-		}
+		printStatus(object.getStatus());
+		printGroup(object.getGroup());
 		return layouter.brk(1, -INDENTATION).print("}").end();
 	}
 	
@@ -363,14 +354,8 @@ public class VCMLPrettyPrinter extends VcmlSwitch<DataLayouter<NoExceptions>> {
 		layouter.brk().beginC().print("selectioncondition {");
 		doSwitch(object.getDescription());
 		doSwitch(object.getDocumentation());
-		printStatus(object);
-		printGroup(object);
-		if(object.getSource() != null) {
-			layouter.brk().beginC().print("source {").brk();
-			String source = new ProcedurePrettyPrinter().prettyPrint(object.getSource());
-			layouter.pre(source);
-			layouter.brk(1, -INDENTATION).print("}").end();
-		}
+		printStatus(object.getStatus());
+		printGroup(object.getGroup());
 		return layouter.brk(1, -INDENTATION).print("}").end();
 	}
 
@@ -455,10 +440,8 @@ public class VCMLPrettyPrinter extends VcmlSwitch<DataLayouter<NoExceptions>> {
 			layouter.print(" {");
 			{
 				doSwitch(object.getDescription());
-				layouter.brk().print("status ").print(object.getStatus());
-				if(object.getGroup() != null) {
-					layouter.brk().print("group ").print(doublequote(object.getGroup()));
-				}
+				printStatus(object.getStatus());
+				printGroup(object.getGroup());
 				layouter.brk().beginC().print("characteristics {");
 				{
 					for(Characteristic cstic : object.getCharacteristics()) {
@@ -496,7 +479,8 @@ public class VCMLPrettyPrinter extends VcmlSwitch<DataLayouter<NoExceptions>> {
 			{
 				doSwitch(object.getDescription());
 				doSwitch(object.getDocumentation());
-				layouter.brk().print("status ").print(object.getStatus().getName());
+				printStatus(object.getStatus());
+				printGroup(object.getGroup());
 			}
 			layouter.brk(1,-INDENTATION).print("}");
 		}
@@ -515,10 +499,8 @@ public class VCMLPrettyPrinter extends VcmlSwitch<DataLayouter<NoExceptions>> {
 			{
 				doSwitch(object.getDescription());
 				doSwitch(object.getDocumentation());
-				layouter.brk().print("status ").print(object.getStatus().getName());
-				if(object.getGroup() != null) {
-					layouter.brk().print("group ").print(doublequote(object.getGroup()));
-				}
+				printStatus(object.getStatus());
+				printGroup(object.getGroup());
 				for (Constraint constraint : object.getConstraints()) {
 					layouter.brk();
 					printCrossReference(object, constraint, VCMLPACKAGE.getDependencyNet_Constraints(), VCMLPACKAGE.getVCObject_Name());
@@ -707,10 +689,8 @@ public class VCMLPrettyPrinter extends VcmlSwitch<DataLayouter<NoExceptions>> {
 			{
 				doSwitch(object.getDescription());
 				doSwitch(object.getDocumentation());
-				layouter.brk().print("status ").print(object.getStatus());
-				if(object.getGroup() != null) {
-					layouter.brk().print("group ").print(doublequote(object.getGroup()));
-				}
+				printStatus(object.getStatus());
+				printGroup(object.getGroup());
 			}
 			layouter.brk(1,-INDENTATION).print("}");
 		}
@@ -753,7 +733,8 @@ public class VCMLPrettyPrinter extends VcmlSwitch<DataLayouter<NoExceptions>> {
 			{
 				doSwitch(object.getDescription());
 				doSwitch(object.getDocumentation());
-				layouter.brk().print("status ").print(object.getStatus().getName());
+				printStatus(object.getStatus());
+				printGroup(object.getGroup());
 			}
 			layouter.brk(1, -INDENTATION).print("}"); 
 		}
@@ -772,10 +753,8 @@ public class VCMLPrettyPrinter extends VcmlSwitch<DataLayouter<NoExceptions>> {
 			{
 				doSwitch(object.getDescription());
 				doSwitch(object.getDocumentation());
-				layouter.brk().print("status ").print(object.getStatus());
-				if(object.getGroup() != null) {
-					layouter.brk().print("group ").print(doublequote(object.getGroup()));
-				}
+				printStatus(object.getStatus());
+				printGroup(object.getGroup());
 			}
 			layouter.brk(1, -INDENTATION).print("}");
 		}
@@ -793,10 +772,8 @@ public class VCMLPrettyPrinter extends VcmlSwitch<DataLayouter<NoExceptions>> {
 			layouter.print(" {");
 			{
 				doSwitch(object.getDescription());
-				layouter.brk().print("status ").print(object.getStatus());
-				if(object.getGroup() != null) {
-					layouter.brk().print("group ").print(doublequote(object.getGroup()));
-				}
+				printStatus(object.getStatus());
+				printGroup(object.getGroup());
 				layouter.brk().beginC().print("arguments {");
 				{
 					for(VariantFunctionArgument arg : object.getArguments()) {
@@ -825,10 +802,8 @@ public class VCMLPrettyPrinter extends VcmlSwitch<DataLayouter<NoExceptions>> {
 			layouter.print(" {");
 			{
 				doSwitch(object.getDescription());
-				layouter.brk().print("status ").print(object.getStatus());
-				if(object.getGroup() != null) {
-					layouter.brk().print("group ").print(doublequote(object.getGroup()));
-				}
+				printStatus(object.getStatus());
+				printGroup(object.getGroup());
 				layouter.brk().beginC().print("arguments {");
 				{
 					for(VariantTableArgument arg : object.getArguments()) {
@@ -980,20 +955,14 @@ public class VCMLPrettyPrinter extends VcmlSwitch<DataLayouter<NoExceptions>> {
 		return "\"" + VClipseStrings.convertToJavaString(string) + "\"";
 	}
 	
-	/**
-	 * @param dependency
-	 */
-	private void printGroup(LocalDependency dependency) {
-		if(dependency.getGroup() != null) {
-			layouter.brk().print("group ").print(dependency.getGroup());
+	private void printGroup(String group) {
+		if(group != null) {
+			layouter.brk().print("group ").print(doublequote(group));
 		}
 	}
 	
-	/**
-	 * @param dependency
-	 */
-	private void printStatus(LocalDependency dependency) {
-		layouter.brk().print("status ").print(dependency.getStatus());
+	private void printStatus(Status status) {
+		layouter.brk().print("status ").print(status.getName().toLowerCase());
 	}
 	
 	private void printNullsafe(Object object) {
