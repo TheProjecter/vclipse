@@ -23,7 +23,6 @@ import org.vclipse.vcml.vcml.ProcedureSource;
 import org.vclipse.vcml.vcml.SelectionCondition;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 public class DependencySourceUtils {
 	
@@ -111,25 +110,15 @@ public class DependencySourceUtils {
 	private String encode(String s) {
 		try {
 			// Hack: we need to encode the encoded URL again. Otherwise, a new folder A would be created for a dependency with name A/B.
-			return URLEncoder.encode(URLEncoder.encode(s, "UTF-8"), "UTF-8");
+			return URLEncoder.encode(URLEncoder.encode(s, "UTF-8"), "UTF-8").toUpperCase();
 		} catch (UnsupportedEncodingException e) {
 			throw new WrappedException(e);
 		}
 	}
 	
 	public URI getSourceURI(Dependency object) {
-		URIConverter uriConverter = URIConverter.INSTANCE;
 		URI baseUri = EcoreUtil2.getNormalizedResourceURI(object).trimFileExtension();
-		baseUri = baseUri.trimSegments(1).appendSegment(baseUri.lastSegment() + SUFFIX_SOURCEFOLDER).appendSegment(getFilename(object));
-		if(!uriConverter.exists(baseUri, Maps.newHashMap())) {
-			String fileName = baseUri.trimFileExtension().lastSegment();
-			if(fileName.equals(fileName.toUpperCase())) {
-				return URI.createURI(baseUri.toString().replace(fileName, fileName.toLowerCase()));
-			} else {
-				return URI.createURI(baseUri.toString().replace(fileName, fileName.toUpperCase()));
-			}
-		}
-		return baseUri;
+		return baseUri.trimSegments(1).appendSegment(baseUri.lastSegment() + SUFFIX_SOURCEFOLDER).appendSegment(getFilename(object));
 	}
 	
 	public URI getVcmlResourceURI(URI dependencySourceUri) {
