@@ -7,7 +7,6 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.validation.Check;
-import org.eclipse.xtext.validation.ValidationMessageAcceptor;
 import org.vclipse.vcml.utils.DependencySourceUtils;
 import org.vclipse.vcml.vcml.BinaryExpression;
 import org.vclipse.vcml.vcml.CharacteristicReference_C;
@@ -49,7 +48,10 @@ public class DependencyJavaValidator extends AbstractDependencyJavaValidator {
 					if(!iterator.hasNext()) {
 						String sourceName = source.eClass().getName();
 						String objectName = sourceName.replace("Source", "");
-						warning(objectName + " object does not exist for the " + sourceName, source, null, ValidationMessageAcceptor.INSIGNIFICANT_INDEX);
+						warning(objectName + " object does not exist for the " + sourceName,
+								source, null, "Not_Existent_Source_Object", 
+									new String[]{source.eClass().getName().replace("Source", ""), 
+										fileName, vcmlResource.getURI().toString()});
 					}
 				}
 			}

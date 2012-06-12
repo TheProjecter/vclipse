@@ -17,6 +17,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.Resource.IOWrappedException;
 import org.eclipse.team.internal.ui.history.CompareFileRevisionEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
@@ -290,7 +291,7 @@ public class VCMLQuickfixProvider extends DefaultQuickfixProvider {
 						resource.getResourceSet().
 							createResource(sourceURI).save(
 								SaveOptions.defaultOptions().toOptionsMap());
-					} catch(final Exception exception) {
+					} catch(final IOWrappedException exception) {
 						BaseUiPlugin.showErrorDialog(
 							exception, "Error during quick fix", "Can not " +
 								"create a file " + data[2] + " for " + data[1]);
