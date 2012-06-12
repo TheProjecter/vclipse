@@ -32,6 +32,5 @@ def void typeOfTest1() {
 		type_of ($root, (material) (300) (nr='123', nr='124'))
 	'''.testParserRule("TypeOf")
 }
-
 	
 }
