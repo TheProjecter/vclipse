@@ -136,7 +136,7 @@ def void parseCharacteristicDateTest() {
 					}
 				}
 			}
-			status Locked
+			status locked
 			group "Group1"
 			[
 				additionalValues
@@ -156,7 +156,7 @@ def void parseClassTest() {
 	'''
 		class (300) DE {
 			description"A Test Class"
-			status Released
+			status released
 			group "TestGroup"
 			characteristics {
 				DE
@@ -192,7 +192,7 @@ def void parseProcedureTest() {
 		procedure testprocedure {
 			description "procedure test description"
 			documentation "procedure test documentation"
-			status Released
+			status released
 			group "TestGroup"
 		}
 	'''.testParserRule("Procedure")
@@ -204,7 +204,7 @@ def void parseSelectionConditionTest() {
 		selectioncondition testselectioncondition {
 			description "selection condition test description"
 			documentation "selection condition test documentation"
-			status InPreparation
+			status inPreparation
 			group "TestGroup"
 		}
 	'''.testParserRule("SelectionCondition")
@@ -216,7 +216,7 @@ def void parsePreconditionTest() {
 		precondition testprecondition {
 			description "precondition test description"
 			documentation "precondition test documentation"
-			status Released
+			status released
 			group "TestGroup"
 		}
 	'''.testParserRule("Precondition")
@@ -228,7 +228,7 @@ def void parseDependencyNetTest() {
 			dependencynet netid {
 				description "A test profile"
 				documentation "A test profile documentation"
-				status Released
+				status released
 				group "Dependency Group"
 				
 				testconstraint
@@ -260,7 +260,7 @@ def void parseMaterialTest() {
 			}
 			
 			configurationprofile testprofile {
-				status Released
+				status released
 				bomapplication bomId
 				uidesign uiId
 				netId
@@ -289,7 +289,7 @@ def void parseConstraintTest() {
 	constraint testconstraint {
 		description " A test constraint"
 		documentation "A test constraint documentation"
-		status Locked
+		status locked
 		group "Constraint Group"
 	}
 	'''.testParserRule("Constraint")
@@ -300,7 +300,7 @@ def void parseVariantFunctionTest() {
 	'''
 		variantfunction testfunction {
 			description "variant function test description"
-			status Released
+			status released
 			group "TestGroup"
 			arguments {
 				in DE
@@ -315,7 +315,7 @@ def void parseVariantTableTest() {
 	'''
 		varianttable testtable {
 			description "variant table test description"
-			status Locked
+			status locked
 			group "TestGroup"
 			arguments {
 				key DE
