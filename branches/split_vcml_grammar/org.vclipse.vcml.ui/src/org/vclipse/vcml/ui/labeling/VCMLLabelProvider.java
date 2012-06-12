@@ -48,8 +48,6 @@ import org.vclipse.vcml.vcml.IsInvisible;
 import org.vclipse.vcml.vcml.IsSpecified_C;
 import org.vclipse.vcml.vcml.IsSpecified_P;
 import org.vclipse.vcml.vcml.Language;
-import org.vclipse.vcml.vcml.LocalPrecondition;
-import org.vclipse.vcml.vcml.LocalSelectionCondition;
 import org.vclipse.vcml.vcml.Material;
 import org.vclipse.vcml.vcml.MultiLanguageDescription;
 import org.vclipse.vcml.vcml.MultiLanguageDescriptions;
@@ -131,14 +129,6 @@ public class VCMLLabelProvider extends AbstractVClipseLabelProvider {
 	
 	public String image(InterfaceDesign element) {
 		return "bwvisu.gif";
-	}
-	
-	public String image(LocalPrecondition element) {
-		return "b_mbed.gif";
-	}
-	
-	public String image(LocalSelectionCondition element) {
-		return "b_bedi.gif";
 	}
 	
 	public String image(Material element) {
