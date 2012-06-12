@@ -16,11 +16,13 @@ import org.eclipse.compare.CompareUI;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.team.internal.ui.history.CompareFileRevisionEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
+import org.eclipse.xtext.resource.SaveOptions;
 import org.eclipse.xtext.resource.XtextResourceSet;
 import org.eclipse.xtext.ui.editor.model.IXtextDocument;
 import org.eclipse.xtext.ui.editor.model.edit.IModificationContext;
@@ -32,7 +34,9 @@ import org.eclipse.xtext.ui.editor.quickfix.IssueResolutionAcceptor;
 import org.eclipse.xtext.validation.Issue;
 import org.vclipse.vcml.diff.storage.EObjectTypedElement;
 import org.vclipse.vcml.formatting.VCMLPrettyPrinter;
+import org.vclipse.vcml.utils.DependencySourceUtils;
 import org.vclipse.vcml.vcml.CharacteristicGroup;
+import org.vclipse.vcml.vcml.Dependency;
 import org.vclipse.vcml.vcml.DependencyNet;
 import org.vclipse.vcml.vcml.InterfaceDesign;
 import org.vclipse.vcml.vcml.VcmlPackage;
@@ -45,6 +49,7 @@ public class VCMLQuickfixProvider extends DefaultQuickfixProvider {
 	
 	@Inject VCMLPrettyPrinter prettyPrinter;
 	@Inject IWorkspaceRoot workspaceRoot;
+	@Inject DependencySourceUtils sourceUtils;
 	
 	@Override
 	public List<IssueResolution> getResolutions(Issue issue) {
@@ -265,6 +270,24 @@ public class VCMLQuickfixProvider extends DefaultQuickfixProvider {
 							}
 						}
 					}							
+				}
+			}
+		});
+	}
+	
+	@Fix("Not_Existent_Source")
+	public void fixNotExistentSourceElement(Issue issue, IssueResolutionAcceptor acceptor) {
+		String[] data = issue.getData();
+		String label = "Create a new file " + data[2];
+		String description = "Creates a new source file for the type " + data[1] + " and name " + data[0];
+		acceptor.accept(issue, label, description, null, new ISemanticModification() {
+			public void apply(EObject element, IModificationContext context) throws Exception {
+				Resource resource = element.eResource();
+				if(element instanceof Dependency) {
+					URI sourceURI = sourceUtils.getSourceURI((Dependency)element);
+					resource.getResourceSet().
+						createResource(sourceURI).save(
+							SaveOptions.defaultOptions().toOptionsMap());
 				}
 			}
 		});

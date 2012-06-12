@@ -299,9 +299,12 @@ public class VCMLJavaValidator extends AbstractVCMLJavaValidator {
 	public void checkDependencySource(Dependency dependency) {
 		EObject source = dependencySourceUtils.getSource(dependency);
 		if(source == null) {
+			String name = nameProvider.getFullyQualifiedName(dependency).getLastSegment();
+			String fileName = dependencySourceUtils.getFilename(dependency);
 			error("Source element for " + dependency.eClass().getName().toLowerCase() + " " + 
-					nameProvider.getFullyQualifiedName(dependency).getLastSegment() + " does not exist", dependency, 
-						VcmlPackage.eINSTANCE.getVCObject_Name(), ValidationMessageAcceptor.INSIGNIFICANT_INDEX);
+					name + " does not exist", dependency, 
+						VcmlPackage.eINSTANCE.getVCObject_Name(), "Not_Existent_Source", 
+							new String[]{name, dependency.eClass().getName(), fileName});
 		}
 	}
 }
