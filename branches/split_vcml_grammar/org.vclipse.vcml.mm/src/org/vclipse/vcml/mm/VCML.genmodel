@@ -174,8 +174,6 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference VCML.ecore#//DateCharacteristicValue/dependencies"/>
     </genClasses>
     <genClasses ecoreClass="VCML.ecore#//CharacteristicOrValueDependencies">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference VCML.ecore#//CharacteristicOrValueDependencies/localPrecondition"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference VCML.ecore#//CharacteristicOrValueDependencies/localSelectionCondition"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference VCML.ecore#//CharacteristicOrValueDependencies/dependencies"/>
     </genClasses>
     <genClasses ecoreClass="VCML.ecore#//Class">
@@ -194,14 +192,6 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference VCML.ecore#//ConfigurationProfile/entries"/>
     </genClasses>
     <genClasses ecoreClass="VCML.ecore#//Dependency"/>
-    <genClasses ecoreClass="VCML.ecore#//GlobalDependency"/>
-    <genClasses ecoreClass="VCML.ecore#//LocalDependency">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference VCML.ecore#//LocalDependency/description"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference VCML.ecore#//LocalDependency/documentation"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute VCML.ecore#//LocalDependency/status"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute VCML.ecore#//LocalDependency/group"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference VCML.ecore#//LocalDependency/source"/>
-    </genClasses>
     <genClasses ecoreClass="VCML.ecore#//Procedure">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference VCML.ecore#//Procedure/description"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference VCML.ecore#//Procedure/documentation"/>
@@ -214,16 +204,12 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute VCML.ecore#//SelectionCondition/status"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute VCML.ecore#//SelectionCondition/group"/>
     </genClasses>
-    <genClasses ecoreClass="VCML.ecore#//LocalSelectionCondition"/>
-    <genClasses ecoreClass="VCML.ecore#//GeneralSelectionCondition"/>
     <genClasses ecoreClass="VCML.ecore#//Precondition">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference VCML.ecore#//Precondition/description"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference VCML.ecore#//Precondition/documentation"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute VCML.ecore#//Precondition/status"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute VCML.ecore#//Precondition/group"/>
     </genClasses>
-    <genClasses ecoreClass="VCML.ecore#//LocalPrecondition"/>
-    <genClasses ecoreClass="VCML.ecore#//GeneralPrecondition"/>
     <genClasses ecoreClass="VCML.ecore#//ConditionSource">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference VCML.ecore#//ConditionSource/condition"/>
     </genClasses>

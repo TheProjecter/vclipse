@@ -156,7 +156,7 @@ DATE : INT '.' INT '.' INT;
 CharacteristicOrValueDependencies :
 	{CharacteristicOrValueDependencies}
 	'dependencies' '{'
-		dependencies+=[GlobalDependency | EXTENDED_ID]*
+		dependencies+=[Dependency | EXTENDED_ID]*
 	'}'
 	;
 

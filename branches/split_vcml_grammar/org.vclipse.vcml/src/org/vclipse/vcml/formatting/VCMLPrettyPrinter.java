@@ -35,15 +35,13 @@ import org.vclipse.vcml.vcml.ConfigurationProfileEntry;
 import org.vclipse.vcml.vcml.Constraint;
 import org.vclipse.vcml.vcml.DateCharacteristicValue;
 import org.vclipse.vcml.vcml.DateType;
+import org.vclipse.vcml.vcml.Dependency;
 import org.vclipse.vcml.vcml.DependencyNet;
 import org.vclipse.vcml.vcml.Description;
 import org.vclipse.vcml.vcml.FormattedDocumentationBlock;
-import org.vclipse.vcml.vcml.GlobalDependency;
 import org.vclipse.vcml.vcml.Import;
 import org.vclipse.vcml.vcml.InterfaceDesign;
 import org.vclipse.vcml.vcml.Literal;
-import org.vclipse.vcml.vcml.LocalPrecondition;
-import org.vclipse.vcml.vcml.LocalSelectionCondition;
 import org.vclipse.vcml.vcml.MDataCharacteristic_P;
 import org.vclipse.vcml.vcml.Material;
 import org.vclipse.vcml.vcml.Model;
@@ -334,32 +332,6 @@ public class VCMLPrettyPrinter extends VcmlSwitch<DataLayouter<NoExceptions>> {
 	}
 
 	/**
-	 * @see org.vclipse.vcml.vcml.util.VcmlSwitch#caseLocalPrecondition(org.vclipse.vcml.vcml.LocalPrecondition)
-	 */
-	@Override
-	public DataLayouter<NoExceptions> caseLocalPrecondition(LocalPrecondition object) {
-		layouter.brk().beginC().print("precondition {");
-		doSwitch(object.getDescription());
-		doSwitch(object.getDocumentation());
-		printStatus(object.getStatus());
-		printGroup(object.getGroup());
-		return layouter.brk(1, -INDENTATION).print("}").end();
-	}
-	
-	/**
-	 * @see org.vclipse.vcml.vcml.util.VcmlSwitch#caseLocalSelectionCondition(org.vclipse.vcml.vcml.LocalSelectionCondition)
-	 */
-	@Override
-	public DataLayouter<NoExceptions> caseLocalSelectionCondition(LocalSelectionCondition object) {
-		layouter.brk().beginC().print("selectioncondition {");
-		doSwitch(object.getDescription());
-		doSwitch(object.getDocumentation());
-		printStatus(object.getStatus());
-		printGroup(object.getGroup());
-		return layouter.brk(1, -INDENTATION).print("}").end();
-	}
-
-	/**
 	 * @see org.vclipse.vcml.vcml.util.VcmlSwitch#caseCharacteristicValue(org.vclipse.vcml.vcml.CharacteristicValue)
 	 */
 	@Override
@@ -382,15 +354,7 @@ public class VCMLPrettyPrinter extends VcmlSwitch<DataLayouter<NoExceptions>> {
 	@Override
 	public DataLayouter<NoExceptions> caseCharacteristicOrValueDependencies(CharacteristicOrValueDependencies object) {
 		layouter.brk().beginC().print("dependencies {");
-		if(object.getLocalPrecondition() != null) {
-			layouter.brk();
-			doSwitch(object.getLocalPrecondition());
-		}
-		if(object.getLocalSelectionCondition() != null) {
-			layouter.brk();
-			doSwitch(object.getLocalSelectionCondition());
-		}
-		for(GlobalDependency dependency : object.getDependencies()) {
+		for(Dependency dependency : object.getDependencies()) {
 			layouter.brk();
 			printCrossReference(object, dependency, VCMLPACKAGE.getCharacteristicOrValueDependencies_Dependencies(), VCMLPACKAGE.getVCObject_Name());
 		}
