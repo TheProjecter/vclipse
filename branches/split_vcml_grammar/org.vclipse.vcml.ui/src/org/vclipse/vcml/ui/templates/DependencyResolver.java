@@ -21,6 +21,8 @@ import com.google.inject.Inject;
 
 public class DependencyResolver extends AbstractTemplateVariableResolver {
 	
+	private static final String DEFAULT_VALUE_IF_EMPTY = "${Name}";
+
 	public static final String VARIABLE_NAME = "Dependency";
 	
 	@Inject
@@ -53,6 +55,9 @@ public class DependencyResolver extends AbstractTemplateVariableResolver {
 		
 		while(filter.hasNext()) {
 			values.add(filter.next().getURI().trimFileExtension().lastSegment());
+		}
+		if(values.isEmpty()) {
+			values.add(DEFAULT_VALUE_IF_EMPTY);
 		}
 		return values;
 	}
