@@ -63,15 +63,15 @@ public class VcmlRenameDependencyParticipant extends RenameParticipant {
 		Object[] elements = getProcessor().getElements();
 		if(elements.length > 0 && elements[0] instanceof IFile) {
 			IFile file = (IFile)elements[0];
-			final String fileName = file.getName().substring(0, file.getName().indexOf('.'));
-			
+			String fileName = file.getName().substring(0, file.getName().indexOf('.'));
+			final String searchName = fileName.toLowerCase().equals(fileName) ? fileName.toUpperCase() : fileName;
 			Resource dependencyResource = resourceUtil.getResource(file);
 			URI vcmlResourceUri = dependencySourceUtils.getVcmlResourceURI(dependencyResource.getURI());
 			EList<EObject> contents = resourceUtil.getResourceSet().getResource(vcmlResourceUri, true).getContents();
 			if(!contents.isEmpty()) {
 				Iterator<VCObject> iterator = Iterables.filter(((Model)contents.get(0)).getObjects(), new Predicate<VCObject>() {
 					public boolean apply(VCObject object) {
-						return object.getName().equals(fileName);
+						return object.getName().equals(searchName);
 					}
 				}).iterator();
 				
