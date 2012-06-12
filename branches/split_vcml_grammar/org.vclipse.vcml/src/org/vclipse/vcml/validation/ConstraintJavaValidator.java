@@ -22,11 +22,15 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
  
-
-public class ConstraintJavaValidator extends AbstractConstraintJavaValidator {
+public class ConstraintJavaValidator extends ProcedureJavaValidator {
 
 	@Inject 
 	private ConstraintRestrictionExtensions expressionExtensions;
+	
+	@Check
+	public void checkConstraintSource(ConstraintSource source) {
+		checkSource(source);
+	}
 	 
 	@Check(CheckType.FAST)
 	public void checkConstraint(ConstraintSource source) {

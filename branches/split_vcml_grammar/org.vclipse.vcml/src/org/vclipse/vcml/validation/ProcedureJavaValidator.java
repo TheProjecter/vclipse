@@ -8,11 +8,16 @@ import org.vclipse.vcml.vcml.ConditionalStatement;
 import org.vclipse.vcml.vcml.DelDefault;
 import org.vclipse.vcml.vcml.Expression;
 import org.vclipse.vcml.vcml.InCondition_P;
+import org.vclipse.vcml.vcml.ProcedureSource;
 import org.vclipse.vcml.vcml.VcmlPackage;
- 
 
-public class ProcedureJavaValidator extends AbstractProcedureJavaValidator {
+public class ProcedureJavaValidator extends ConditionJavaValidator {
 
+	@Check
+	public void checkProcedureSource(ProcedureSource source) {
+		checkSource(source);
+	}
+	
 	@Check
 	public void checkCompoundStatement(CompoundStatement cs) {
 		if (!(cs.eContainer() instanceof ConditionalStatement)) {

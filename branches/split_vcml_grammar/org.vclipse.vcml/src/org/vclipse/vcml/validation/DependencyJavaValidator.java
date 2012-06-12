@@ -1,6 +1,14 @@
 package org.vclipse.vcml.validation;
 
+import java.util.Iterator;
+
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.validation.Check;
+import org.eclipse.xtext.validation.ValidationMessageAcceptor;
+import org.vclipse.vcml.utils.DependencySourceUtils;
 import org.vclipse.vcml.vcml.BinaryExpression;
 import org.vclipse.vcml.vcml.CharacteristicReference_C;
 import org.vclipse.vcml.vcml.CharacteristicReference_P;
@@ -8,14 +16,45 @@ import org.vclipse.vcml.vcml.Comparison;
 import org.vclipse.vcml.vcml.Expression;
 import org.vclipse.vcml.vcml.MDataCharacteristic_C;
 import org.vclipse.vcml.vcml.MDataCharacteristic_P;
+import org.vclipse.vcml.vcml.Model;
 import org.vclipse.vcml.vcml.NumericLiteral;
 import org.vclipse.vcml.vcml.SymbolicLiteral;
 import org.vclipse.vcml.vcml.UnaryExpression;
+import org.vclipse.vcml.vcml.VCObject;
 import org.vclipse.vcml.vcml.VcmlPackage;
- 
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import com.google.inject.Inject;
+ 
 public class DependencyJavaValidator extends AbstractDependencyJavaValidator {
 
+	@Inject
+	private DependencySourceUtils sourceUtils;
+	
+	protected void checkSource(EObject source) {
+		Resource sourceResource = source.eResource();
+		URI vcmlUri = sourceUtils.getVcmlResourceURI(sourceResource.getURI());
+		if(vcmlUri != null) {
+			final String fileName = sourceResource.getURI().trimFileExtension().lastSegment();
+			Resource vcmlResource = sourceResource.getResourceSet().getResource(vcmlUri, true);
+			EList<EObject> contents = vcmlResource.getContents();
+			if(!contents.isEmpty()) {
+				if(!contents.isEmpty()) {
+					Iterator<VCObject> iterator = Iterables.filter(((Model)contents.get(0)).getObjects(), new Predicate<VCObject>() {
+						public boolean apply(VCObject object) {
+							return object.getName().equals(fileName);
+						}
+					}).iterator();
+					if(!iterator.hasNext()) {
+						warning("Procedure object does not exist for the " + 
+								source.eClass().getName(), source, null, ValidationMessageAcceptor.INSIGNIFICANT_INDEX);
+					}
+				}
+			}
+		}
+	}
+	
 	@Check
 	public void checkComparison(Comparison comparison) {
 		Expression left = comparison.getLeft();
