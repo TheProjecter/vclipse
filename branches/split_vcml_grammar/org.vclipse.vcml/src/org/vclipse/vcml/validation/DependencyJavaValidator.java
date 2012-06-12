@@ -47,8 +47,9 @@ public class DependencyJavaValidator extends AbstractDependencyJavaValidator {
 						}
 					}).iterator();
 					if(!iterator.hasNext()) {
-						warning("Procedure object does not exist for the " + 
-								source.eClass().getName(), source, null, ValidationMessageAcceptor.INSIGNIFICANT_INDEX);
+						String sourceName = source.eClass().getName();
+						String objectName = sourceName.replace("Source", "");
+						warning(objectName + " object does not exist for the " + sourceName, source, null, ValidationMessageAcceptor.INSIGNIFICANT_INDEX);
 					}
 				}
 			}
