@@ -395,7 +395,7 @@
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="FunctionOrTable"/>
-  <eClassifiers xsi:type="ecore:EClass" name="Function" eSuperTypes="#//ConstraintRestriction #//SimpleStatement #//FunctionOrTable">
+  <eClassifiers xsi:type="ecore:EClass" name="Function" eSuperTypes="#//ConstraintRestriction #//SimpleStatement #//FunctionOrTable #//Condition">
     <eStructuralFeatures xsi:type="ecore:EReference" name="function" eType="#//VariantFunction"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="characteristics" unique="false"
         upperBound="-1" eType="#//Characteristic"/>
@@ -409,7 +409,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="values" upperBound="-1"
         eType="#//Literal" containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Table" eSuperTypes="#//ConstraintRestriction #//SimpleStatement #//FunctionOrTable">
+  <eClassifiers xsi:type="ecore:EClass" name="Table" eSuperTypes="#//ConstraintRestriction #//SimpleStatement #//FunctionOrTable #//Condition">
     <eStructuralFeatures xsi:type="ecore:EReference" name="table" eType="#//VariantTable"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="characteristics" unique="false"
         upperBound="-1" eType="#//Characteristic"/>
