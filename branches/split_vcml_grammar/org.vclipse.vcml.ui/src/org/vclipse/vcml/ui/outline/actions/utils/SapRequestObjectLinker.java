@@ -30,6 +30,7 @@ public class SapRequestObjectLinker extends VCMLLinker {
 	private IExtensionPointUtilities extensionPointReader;
 	
 	private Set<String> seenObjects;
+	private Resource output;
 	
 	public SapRequestObjectLinker() {
 		seenObjects = Sets.newHashSet();
@@ -37,6 +38,10 @@ public class SapRequestObjectLinker extends VCMLLinker {
 	
 	public void setSeenObjects(Set<String> seenObjects) {
 		this.seenObjects = seenObjects;
+	}
+	
+	public void setOutput(Resource output) {
+		this.output = output;
 	}
 	
 	@Override
@@ -61,7 +66,8 @@ public class SapRequestObjectLinker extends VCMLLinker {
 				if(crossReference.eIsProxy()) {
 					if(crossReference instanceof VCObject) {
 						VCObject vcobject = (VCObject)crossReference;
-						if(seenObjects.contains(vcobject.eClass().getName() + "/" + vcobject.getName().toUpperCase())) {
+						String name = vcobject.getName();
+						if(name != null && seenObjects.contains(vcobject.eClass().getName() + "/" + name.toUpperCase())) {
 							continue;
 						}
 					}
@@ -70,7 +76,7 @@ public class SapRequestObjectLinker extends VCMLLinker {
 						if(handler.getClass().getSimpleName().contains("Extract")) {
 							try {
 								Method method = handler.getClass().getMethod("run", new Class[]{getInstanceType(crossReference), Resource.class, IProgressMonitor.class, Set.class});
-								method.invoke(handler, new Object[]{crossReference, object.eResource(), new NullProgressMonitor(), seenObjects});
+								method.invoke(handler, new Object[]{crossReference, output == null ? object.eResource() : output, new NullProgressMonitor(), seenObjects});
 							} catch (NoSuchMethodException e) {
 								e.printStackTrace();
 								// ignore 

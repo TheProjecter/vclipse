@@ -14,10 +14,12 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.vclipse.vcml.vcml.Constraint;
-import org.vclipse.vcml.vcml.Model;
+import org.eclipse.xtext.resource.impl.ListBasedDiagnosticConsumer;
 import org.vclipse.vcml.ui.actions.BAPIUtils;
 import org.vclipse.vcml.utils.VcmlUtils;
+import org.vclipse.vcml.vcml.Constraint;
+import org.vclipse.vcml.vcml.ConstraintSource;
+import org.vclipse.vcml.vcml.Model;
 
 import com.sap.conn.jco.AbapException;
 import com.sap.conn.jco.JCoException;
@@ -50,6 +52,11 @@ public class ConstraintReader extends BAPIUtils {
 			object.setDescription(readDescription(tpl.getTable("DESCRIPTION"), "LANGUAGE_ISO", "LANGUAGE", "DESCRIPT"));
 			object.setDocumentation(readMultiLanguageDocumentations(tpl.getTable("DOCUMENTATION")));
 			readSource(tpl.getTable("SOURCE"), object);
+			
+			ConstraintSource constraintSource = sourceUtils.getConstraintSource(object);
+			sapRequestObjectLinker.setSeenObjects(seenObjects);
+			sapRequestObjectLinker.setOutput(object.eResource());
+			sapRequestObjectLinker.linkModel(constraintSource, new ListBasedDiagnosticConsumer());				
 		} catch (AbapException e) {
 			handleAbapException(e);
 		} 

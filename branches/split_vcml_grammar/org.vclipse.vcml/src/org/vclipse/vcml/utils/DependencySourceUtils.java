@@ -11,7 +11,9 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.common.util.WrappedException;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.URIConverter;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.xtext.EcoreUtil2;
 import org.vclipse.vcml.vcml.ConditionSource;
 import org.vclipse.vcml.vcml.Constraint;
@@ -38,11 +40,14 @@ public class DependencySourceUtils {
 		Resource resource = object.eResource();
 		URI sourceURI = getSourceURI(object);
 		List<EObject> contents = Lists.newArrayList();
+		ResourceSet resourceSet = resource.getResourceSet();
+		if(resourceSet == null) {
+			resourceSet = new ResourceSetImpl();
+		}
 		try {
-			contents = resource.getResourceSet().getResource(sourceURI, true).getContents();
+			contents = resourceSet.getResource(sourceURI, true).getContents();
 		} catch(Exception exception) {
 			// resource does not exists
-			return null;
 		}
 		if(!contents.isEmpty()) {
 			return contents.get(0);

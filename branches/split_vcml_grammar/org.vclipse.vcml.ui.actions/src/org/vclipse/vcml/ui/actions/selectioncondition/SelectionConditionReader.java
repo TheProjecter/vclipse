@@ -14,10 +14,12 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.vclipse.vcml.vcml.Model;
-import org.vclipse.vcml.vcml.SelectionCondition;
+import org.eclipse.xtext.resource.impl.ListBasedDiagnosticConsumer;
 import org.vclipse.vcml.ui.actions.BAPIUtils;
 import org.vclipse.vcml.utils.VcmlUtils;
+import org.vclipse.vcml.vcml.ConditionSource;
+import org.vclipse.vcml.vcml.Model;
+import org.vclipse.vcml.vcml.SelectionCondition;
 
 import com.sap.conn.jco.AbapException;
 import com.sap.conn.jco.JCoException;
@@ -58,6 +60,11 @@ public class SelectionConditionReader extends BAPIUtils {
 			object.setDescription(readDescription(tpl.getTable("DESCRIPTION"), "LANGUAGE_ISO", "LANGUAGE", "DESCRIPT"));
 			object.setDocumentation(readMultiLanguageDocumentations(tpl.getTable("DOCUMENTATION")));
 			readSource(tpl.getTable("SOURCE"), object);
+			
+			ConditionSource selectionConditionSource = sourceUtils.getSelectionConditionSource(object);
+			sapRequestObjectLinker.setSeenObjects(seenObjects);
+			sapRequestObjectLinker.setOutput(object.eResource());
+			sapRequestObjectLinker.linkModel(selectionConditionSource, new ListBasedDiagnosticConsumer());
 		} catch (AbapException e) {
 			handleAbapException(e);
 		}

@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -30,8 +31,12 @@ import org.vclipse.connection.VClipseConnectionPlugin;
 import org.vclipse.console.CMConsolePlugin;
 import org.vclipse.console.CMConsolePlugin.Kind;
 import org.vclipse.vcml.VCMLRuntimeModule;
+import org.vclipse.vcml.ui.VCMLUiModule;
 import org.vclipse.vcml.ui.VCMLUiPlugin;
+import org.vclipse.vcml.ui.extension.IExtensionPointUtilities;
+import org.vclipse.vcml.ui.internal.VCMLActivator;
 import org.vclipse.vcml.ui.outline.actions.OutlineActionCanceledException;
+import org.vclipse.vcml.ui.outline.actions.utils.SapRequestObjectLinker;
 import org.vclipse.vcml.utils.DependencySourceUtils;
 import org.vclipse.vcml.utils.DescriptionHandler;
 import org.vclipse.vcml.utils.DocumentationHandler;
@@ -81,8 +86,10 @@ public class BAPIUtils {
 	
 	protected IConnectionHandler connectionHandler;
 	
-	private DependencySourceUtils sourceUtils;
+	protected DependencySourceUtils sourceUtils;
 
+	protected SapRequestObjectLinker sapRequestObjectLinker;
+	
 	/**
 	 * 
 	 */
@@ -94,8 +101,11 @@ public class BAPIUtils {
 		info = new PrintStream(CMConsolePlugin.getDefault().getConsole(Kind.Info));
 	
 		// injection TODO injection should be simplified
-		Injector injector = Guice.createInjector(new VCMLRuntimeModule());
-		sourceUtils = injector.getInstance(DependencySourceUtils.class);
+		Injector coreInjector = Guice.createInjector(new VCMLRuntimeModule());
+		Injector uiInjector = VCMLActivator.getInstance().getInjector(VCMLActivator.ORG_VCLIPSE_VCML_VCML);
+		
+		sourceUtils = coreInjector.getInstance(DependencySourceUtils.class);
+		sapRequestObjectLinker = uiInjector.getInstance(SapRequestObjectLinker.class);
 		preferenceStore = VCMLUiPlugin.getDefault().getInjector().getInstance(IPreferenceStore.class);
 		connectionHandler = VClipseConnectionPlugin.getDefault().getInjector().getInstance(IConnectionHandler.class);
 	}
