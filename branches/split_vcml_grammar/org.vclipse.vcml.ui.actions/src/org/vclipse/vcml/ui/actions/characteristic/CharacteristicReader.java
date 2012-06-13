@@ -56,7 +56,7 @@ public class CharacteristicReader extends BAPIUtils {
 		if(monitor.isCanceled()) {
 			return null;
 		}
-		if(!seenObjects.add("Characteristic/" + csticName)) {
+		if(!seenObjects.add("Characteristic/" + csticName.toUpperCase())) {
 			return null;			
 		}
 		final Characteristic object = VCML.createCharacteristic();
