@@ -129,7 +129,6 @@ public class BillOfMaterialReader extends BAPIUtils {
 								int seq = getSequenceNumber(tT_DEP_ORDER, itemNode, depName);
 								bomItem.getEntries().add(mkConfigurationProfileEntry(seq, proc));
 							} else if ("5".equals(depType)) {
-								System.out.println(bomMaterial.getName() + " " + depName);
 								SelectionCondition cond = null;
 								if (recurse) {
 									if(monitor.isCanceled()) {
@@ -140,7 +139,6 @@ public class BillOfMaterialReader extends BAPIUtils {
 								if (cond==null) {
 									cond = VCMLProxyFactory.createSelectionConditionProxy(resource, depName);
 								}
-								System.out.println("\t" + cond);
 								bomItem.setSelectionCondition(cond);
 							} else {
 								throw new IllegalArgumentException("unknown dependency type in BOM: " + depName + " of type " + depType);
