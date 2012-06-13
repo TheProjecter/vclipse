@@ -17,6 +17,7 @@ import org.vclipse.vcml.vcml.ConstraintObject;
 import org.vclipse.vcml.vcml.ConstraintRestriction;
 import org.vclipse.vcml.vcml.ConstraintRestrictionFalse;
 import org.vclipse.vcml.vcml.ConstraintSource;
+import org.vclipse.vcml.vcml.PartOfCondition;
 
 import com.google.inject.Inject;
 
@@ -93,4 +94,7 @@ public class ConstraintOutlineTreeProvider extends VCMLOutlineTreeProvider {
 		return "false";
 	}
 	
+	String _text(PartOfCondition partOfCondition) {
+		return "part_of(" + partOfCondition.getChild().getName() + ", " + partOfCondition.getParent().getName() + ")";
+	}
 }
