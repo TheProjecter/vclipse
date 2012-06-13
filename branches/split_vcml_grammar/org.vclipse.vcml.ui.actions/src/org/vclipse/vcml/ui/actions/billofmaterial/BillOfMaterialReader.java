@@ -22,9 +22,15 @@ import org.eclipse.xtext.util.Strings;
 import org.vclipse.vcml.vcml.BOMItem;
 import org.vclipse.vcml.vcml.BillOfMaterial;
 import org.vclipse.vcml.vcml.Material;
+import org.vclipse.vcml.vcml.Procedure;
+import org.vclipse.vcml.vcml.SelectionCondition;
 import org.vclipse.vcml.ui.actions.BAPIUtils;
 import org.vclipse.vcml.ui.actions.material.MaterialReader;
+import org.vclipse.vcml.ui.actions.procedure.ProcedureReader;
+import org.vclipse.vcml.ui.actions.selectioncondition.SelectionConditionReader;
 import org.vclipse.vcml.utils.VCMLProxyFactory;
+import static org.vclipse.vcml.utils.VcmlObjectUtils.mkConfigurationProfileEntry;
+import static org.vclipse.vcml.utils.VcmlObjectUtils.sortEntries;
 
 import com.google.inject.Inject;
 import com.sap.conn.jco.AbapException;
@@ -39,6 +45,12 @@ public class BillOfMaterialReader extends BAPIUtils {
 
 	@Inject
 	private MaterialReader materialReader;
+
+	@Inject
+	private ProcedureReader procedureReader;
+	
+	@Inject
+	private SelectionConditionReader selectionConditionReader;
 	
 	public void read(Material containerMaterial, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, boolean recurse) throws JCoException {
 		if(monitor.isCanceled()) {
@@ -60,7 +72,7 @@ public class BillOfMaterialReader extends BAPIUtils {
 
 			JCoParameterList tpl = function.getTableParameterList();
 			
-			JCoTable tSTKO = tpl.getTable("T_STKO"); // "St�cklisten-Kopf"
+			JCoTable tSTKO = tpl.getTable("T_STKO"); // BOM headers
 			Map<String, BillOfMaterial> billOfMaterialByName = new HashMap<String, BillOfMaterial>();
 			for (int i = 0; i < tSTKO.getNumRows(); i++) {
 				tSTKO.setRow(i);
@@ -71,13 +83,15 @@ public class BillOfMaterialReader extends BAPIUtils {
 				// object.setStatus(VCMLUtils.createStatus(tSTKO.getInt("BOM_STATUS"))); // TODO BOM should have a status
 			}
 
-			JCoTable tSTPO = tpl.getTable("T_STPO"); // "St�cklisten-Position"
+			JCoTable tSTPO = tpl.getTable("T_STPO"); // BOM items
+			JCoTable tT_DEP_DATA = tpl.getTable("T_DEP_DATA"); // Object dependencies: basic data
+			JCoTable tT_DEP_ORDER = tpl.getTable("T_DEP_ORDER"); // Object dependencies: sort sequence
+			
 			for (int i = 0; i < tSTPO.getNumRows(); i++) {
 				tSTPO.setRow(i);
 				String bomNo = tSTPO.getString("BOM_NO");
 				BillOfMaterial bom = billOfMaterialByName.get(bomNo);
 				List<BOMItem> bomItems = bom.getItems();
-				// String itemNode = tSTPO.getString("ITEM_NODE");
 				BOMItem bomItem = VCML.createBOMItem();
 				bomItems.add(bomItem);
 				bomItem.setItemnumber(tSTPO.getInt("ITEM_NO"));
@@ -94,6 +108,48 @@ public class BillOfMaterialReader extends BAPIUtils {
 						bomMaterial = VCMLProxyFactory.createMaterialProxy(resource, component);
 					}
 					bomItem.setMaterial(bomMaterial);
+					
+					String itemNode = tSTPO.getString("ITEM_NODE");
+					for (int j = 0; j < tT_DEP_DATA.getNumRows(); j++) {
+						tT_DEP_DATA.setRow(j);
+						if (Strings.equal(itemNode, tT_DEP_DATA.getString("ITEM_NODE"))) {
+							String depType = tT_DEP_DATA.getString("DEP_TYPE");
+							String depName = tT_DEP_DATA.getString("DEP_INTERN");
+							if ("7".equals(depType)) {
+								Procedure proc = null;
+								if (recurse) {
+									if(monitor.isCanceled()) {
+										return;
+									}
+									proc = procedureReader.read(depName, resource, monitor, seenObjects, recurse);
+								}
+								if (proc==null) {
+									proc = VCMLProxyFactory.createProcedureProxy(resource, depName);
+								}
+								int seq = getSequenceNumber(tT_DEP_ORDER, itemNode, depName);
+								bomItem.getEntries().add(mkConfigurationProfileEntry(seq, proc));
+							} else if ("5".equals(depType)) {
+								System.out.println(bomMaterial.getName() + " " + depName);
+								SelectionCondition cond = null;
+								if (recurse) {
+									if(monitor.isCanceled()) {
+										return;
+									}
+									cond = selectionConditionReader.read(depName, resource, monitor, seenObjects, recurse);
+								}
+								if (cond==null) {
+									cond = VCMLProxyFactory.createSelectionConditionProxy(resource, depName);
+								}
+								System.out.println("\t" + cond);
+								bomItem.setSelectionCondition(cond);
+							} else {
+								throw new IllegalArgumentException("unknown dependency type in BOM: " + depName + " of type " + depType);
+							}
+							
+						}
+					}
+					sortEntries(bomItem.getEntries());
+					
 				} else {
 					if (log.isTraceEnabled()) {
 						log.trace("BOM item with emtpy COMPONENT for material " + materialNumber + ":\n"
@@ -109,6 +165,17 @@ public class BillOfMaterialReader extends BAPIUtils {
 		} catch (AbapException e) {
 			handleAbapException(e);
 		} 
+	}
+
+	private int getSequenceNumber(JCoTable tOrder, String itemIdent, String depName) {
+		for (int i = 0; i < tOrder.getNumRows(); i++) {
+			tOrder.setRow(i);
+			if (Strings.equal(itemIdent,tOrder.getString("ITEM_NODE")) && 
+				Strings.equal(depName, tOrder.getString("DEP_INTERN"))) {
+				return tOrder.getInt("DEP_LINENO");
+			}
+		}
+		return 0;
 	}
 
 }

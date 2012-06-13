@@ -1,5 +1,10 @@
 package org.vclipse.vcml.utils;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 import org.eclipse.emf.common.util.EList;
 import org.vclipse.vcml.vcml.BOMItem;
 import org.vclipse.vcml.vcml.BillOfMaterial;
@@ -37,6 +42,8 @@ import org.vclipse.vcml.vcml.VariantTable;
 import org.vclipse.vcml.vcml.VariantTableArgument;
 import org.vclipse.vcml.vcml.VariantTableContent;
 import org.vclipse.vcml.vcml.VcmlFactory;
+
+import com.google.common.collect.Lists;
 
 public class VcmlObjectUtils {
 
@@ -230,5 +237,16 @@ public class VcmlObjectUtils {
 		vta.setCharacteristic(cstic);
 		vta.setKey(key);
 		return vta;
+	}
+	
+	static public void sortEntries(List<ConfigurationProfileEntry> entries) {
+		// direct sort of "entries" does not work: The 'no duplicates' constraint is violated
+		ArrayList<ConfigurationProfileEntry> arrayList = Lists.newArrayList(entries);
+		Collections.sort(arrayList, new Comparator<ConfigurationProfileEntry>() {
+			public int compare(ConfigurationProfileEntry arg0, ConfigurationProfileEntry arg1) {
+				return new Integer(arg0.getSequence()).compareTo(new Integer(arg1.getSequence()));
+			}});
+		entries.clear();
+		entries.addAll(arrayList);
 	}
 }

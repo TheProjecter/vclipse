@@ -10,6 +10,8 @@
  ******************************************************************************/
 package org.vclipse.vcml.ui.actions.configurationprofile;
 
+import static org.vclipse.vcml.utils.VcmlObjectUtils.sortEntries;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -104,11 +106,13 @@ public class ConfigurationProfileReader extends BAPIUtils {
 			}
 			
 			JCoTable conProDependencyData = tpl.getTable("CON_PRO_DEPENDENCY_DATA");
+			JCoTable conProDependencyOrder = tpl.getTable("CON_PRO_DEPENDENCY_ORDER");
 			Map<String, ConfigurationProfileEntry> entriesByName = new HashMap<String, ConfigurationProfileEntry>();
 			for (int i = 0; i < conProDependencyData.getNumRows(); i++) {
 				conProDependencyData.setRow(i);
 				
-				ConfigurationProfile profile = configurationprofilesByName.get(conProDependencyData.getString("C_PROFILE"));
+				String cProfile = conProDependencyData.getString("C_PROFILE");
+				ConfigurationProfile profile = configurationprofilesByName.get(cProfile);
 				if (profile==null) { // unknown profile
 					continue;
 				}
@@ -128,6 +132,7 @@ public class ConfigurationProfileReader extends BAPIUtils {
 					if (procedure==null) {
 						procedure = VCMLProxyFactory.createProcedureProxy(resource, depName);
 					}
+					entry.setSequence(getSequenceNumber(conProDependencyOrder, cProfile, depName));
 					entry.setDependency(procedure);
 				} else if ("CNET".equals(depType)) {
 					DependencyNet dependencyNet = null;
@@ -144,20 +149,25 @@ public class ConfigurationProfileReader extends BAPIUtils {
 				} else {
 					throw new IllegalArgumentException("unknown dependency type in configuration profile: " + depName + " of type " + depType);
 				}
+
+				sortEntries(profile.getEntries());
 			}
 			
-			JCoTable conProDependencyOrder = tpl.getTable("CON_PRO_DEPENDENCY_ORDER");
-			for (int i = 0; i < conProDependencyOrder.getNumRows(); i++) {
-				conProDependencyOrder.setRow(i);
-				ConfigurationProfileEntry entry = entriesByName.get(conProDependencyData.getString("DEP_INTERN"));
-				if (entry!=null) {
-					entry.setSequence(conProDependencyOrder.getInt("DEP_LINENO"));
-				}
-			}
 
 		} catch (AbapException e) {
 			handleAbapException(e);
 		} 
+	}
+
+	private int getSequenceNumber(JCoTable tOrder, String profileName, String depName) {
+		for (int i = 0; i < tOrder.getNumRows(); i++) {
+			tOrder.setRow(i);
+			if (Strings.equal(profileName,tOrder.getString("C_PROFILE")) && 
+				Strings.equal(depName, tOrder.getString("DEP_INTERN"))) {
+				return tOrder.getInt("DEP_LINENO");
+			}
+		}
+		return 0;
 	}
 
 }

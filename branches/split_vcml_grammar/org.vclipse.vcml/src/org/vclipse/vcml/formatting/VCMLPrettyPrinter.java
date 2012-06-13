@@ -536,12 +536,15 @@ public class VCMLPrettyPrinter extends VcmlSwitch<DataLayouter<NoExceptions>> {
 		printNullsafe(object.getItemnumber());
 		layouter.print(" ");
 		printCrossReference(object, VCMLPACKAGE.getBOMItem_Material(), VCMLPACKAGE.getVCObject_Name());
-		EList<ConfigurationProfileEntry> entries = object.getEntries();
 		SelectionCondition selCondition = object.getSelectionCondition();
-		if(selCondition != null && !entries.isEmpty()) {
+		EList<ConfigurationProfileEntry> entries = object.getEntries();
+		if(selCondition != null || !entries.isEmpty()) {
 			layouter.brk().beginC().print("dependencies {");
 			{
-				printCrossReference(object, VCMLPACKAGE.getBOMItem_SelectionCondition(), VCMLPACKAGE.getVCObject_Name());
+				if (selCondition != null) {
+					layouter.brk();
+					printCrossReference(object, VCMLPACKAGE.getBOMItem_SelectionCondition(), VCMLPACKAGE.getVCObject_Name());
+				}
 				for(ConfigurationProfileEntry entry : entries) {
 					layouter.brk();
 					printNullsafe(entry.getSequence());
