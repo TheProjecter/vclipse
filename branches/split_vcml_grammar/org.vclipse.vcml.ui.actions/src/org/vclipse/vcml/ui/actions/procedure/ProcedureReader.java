@@ -53,7 +53,7 @@ public class ProcedureReader extends BAPIUtils {
 			JCoStructure dependencyData = function.getExportParameterList().getStructure("DEPENDENCY_DATA");
 			String depType = dependencyData.getString("DEP_TYPE");
 			if (!"PROC".equals(depType))
-				err.println("ERROR: " + procedureName + " is not a procedure - it has dependency type " + depType);
+				error.println("ERROR: " + procedureName + " is not a procedure - it has dependency type " + depType);
 			object.setStatus(VcmlUtils.createStatusFromInt(dependencyData.getInt("STATUS")));
 			object.setGroup(nullIfEmpty(dependencyData.getString("GROUP")));
 			JCoParameterList tpl = function.getTableParameterList();

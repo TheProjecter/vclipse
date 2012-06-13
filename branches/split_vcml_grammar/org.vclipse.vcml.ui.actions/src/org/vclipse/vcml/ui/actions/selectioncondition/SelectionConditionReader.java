@@ -53,7 +53,7 @@ public class SelectionConditionReader extends BAPIUtils {
 			JCoStructure dependencyData = function.getExportParameterList().getStructure("DEPENDENCY_DATA");
 			String depType = dependencyData.getString("DEP_TYPE");
 			if (!"SEL".equals(depType))
-				err.println("ERROR: " + selectionConditionName + " is not a selection condition - it has dependency type " + depType);
+				error.println("ERROR: " + selectionConditionName + " is not a selection condition - it has dependency type " + depType);
 			object.setStatus(VcmlUtils.createStatusFromInt(dependencyData.getInt("STATUS")));
 			object.setGroup(nullIfEmpty(dependencyData.getString("GROUP")));
 			JCoParameterList tpl = function.getTableParameterList();

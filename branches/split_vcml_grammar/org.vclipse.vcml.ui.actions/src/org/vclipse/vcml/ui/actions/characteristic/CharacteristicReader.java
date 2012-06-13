@@ -174,7 +174,7 @@ public class CharacteristicReader extends BAPIUtils {
 					}
 				}
 			} else {
-				err.println("error: illegal/unknown data type " + dataType);
+				error.println("error: illegal/unknown data type " + dataType);
 			}
 			object.setMultiValue("M".equals(charactDetail.getString("VALUE_ASSIGNMENT")));
 			object.setRequired("X".equals(charactDetail.getString("ENTRY_REQUIRED")));

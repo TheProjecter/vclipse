@@ -30,6 +30,7 @@ import org.eclipse.xtext.ui.editor.templates.XtextTemplateContextType;
 import org.eclipse.xtext.ui.refactoring.ui.RenameRefactoringExecuter;
 import org.eclipse.xtext.ui.shared.Access;
 import org.vclipse.base.ui.util.ClasspathAwareImageHelper;
+import org.vclipse.base.ui.util.IExtendedImageHelper;
 import org.vclipse.vcml.ui.editor.hover.VCMLHoverProvider;
 import org.vclipse.vcml.ui.extension.ExtensionPointUtilities;
 import org.vclipse.vcml.ui.extension.IExtensionPointUtilities;
@@ -96,6 +97,10 @@ public class VCMLUiModule extends org.vclipse.vcml.ui.AbstractVCMLUiModule {
 	
 	public Class<? extends XtextTemplateContextType> bindXtextTemplateContextType() {
 		return VcmlTemplateContextType.class;
+	}
+	
+	public Class<? extends IExtendedImageHelper> bindIExtendedImageHelper() {
+		return ClasspathAwareImageHelper.class;
 	}
 	
 	/**

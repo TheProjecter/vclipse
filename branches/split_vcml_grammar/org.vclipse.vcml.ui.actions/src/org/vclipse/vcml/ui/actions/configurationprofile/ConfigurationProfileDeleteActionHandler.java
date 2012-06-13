@@ -29,7 +29,7 @@ public class ConfigurationProfileDeleteActionHandler extends BAPIUtils implement
 
 	@Override
 	public void run(ConfigurationProfile object, Resource resource,	IProgressMonitor monitor, Set<String> seenObjects) throws JCoException {
-		err.println("// " + this.getClass().getSimpleName() + " not yet implemented");
+		error.println("// " + this.getClass().getSimpleName() + " not yet implemented");
 	}
 
 }

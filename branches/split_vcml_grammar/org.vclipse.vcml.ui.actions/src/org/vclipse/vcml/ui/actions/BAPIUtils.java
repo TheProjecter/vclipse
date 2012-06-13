@@ -21,20 +21,11 @@ import java.util.Collection;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
-import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.xtext.util.Strings;
 import org.vclipse.connection.IConnectionHandler;
-import org.vclipse.connection.VClipseConnectionPlugin;
-import org.vclipse.console.CMConsolePlugin;
-import org.vclipse.console.CMConsolePlugin.Kind;
-import org.vclipse.vcml.VCMLRuntimeModule;
-import org.vclipse.vcml.ui.VCMLUiModule;
-import org.vclipse.vcml.ui.VCMLUiPlugin;
-import org.vclipse.vcml.ui.extension.IExtensionPointUtilities;
-import org.vclipse.vcml.ui.internal.VCMLActivator;
 import org.vclipse.vcml.ui.outline.actions.OutlineActionCanceledException;
 import org.vclipse.vcml.ui.outline.actions.utils.SapRequestObjectLinker;
 import org.vclipse.vcml.utils.DependencySourceUtils;
@@ -56,8 +47,8 @@ import org.vclipse.vcml.vcml.VcmlFactory;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import com.sap.conn.jco.AbapException;
 import com.sap.conn.jco.JCoContext;
 import com.sap.conn.jco.JCoException;
@@ -69,12 +60,6 @@ public class BAPIUtils {
 
 	private final Logger log = Logger.getLogger(BAPIUtils.class);
 
-	protected PrintStream task; 
-	protected PrintStream res; 
-	protected PrintStream err; 
-	protected PrintStream warning; 
-	protected PrintStream info; 
-	
 	/**
 	 * 
 	 */
@@ -82,34 +67,33 @@ public class BAPIUtils {
 
 	private JCoFunction currentFunction;
 
+	@Inject
 	private IPreferenceStore preferenceStore;
 	
+	@Inject
 	protected IConnectionHandler connectionHandler;
 	
+	@Inject
 	protected DependencySourceUtils sourceUtils;
 
+	@Inject
+	@Named("Task")
+	protected PrintStream task; 
+	
+	@Inject
+	@Named("Error")
+	protected PrintStream error; 
+	
+	@Inject
+	@Named("Warning")
+	protected PrintStream warning; 
+	
+	@Inject
+	@Named("Info")
+	protected PrintStream info; 
+	
+	@Inject
 	protected SapRequestObjectLinker sapRequestObjectLinker;
-	
-	/**
-	 * 
-	 */
-	public BAPIUtils() {
-		task = new PrintStream(CMConsolePlugin.getDefault().getConsole(Kind.Task));
-		res = new PrintStream(CMConsolePlugin.getDefault().getConsole(Kind.Result));
-		err = new PrintStream(CMConsolePlugin.getDefault().getConsole(Kind.Error));
-		warning = new PrintStream(CMConsolePlugin.getDefault().getConsole(Kind.Warning));
-		info = new PrintStream(CMConsolePlugin.getDefault().getConsole(Kind.Info));
-	
-		// injection TODO injection should be simplified
-		Injector coreInjector = Guice.createInjector(new VCMLRuntimeModule());
-		Injector uiInjector = VCMLActivator.getInstance().getInjector(VCMLActivator.ORG_VCLIPSE_VCML_VCML);
-		
-		sourceUtils = coreInjector.getInstance(DependencySourceUtils.class);
-		sapRequestObjectLinker = uiInjector.getInstance(SapRequestObjectLinker.class);
-		preferenceStore = VCMLUiPlugin.getDefault().getInjector().getInstance(IPreferenceStore.class);
-		connectionHandler = VClipseConnectionPlugin.getDefault().getInjector().getInstance(IConnectionHandler.class);
-	}
-	
 	
 	/**
 	 * @param function
@@ -122,7 +106,7 @@ public class BAPIUtils {
 //		for (int i = 0; i < table.getNumRows(); i++) {
 //			table.setRow(i);
 //			String type = table.getString("TYPE");
-//			err.println("/* " + type + "\t" + table.getValue("NUMBER") + "\t" + table.getString("MESSAGE") + "*/");
+//			error.println("/* " + type + "\t" + table.getValue("NUMBER") + "\t" + table.getString("MESSAGE") + "*/");
 //			if ("E".equals(type)) {
 //				retval = false;
 //			}
@@ -139,11 +123,11 @@ public class BAPIUtils {
 			if (printThisMessage) {
 				switch (type.charAt(0)) {
 				case 'A': 
-					err.println("// ABORT: " + table.getString("MESSAGE"));
+					error.println("// ABORT: " + table.getString("MESSAGE"));
 					retval = false;
 					break;
 				case 'E': 
-					err.println("// ERROR: " + table.getString("MESSAGE"));
+					error.println("// ERROR: " + table.getString("MESSAGE"));
 					retval = false;
 					break;
 				case 'W': 
@@ -156,13 +140,13 @@ public class BAPIUtils {
 					info.println("// INFO: " + table.getString("MESSAGE"));
 					break;
 				default:
-					err.println("/* unknown format of table row: " + table.toXML() + " */");
+					error.println("/* unknown format of table row: " + table.toXML() + " */");
 					retval = false;
 				}
 			}
 		}
 		if (!printThisMessage) {
-			err.println("/* unknown format of message table: " + table.toXML() + " */");
+			error.println("/* unknown format of message table: " + table.toXML() + " */");
 			retval = false;
 		}
 		return retval;
@@ -178,10 +162,10 @@ public class BAPIUtils {
 		if (!Strings.isEmpty(type)) {
 			switch (type.charAt(0)) {
 			case 'A': 
-				err.println("// ABORT: " + returnStructure.getString("MESSAGE"));
+				error.println("// ABORT: " + returnStructure.getString("MESSAGE"));
 				return false;
 			case 'E': 
-				err.println("// ERROR: " + returnStructure.getString("MESSAGE"));
+				error.println("// ERROR: " + returnStructure.getString("MESSAGE"));
 				return false;
 			case 'W': 
 				warning.println("// WARNING: " + returnStructure.getString("MESSAGE"));
@@ -193,7 +177,7 @@ public class BAPIUtils {
 				info.println("// INFO: " + returnStructure.getString("MESSAGE"));
 				return true;
 			default:
-				err.println("// unknown format of return structure: " + returnStructure.toXML());
+				error.println("// unknown format of return structure: " + returnStructure.toXML());
 				return false;
 			}
 			// NUMBER is not a member of BAPIRETURN (only BAPIRETURN2?)
@@ -267,24 +251,24 @@ public class BAPIUtils {
 				if (ampPosition==-1) break; // no & in instantiatedMessage
 				instantiatedMessage.replace(ampPosition, ampPosition+1, p);
 			}
-			err.println("// " + e.getLocalizedMessage() + ": " + instantiatedMessage);
+			error.println("// " + e.getLocalizedMessage() + ": " + instantiatedMessage);
 			return;
 		}
-		err.println("### failed: " + currentFunction.toXML());
-		err.println("### AbapException");
-		err.println("key: " + e.getKey());
+		error.println("### failed: " + currentFunction.toXML());
+		error.println("### AbapException");
+		error.println("key: " + e.getKey());
 		for(String p : e.getMessageParameters()) {
-			err.println("parameter: " + p);
+			error.println("parameter: " + p);
 		}
-		err.println("message: " + e.getMessage());
-		err.println("messageNumber: " + messageNumber);
-		err.println("group: " + e.getGroup());
-		err.println("messageClass: " + messageClass);
-		err.println("messageText: " + e.getMessageText());
-		err.println("messageType: " + e.getMessageType());
-		err.println("localizedMessage : " + e.getLocalizedMessage());
-		// err.println(e.getCause());
-		err.println("Use SE91 to query error message using message class " + messageClass + " and message number " + e.getMessageNumber());
+		error.println("message: " + e.getMessage());
+		error.println("messageNumber: " + messageNumber);
+		error.println("group: " + e.getGroup());
+		error.println("messageClass: " + messageClass);
+		error.println("messageText: " + e.getMessageText());
+		error.println("messageType: " + e.getMessageType());
+		error.println("localizedMessage : " + e.getLocalizedMessage());
+		// error.println(e.getCause());
+		error.println("Use SE91 to query error message using message class " + messageClass + " and message number " + e.getMessageNumber());
 	}
 
 	

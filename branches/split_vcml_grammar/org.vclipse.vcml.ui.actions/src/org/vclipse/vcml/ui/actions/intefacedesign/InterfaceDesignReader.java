@@ -231,14 +231,14 @@ FRAME_TEXT
 						for (int gl = 0; gl < charGroupsLang.getNumRows(); gl++) {
 							charGroupsLang.setRow(gl);
 							if (groupName.equals(charGroupsLang.getValue("GROUP_NAME"))) {
-								err.println(groupName + "\t" + charGroupsLang.getValue("LANGUAGE_ISO") + "\t" + charGroupsLang.getValue("GROUP_TEXT"));
+								error.println(groupName + "\t" + charGroupsLang.getValue("LANGUAGE_ISO") + "\t" + charGroupsLang.getValue("GROUP_TEXT"));
 							}
 						}
 						for (int c = 0; c < chars.getNumRows(); c++) {
 							chars.setRow(c);
 							// TODO sort chars by LINE
 							if (groupName.equals(chars.getValue("GROUP_NAME")) && "2".equals(chars.getValue("DESCR_OR_VALUE"))) {
-								err.println("\t" + chars.getValue("LINE") + "\t" + chars.getValue("NAME_CHAR"));
+								error.println("\t" + chars.getValue("LINE") + "\t" + chars.getValue("NAME_CHAR"));
 							}
 						}
 					}

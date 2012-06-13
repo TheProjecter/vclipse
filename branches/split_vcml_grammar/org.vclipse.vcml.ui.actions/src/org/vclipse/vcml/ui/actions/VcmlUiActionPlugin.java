@@ -28,7 +28,6 @@ public class VcmlUiActionPlugin extends AbstractUIPlugin {
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		getInjector();
 		plugin = this;
 	}
 

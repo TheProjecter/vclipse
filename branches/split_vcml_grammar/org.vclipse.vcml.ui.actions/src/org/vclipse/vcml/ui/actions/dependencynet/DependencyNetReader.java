@@ -48,7 +48,7 @@ public class DependencyNetReader extends BAPIUtils {
 			JCoStructure dependencyData = epl.getStructure("BASIC_DATA");
 			String depType = dependencyData.getString("DEP_TYPE");
 			if (!"CNET".equals(depType))
-				err.println("ERROR: " + depNetName + " is not a dependency net - it has dependency type " + depType);
+				error.println("ERROR: " + depNetName + " is not a dependency net - it has dependency type " + depType);
 			object.setStatus(VcmlUtils.createStatusFromInt(dependencyData.getInt("STATUS")));
 			object.setGroup(nullIfEmpty(dependencyData.getString("GROUP")));
 			JCoParameterList tpl = function.getTableParameterList();

@@ -26,7 +26,6 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.xtext.ui.IImageHelper;
 import org.eclipse.xtext.ui.editor.outline.impl.OutlinePage;
 import org.vclipse.base.ui.util.IExtendedImageHelper;
 import org.vclipse.vcml.ui.IUiConstants;
@@ -40,22 +39,17 @@ public class VCMLOutlinePage extends OutlinePage implements IPropertyChangeListe
 
 	private static final String POPUP_MENU_ID = VCMLOutlinePage.class.getSimpleName() + ".popup";
 
-	private final IExtendedImageHelper imageHelper;
+	@Inject
+	private IExtendedImageHelper imageHelper;
 	
-	private final IPreferenceStore preferenceStore;
+	@Inject
+	private IPreferenceStore preferenceStore;
 	
-	private final IExtensionPointUtilities extensionPointUtilities;
+	@Inject
+	private IExtensionPointUtilities extensionPointUtilities;
 
 	private Menu menu;
 	
-	@Inject
-	public VCMLOutlinePage(IImageHelper imageHelper, IPreferenceStore preferenceStore, IExtensionPointUtilities extensionPointUtilities) {
-		this.preferenceStore = preferenceStore;
-		this.imageHelper = (IExtendedImageHelper)imageHelper;
-		this.extensionPointUtilities = extensionPointUtilities;
-		this.preferenceStore.addPropertyChangeListener(this);
-	}
-
 	@Override
 	public void dispose() {
 		preferenceStore.removePropertyChangeListener(this);
@@ -72,6 +66,7 @@ public class VCMLOutlinePage extends OutlinePage implements IPropertyChangeListe
 	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
+		preferenceStore.addPropertyChangeListener(this);
 		TreeViewer treeViewer = getTreeViewer();
 		IToolBarManager toolBarManager = getSite().getActionBars().getToolBarManager();
 		

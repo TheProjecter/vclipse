@@ -28,7 +28,7 @@ import com.sap.conn.jco.JCoParameterList;
 import com.sap.conn.jco.JCoStructure;
 
 public class PreconditionReader extends BAPIUtils {
-
+	
 	public Precondition read(String preconditionName, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, boolean recurse) throws JCoException {
 		if(!seenObjects.add("Precondition/" + preconditionName)) {
 			return null;
@@ -53,7 +53,7 @@ public class PreconditionReader extends BAPIUtils {
 			JCoStructure dependencyData = function.getExportParameterList().getStructure("DEPENDENCY_DATA");
 			String depType = dependencyData.getString("DEP_TYPE");
 			if (!"PRE".equals(depType))
-				err.println("ERROR: " + preconditionName + " is not a precondition - it has dependency type " + depType);
+				error.println("ERROR: " + preconditionName + " is not a precondition - it has dependency type " + depType);
 			object.setStatus(VcmlUtils.createStatusFromInt(dependencyData.getInt("STATUS")));
 			object.setGroup(nullIfEmpty(dependencyData.getString("GROUP")));
 			JCoParameterList tpl = function.getTableParameterList();
