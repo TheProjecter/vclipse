@@ -29,14 +29,6 @@ Assignment
 	:	'$self' '.' characteristic=[Characteristic | XID] '=' expression=Expression
     ;
 
-PFunction
-	:	'pfunction' function=[VariantFunction|XID]
-		'('
-			characteristics+=[Characteristic|XID] '=' values+=Literal
-			(',' characteristics+=[Characteristic|XID] '=' values+=Literal)*
-		')'
-	;
-
 SetOrDelDefault
 	:	SetDefault
 	|	DelDefault
@@ -100,6 +92,7 @@ PrimaryCondition returns Condition
  	|   TypeOf
  	|	Table
  	|	Function
+ 	|	PFunction
 	;
 
 IsSpecified returns IsSpecified_P

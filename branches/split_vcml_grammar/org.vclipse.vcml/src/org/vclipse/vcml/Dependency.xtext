@@ -127,6 +127,14 @@ Function returns Function
 		')'
 	;
 
+PFunction
+	:	'pfunction' function=[VariantFunction|XID]
+		'('
+			characteristics+=[Characteristic|XID] '=' values+=Literal
+			(',' characteristics+=[Characteristic|XID] '=' values+=Literal)*
+		')'
+	;
+
 Table returns Table
 	:	'table' table=[VariantTable|XID]
 		'('

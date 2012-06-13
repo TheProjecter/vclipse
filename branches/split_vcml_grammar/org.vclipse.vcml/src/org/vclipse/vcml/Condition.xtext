@@ -48,6 +48,7 @@ PrimaryCondition returns Condition
  	|   TypeOf
  	|	Table
  	|	Function
+ 	|	PFunction
 	;
 
 IsSpecified returns IsSpecified_P
