@@ -760,7 +760,9 @@ public class VCML2IDocSwitch extends VcmlSwitch<List<IDoc>> {
 		setValue(segmentE1CUCOM, "C_PROFILE", toUpperCase(profile.getName()));
 		setValue(segmentE1CUCOM, "CLASSTYPE", "300");
 		setValue(segmentE1CUCOM, "STATUS", VcmlUtils.createIntFromStatus(profile.getStatus()));
-		setValue(segmentE1CUCOM, "BOMAPPL", profile.getBomapplication());
+		if(profile.getBomapplication() != null) {
+			setValue(segmentE1CUCOM, "BOMAPPL", profile.getBomapplication());			
+		}
 		setValue(segmentE1CUCOM, "BOMEXPL", "4");
 		setValue(segmentE1CUCOM, "INITSCREEN", "1");
 		setValue(segmentE1CUCOM, "FLRESULT", "X");

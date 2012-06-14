@@ -618,7 +618,8 @@ public class VCMLPrettyPrinter extends VcmlSwitch<DataLayouter<NoExceptions>> {
 					printNullsafe(profile.getName());
 					layouter.print("' {");
 					{
-						if (profile.getBomapplication() != null) {
+						String bomapplication = profile.getBomapplication();
+						if (bomapplication != null && !bomapplication.isEmpty()) {
 							layouter.brk().print("bomapplication ").print(profile.getBomapplication());
 						}
 						if(profile.getUidesign() != null) {

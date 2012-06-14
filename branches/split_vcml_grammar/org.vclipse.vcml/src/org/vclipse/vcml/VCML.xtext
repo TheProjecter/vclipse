@@ -182,7 +182,7 @@ CLASSNAME
 ConfigurationProfile :
     'configurationprofile' name=EXTENDED_ID '{'
 	   (	('status' status=Status)?
-	   &	('bomapplication' bomapplication=XID)
+	   &	('bomapplication' bomapplication=XID)?
 	   &	('uidesign' uidesign=[InterfaceDesign | EXTENDED_ID])?
 	   )
        (dependencyNets+=[DependencyNet|EXTENDED_ID])*
