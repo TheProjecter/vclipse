@@ -59,9 +59,11 @@ public class ProcedureReader extends BAPIUtils {
 			readSource(tpl.getTable("SOURCE"), object);
 			
 			ProcedureSource procedureSource = sourceUtils.getProcedureSource(object);
-			sapRequestObjectLinker.setSeenObjects(seenObjects);
-			sapRequestObjectLinker.setOutput(object.eResource());
-			sapRequestObjectLinker.linkModel(procedureSource, new ListBasedDiagnosticConsumer());
+			if (procedureSource!=null) {
+				sapRequestObjectLinker.setSeenObjects(seenObjects);
+				sapRequestObjectLinker.setOutput(object.eResource());
+				sapRequestObjectLinker.linkModel(procedureSource, new ListBasedDiagnosticConsumer());
+			}
 		} catch (AbapException e) {
 			handleAbapException(e);
 		}

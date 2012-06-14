@@ -59,9 +59,11 @@ public class SelectionConditionReader extends BAPIUtils {
 			readSource(tpl.getTable("SOURCE"), object);
 			
 			ConditionSource selectionConditionSource = sourceUtils.getSelectionConditionSource(object);
-			sapRequestObjectLinker.setSeenObjects(seenObjects);
-			sapRequestObjectLinker.setOutput(object.eResource());
-			sapRequestObjectLinker.linkModel(selectionConditionSource, new ListBasedDiagnosticConsumer());
+			if (selectionConditionSource!=null) {
+				sapRequestObjectLinker.setSeenObjects(seenObjects);
+				sapRequestObjectLinker.setOutput(object.eResource());
+				sapRequestObjectLinker.linkModel(selectionConditionSource, new ListBasedDiagnosticConsumer());
+			}
 		} catch (AbapException e) {
 			handleAbapException(e);
 		}

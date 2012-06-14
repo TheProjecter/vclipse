@@ -51,9 +51,11 @@ public class ConstraintReader extends BAPIUtils {
 			readSource(tpl.getTable("SOURCE"), object);
 			
 			ConstraintSource constraintSource = sourceUtils.getConstraintSource(object);
-			sapRequestObjectLinker.setSeenObjects(seenObjects);
-			sapRequestObjectLinker.setOutput(object.eResource());
-			sapRequestObjectLinker.linkModel(constraintSource, new ListBasedDiagnosticConsumer());				
+			if (constraintSource!=null) {
+				sapRequestObjectLinker.setSeenObjects(seenObjects);
+				sapRequestObjectLinker.setOutput(object.eResource());
+				sapRequestObjectLinker.linkModel(constraintSource, new ListBasedDiagnosticConsumer());
+			}
 		} catch (AbapException e) {
 			handleAbapException(e);
 		} 

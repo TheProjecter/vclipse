@@ -59,9 +59,11 @@ public class PreconditionReader extends BAPIUtils {
 			readSource(tpl.getTable("SOURCE"), object);
 			
 			ConditionSource conditionSource = sourceUtils.getPreconditionSource(object);
-			sapRequestObjectLinker.setSeenObjects(seenObjects);
-			sapRequestObjectLinker.setOutput(object.eResource());
-			sapRequestObjectLinker.linkModel(conditionSource, new ListBasedDiagnosticConsumer());
+			if (conditionSource!=null) {
+				sapRequestObjectLinker.setSeenObjects(seenObjects);
+				sapRequestObjectLinker.setOutput(object.eResource());
+				sapRequestObjectLinker.linkModel(conditionSource, new ListBasedDiagnosticConsumer());
+			}
 		} catch (AbapException e) {
 			handleAbapException(e);
 		}
