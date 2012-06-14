@@ -35,7 +35,7 @@ public class DependencyNetReader extends BAPIUtils {
 	private ConstraintReader constraintReader;
 
 	public DependencyNet read(String depNetName, Model vcmlModel, IProgressMonitor monitor, Set<String> seenObjects, boolean recurse) throws JCoException {
-		if(!seenObjects.add("DependencyNet/" + depNetName.toUpperCase())) {
+		if(depNetName == null || !seenObjects.add("DependencyNet/" + depNetName.toUpperCase())) {
 			return null;
 		}
 		DependencyNet object = VCML.createDependencyNet();

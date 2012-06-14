@@ -51,12 +51,8 @@ public class CharacteristicReader extends BAPIUtils {
 	public static final SimpleDateFormat DATEFORMAT_SAP = new SimpleDateFormat("yyyyMMdd");
 	public static final SimpleDateFormat DATEFORMAT_VCML = new SimpleDateFormat("dd.MM.yyyy");
 
-	
 	public Characteristic read(String csticName, Model vcmlModel, final IProgressMonitor monitor, Set<String> seenObjects, boolean recurse) throws JCoException {
-		if(monitor.isCanceled()) {
-			return null;
-		}
-		if(!seenObjects.add("Characteristic/" + csticName.toUpperCase())) {
+		if(csticName == null || !seenObjects.add("Characteristic/" + csticName.toUpperCase()) || monitor.isCanceled()) {
 			return null;			
 		}
 		final Characteristic object = VCML.createCharacteristic();

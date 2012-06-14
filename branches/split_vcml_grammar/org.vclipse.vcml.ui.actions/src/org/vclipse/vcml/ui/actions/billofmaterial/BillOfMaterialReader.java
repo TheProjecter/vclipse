@@ -53,11 +53,8 @@ public class BillOfMaterialReader extends BAPIUtils {
 	private SelectionConditionReader selectionConditionReader;
 	
 	public void read(Material containerMaterial, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, boolean recurse) throws JCoException {
-		if(monitor.isCanceled()) {
-			return;
-		}
 		String materialNumber = containerMaterial.getName();
-		if (!seenObjects.add("BillOfMaterial/" + materialNumber.toUpperCase())) {
+		if(materialNumber == null || !seenObjects.add("BillOfMaterial/" + materialNumber.toUpperCase()) || monitor.isCanceled()) {
 			return;
 		}
 		JCoFunction function = getJCoFunction("CSAP_MAT_BOM_READ", monitor);
