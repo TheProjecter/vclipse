@@ -50,6 +50,7 @@ import org.eclipse.xtext.resource.XtextResourceSet;
 import org.eclipse.xtext.ui.editor.model.IXtextDocument;
 import org.eclipse.xtext.ui.editor.outline.impl.EObjectNode;
 import org.eclipse.xtext.ui.util.ResourceUtil;
+import org.eclipse.xtext.util.SimpleAttributeResolver;
 import org.eclipse.xtext.util.StringInputStream;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 import org.vclipse.console.CMConsolePlugin;
@@ -153,12 +154,15 @@ public class VCMLOutlineAction extends Action implements ISelectionChangedListen
 			final Model vcmlModel = (Model)finalSourceResource.getContents().get(0);
 			Job job = new Job(getDescription()) {
 				protected IStatus run(IProgressMonitor monitor) {
-					monitor.beginTask("Extracting objects from SAP system", IProgressMonitor.UNKNOWN);
+					String taskName = "Executing rfc call on SAP system";
+					monitor.beginTask(taskName, IProgressMonitor.UNKNOWN);
 					for(EObject obj : getSelectedObjects()) {
 						if(monitor.isCanceled()) {
 							break;
 						}
 						IVCMLOutlineActionHandler<?> actionHandler = actionHandlers.get(getInstanceTypeName(obj));
+						taskName = "Executing " + actionHandler.getClass().getSimpleName() + " for " + SimpleAttributeResolver.NAME_RESOLVER.apply(obj);
+						monitor.setTaskName(taskName);
 						if (actionHandler != null) {
 							try {
 								Method method = actionHandler.getClass().getMethod("run", new Class[]{getInstanceType(obj), Resource.class, IProgressMonitor.class, Set.class});
@@ -223,7 +227,7 @@ public class VCMLOutlineAction extends Action implements ISelectionChangedListen
 							exception.printStackTrace();
 						}
 					}
-					result.println("Extraction finished.");
+					result.println("Task finished: " + taskName);
 					return Status.OK_STATUS;
 				}
 			};
