@@ -8,6 +8,7 @@ import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.common.util.WrappedException;
 import org.eclipse.emf.ecore.EObject;
@@ -142,25 +143,26 @@ public class DependencySourceUtils {
 	}
 	
 	public VCObject getDependency(EObject object) {
+		if(object instanceof ConditionSource || object instanceof ConstraintSource || object instanceof ProcedureSource) {
+			return getDependency(EcoreUtil.getURI(object));
+		}
+		return null;
+	}
+	
+	public VCObject getDependency(URI sourceResourceUri) {
 		VCObject foundObject = null;
-		if(object instanceof ConditionSource ||
-				object instanceof ConstraintSource ||
-					object instanceof ProcedureSource) {
-			final String name = object.eResource().getURI().trimFileExtension().lastSegment();
-			URI uri = EcoreUtil.getURI(object);
-			URI vcmlFileUri = getVcmlResourceURI(uri);
-			EObject eObject = object.eResource().getResourceSet().getEObject(vcmlFileUri, true);
-			if(eObject instanceof Model) {
-				Model model = (Model)eObject;
-				Iterator<VCObject> iterator = Iterables.filter(model.getObjects(), new Predicate<VCObject>() {
-					public boolean apply(VCObject object) {
-						return object.getName().equals(name);
-					}
-				}).iterator();
-				while(iterator.hasNext()) {
-					foundObject = iterator.next();
-					break;
+		final String searchName = sourceResourceUri.trimFileExtension().lastSegment();
+		URI vcmlResourceUri = getVcmlResourceURI(sourceResourceUri);
+		EList<EObject> contents = new ResourceSetImpl().getResource(vcmlResourceUri, true).getContents();
+		if(!contents.isEmpty()) {
+			Iterator<VCObject> iterator = Iterables.filter(((Model)contents.get(0)).getObjects(), new Predicate<VCObject>() {
+				public boolean apply(VCObject object) {
+					return object.getName().equals(searchName);
 				}
+			}).iterator();
+			while(iterator.hasNext()) {
+				foundObject = iterator.next();
+				break;
 			}
 		}
 		return foundObject;
