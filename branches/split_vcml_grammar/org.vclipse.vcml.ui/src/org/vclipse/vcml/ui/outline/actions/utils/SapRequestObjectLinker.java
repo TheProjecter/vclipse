@@ -19,7 +19,6 @@ import org.vclipse.vcml.linking.VCMLLinker;
 import org.vclipse.vcml.ui.extension.IExtensionPointUtilities;
 import org.vclipse.vcml.ui.outline.actions.IVCMLOutlineActionHandler;
 import org.vclipse.vcml.ui.outline.actions.OutlineActionCanceledException;
-import org.vclipse.vcml.vcml.VCObject;
 
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
@@ -64,13 +63,6 @@ public class SapRequestObjectLinker extends VCMLLinker {
 		while(treeIterator.hasNext()) {
 			for(EObject crossReference : treeIterator.next().eCrossReferences()) {
 				if(crossReference.eIsProxy()) {
-					if(crossReference instanceof VCObject) {
-						VCObject vcobject = (VCObject)crossReference;
-						String name = vcobject.getName();
-						if(name != null && seenObjects.contains(vcobject.eClass().getName() + "/" + name.toUpperCase())) {
-							continue;
-						}
-					}
 					Collection<IVCMLOutlineActionHandler<?>> handlers = extensionPointReader.getHandler(crossReference.eClass().getInstanceClassName());
 					for(IVCMLOutlineActionHandler<?> handler : handlers) {
 						if(handler.getClass().getSimpleName().contains("Extract")) {
