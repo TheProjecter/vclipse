@@ -46,7 +46,7 @@ public class MaterialReader extends BAPIUtils {
 	private BillOfMaterialReader bomReader;
 	
 	public Material read(String materialName, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, boolean recurse) throws JCoException {
-		if (!seenObjects.add("Material/" + materialName)) {
+		if (!seenObjects.add("Material/" + materialName.toUpperCase())) {
 			return null;
 		}
 		if(monitor.isCanceled()) {

@@ -40,7 +40,7 @@ public class InterfaceDesignReader extends BAPIUtils {
 	private CharacteristicReader csticReader;
 	
 	public InterfaceDesign read(String interfaceDesignName, Model model, IProgressMonitor monitor, Set<String> seenObjects, boolean recurse) throws JCoException {
-		if (!seenObjects.add("InterfaceDesign/" + interfaceDesignName)) {
+		if (!seenObjects.add("InterfaceDesign/" + interfaceDesignName.toUpperCase())) {
 			return null;
 		}
 		if(monitor.isCanceled()) {

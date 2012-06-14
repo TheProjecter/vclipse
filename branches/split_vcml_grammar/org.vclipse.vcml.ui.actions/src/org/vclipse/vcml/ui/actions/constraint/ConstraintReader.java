@@ -30,7 +30,7 @@ import com.sap.conn.jco.JCoStructure;
 public class ConstraintReader extends BAPIUtils {
 
 	public Constraint read(String constraintName, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, boolean recurse) throws JCoException {
-		if (!seenObjects.add("Constraint/" + constraintName)) {
+		if (!seenObjects.add("Constraint/" + constraintName.toUpperCase())) {
 			return null;
 		}
 		if(monitor.isCanceled()) {

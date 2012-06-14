@@ -30,7 +30,7 @@ import com.sap.conn.jco.JCoStructure;
 public class ProcedureReader extends BAPIUtils {
 
 	public Procedure read(String procedureName, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, boolean recurse) throws JCoException {
-		if(!seenObjects.add("Procedure/" + procedureName)) {
+		if(!seenObjects.add("Procedure/" + procedureName.toUpperCase())) {
 			return null;
 		}
 		if(monitor.isCanceled()) {

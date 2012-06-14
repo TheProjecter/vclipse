@@ -57,7 +57,7 @@ public class BillOfMaterialReader extends BAPIUtils {
 			return;
 		}
 		String materialNumber = containerMaterial.getName();
-		if (!seenObjects.add("BillOfMaterial/" + materialNumber)) {
+		if (!seenObjects.add("BillOfMaterial/" + materialNumber.toUpperCase())) {
 			return;
 		}
 		JCoFunction function = getJCoFunction("CSAP_MAT_BOM_READ", monitor);

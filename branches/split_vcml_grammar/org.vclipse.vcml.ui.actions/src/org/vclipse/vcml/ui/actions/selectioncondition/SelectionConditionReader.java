@@ -30,7 +30,7 @@ import com.sap.conn.jco.JCoStructure;
 public class SelectionConditionReader extends BAPIUtils {
 
 	public SelectionCondition read(String selectionConditionName, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, boolean recurse) throws JCoException {
-		if (!seenObjects.add("SelectionCondition/" + selectionConditionName)) {
+		if (!seenObjects.add("SelectionCondition/" + selectionConditionName.toUpperCase())) {
 			return null;
 		}
 		if(monitor.isCanceled()) {

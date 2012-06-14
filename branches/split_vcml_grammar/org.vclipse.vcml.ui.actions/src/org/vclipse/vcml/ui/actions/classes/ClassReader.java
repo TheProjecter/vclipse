@@ -38,7 +38,7 @@ public class ClassReader extends BAPIUtils {
 		int classType = VcmlUtils.getClassType(classSpec);
 		String className = VcmlUtils.getClassName(classSpec);
 		String newClassSpec = "(" + classType + ")" + className;
-		if (!seenObjects.add("Class/" + newClassSpec)) {
+		if (!seenObjects.add("Class/" + newClassSpec.toUpperCase())) {
 			return null;
 		}
 		Class object = VCML.createClass();

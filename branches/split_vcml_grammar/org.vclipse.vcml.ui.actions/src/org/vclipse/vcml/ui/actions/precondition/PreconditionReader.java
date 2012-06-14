@@ -30,7 +30,7 @@ import com.sap.conn.jco.JCoStructure;
 public class PreconditionReader extends BAPIUtils {
 	
 	public Precondition read(String preconditionName, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, boolean recurse) throws JCoException {
-		if(!seenObjects.add("Precondition/" + preconditionName)) {
+		if(!seenObjects.add("Precondition/" + preconditionName.toUpperCase())) {
 			return null;
 		}
 		if(monitor.isCanceled()) {
