@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.emf.common.util.URI;
@@ -14,16 +15,21 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.URIConverter;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.xtext.EcoreUtil2;
 import org.vclipse.vcml.vcml.ConditionSource;
 import org.vclipse.vcml.vcml.Constraint;
 import org.vclipse.vcml.vcml.ConstraintSource;
 import org.vclipse.vcml.vcml.Dependency;
+import org.vclipse.vcml.vcml.Model;
 import org.vclipse.vcml.vcml.Precondition;
 import org.vclipse.vcml.vcml.Procedure;
 import org.vclipse.vcml.vcml.ProcedureSource;
 import org.vclipse.vcml.vcml.SelectionCondition;
+import org.vclipse.vcml.vcml.VCObject;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 public class DependencySourceUtils {
@@ -135,4 +141,28 @@ public class DependencySourceUtils {
 		return URI.createURI(folderName); // TODO currently not clear what to do in this situation
 	}
 	
+	public VCObject getDependency(EObject object) {
+		VCObject foundObject = null;
+		if(object instanceof ConditionSource ||
+				object instanceof ConstraintSource ||
+					object instanceof ProcedureSource) {
+			final String name = object.eResource().getURI().trimFileExtension().lastSegment();
+			URI uri = EcoreUtil.getURI(object);
+			URI vcmlFileUri = getVcmlResourceURI(uri);
+			EObject eObject = object.eResource().getResourceSet().getEObject(vcmlFileUri, true);
+			if(eObject instanceof Model) {
+				Model model = (Model)eObject;
+				Iterator<VCObject> iterator = Iterables.filter(model.getObjects(), new Predicate<VCObject>() {
+					public boolean apply(VCObject object) {
+						return object.getName().equals(name);
+					}
+				}).iterator();
+				while(iterator.hasNext()) {
+					foundObject = iterator.next();
+					break;
+				}
+			}
+		}
+		return foundObject;
+	}
 }

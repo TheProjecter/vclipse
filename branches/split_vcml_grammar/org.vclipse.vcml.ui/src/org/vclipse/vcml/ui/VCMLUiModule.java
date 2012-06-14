@@ -35,6 +35,7 @@ import org.vclipse.vcml.ui.editor.hover.VCMLHoverProvider;
 import org.vclipse.vcml.ui.extension.ExtensionPointUtilities;
 import org.vclipse.vcml.ui.extension.IExtensionPointUtilities;
 import org.vclipse.vcml.ui.hyperlinks.VcmlHyperlinkHelper;
+import org.vclipse.vcml.ui.hyperlinks.VcmlHyperlinkLabelProvider;
 import org.vclipse.vcml.ui.outline.VCMLOutlinePage;
 import org.vclipse.vcml.ui.outline.VCMLOutlineTreeProvider;
 import org.vclipse.vcml.ui.refactoring.VcmlRenameRefactoringExecuter;
@@ -113,6 +114,13 @@ public class VCMLUiModule extends org.vclipse.vcml.ui.AbstractVCMLUiModule {
 	/**
 	 * Hyperlinks
 	 */
+	public void configureHyperlinkLabelProvider(com.google.inject.Binder binder) {
+		binder.bind(
+				org.eclipse.jface.viewers.ILabelProvider.class).
+					annotatedWith(org.eclipse.xtext.ui.editor.hyperlinking.HyperlinkLabelProvider.class).
+						to(VcmlHyperlinkLabelProvider.class);
+	}
+	
 	public Class<? extends IHyperlinkHelper> bindIHyperlinkHelper() {
 		return VcmlHyperlinkHelper.class;
 	}
