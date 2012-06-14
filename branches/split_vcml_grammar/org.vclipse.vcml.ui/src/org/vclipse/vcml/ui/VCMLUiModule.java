@@ -17,12 +17,14 @@ import java.io.PrintStream;
 
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eclipse.xtext.documentation.IEObjectDocumentationProvider;
 import org.eclipse.xtext.documentation.impl.MultiLineCommentDocumentationProvider;
 import org.eclipse.xtext.ui.IImageHelper;
 import org.eclipse.xtext.ui.editor.hover.IEObjectHoverProvider;
+import org.eclipse.xtext.ui.editor.hyperlinking.HyperlinkLabelProvider;
 import org.eclipse.xtext.ui.editor.hyperlinking.IHyperlinkHelper;
 import org.eclipse.xtext.ui.editor.outline.IOutlineTreeProvider;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.AbstractAntlrTokenToAttributeIdMapper;
@@ -38,7 +40,7 @@ import org.vclipse.vcml.ui.hyperlinks.VcmlHyperlinkHelper;
 import org.vclipse.vcml.ui.hyperlinks.VcmlHyperlinkLabelProvider;
 import org.vclipse.vcml.ui.outline.VCMLOutlinePage;
 import org.vclipse.vcml.ui.outline.VCMLOutlineTreeProvider;
-import org.vclipse.vcml.ui.refactoring.VcmlRenameRefactoringExecuter;
+import org.vclipse.vcml.ui.refactoring.VcmlRenameRefactoringExecutor;
 import org.vclipse.vcml.ui.syntaxcoloring.VCMLAntlrTokenToAttributeIdMapper;
 import org.vclipse.vcml.ui.templates.VcmlTemplateContextType;
 
@@ -108,17 +110,14 @@ public class VCMLUiModule extends org.vclipse.vcml.ui.AbstractVCMLUiModule {
 	 * Refactoring
 	 */
 	public Provider<? extends RenameRefactoringExecuter> provideRenameRefactoringExecuter() {
-		return Access.provider(VcmlRenameRefactoringExecuter.class);
+		return Access.provider(VcmlRenameRefactoringExecutor.class);
 	}
 	
 	/**
 	 * Hyperlinks
 	 */
 	public void configureHyperlinkLabelProvider(com.google.inject.Binder binder) {
-		binder.bind(
-				org.eclipse.jface.viewers.ILabelProvider.class).
-					annotatedWith(org.eclipse.xtext.ui.editor.hyperlinking.HyperlinkLabelProvider.class).
-						to(VcmlHyperlinkLabelProvider.class);
+		binder.bind(ILabelProvider.class).annotatedWith(HyperlinkLabelProvider.class).to(VcmlHyperlinkLabelProvider.class);
 	}
 	
 	public Class<? extends IHyperlinkHelper> bindIHyperlinkHelper() {
