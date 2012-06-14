@@ -929,7 +929,7 @@ public class VCMLPrettyPrinter extends VcmlSwitch<DataLayouter<NoExceptions>> {
 	}
 	
 	private void printStatus(Status status) {
-		layouter.brk().print("status ").print(status.getName().toLowerCase());
+		layouter.brk().print("status ").print(status.getLiteral());
 	}
 	
 	private void printNullsafe(Object object) {
