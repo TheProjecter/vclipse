@@ -5,6 +5,9 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.vclipse.vcml.ui.labeling.VCMLLabelProvider;
 import org.vclipse.vcml.utils.DependencySourceUtils;
+import org.vclipse.vcml.vcml.ConditionSource;
+import org.vclipse.vcml.vcml.ConstraintSource;
+import org.vclipse.vcml.vcml.ProcedureSource;
 import org.vclipse.vcml.vcml.VCObject;
 
 import com.google.inject.Inject;
@@ -23,7 +26,9 @@ public class VcmlHyperlinkLabelProvider extends VCMLLabelProvider {
 
 	@Override
 	public String getText(Object element) {
-		if(element instanceof EObject) {
+		if(element instanceof ConditionSource ||
+				element instanceof ConstraintSource ||
+					element instanceof ProcedureSource) {
 			VCObject dependency = sourceUtils.getDependency((EObject)element);
 			if(dependency != null) {
 				return "Show source code for " + dependency.getName();
