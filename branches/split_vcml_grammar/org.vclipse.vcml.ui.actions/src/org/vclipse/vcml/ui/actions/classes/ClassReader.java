@@ -44,39 +44,74 @@ public class ClassReader extends BAPIUtils {
 		Class object = VCML.createClass();
 		object.setName(newClassSpec);
 		model.getObjects().add(object);
-		JCoFunction function = getJCoFunction("BAPI_CLASS_GETDETAIL", monitor);
-		JCoParameterList ipl = function.getImportParameterList();
-		ipl.setValue("CLASSTYPE", classType);
-		ipl.setValue("CLASSNUM", className);
-		System.err.println("newClassSpec: " + newClassSpec);
-		execute(function, monitor, newClassSpec);
-		if (processReturnStructure(function)) {
-			JCoStructure classBasicData = function.getExportParameterList().getStructure("CLASSBASICDATA");
-			object.setStatus(VcmlUtils.createStatusFromInt(classBasicData.getInt("STATUS")));
-			object.setGroup(nullIfEmpty(classBasicData.getString("CLASSGROUP")));
-			JCoTable classCharacteristics =
-				function.getTableParameterList().getTable("CLASSCHARACTERISTICS");
-			if (classCharacteristics.getNumRows()>0) {
-				List<Characteristic> characteristics = object.getCharacteristics();
-				for (int i = 0; i < classCharacteristics.getNumRows(); i++) {
-					classCharacteristics.setRow(i);
-					String csticName = classCharacteristics.getString("NAME_CHAR");
-					// TODO move this read / proxy mechanism to CharacteristicReader
-					Characteristic cstic = null;
+		{
+			JCoFunction function = getJCoFunction("BAPI_CLASS_GETDETAIL", monitor);
+			JCoParameterList ipl = function.getImportParameterList();
+			ipl.setValue("CLASSTYPE", classType);
+			ipl.setValue("CLASSNUM", className);
+			execute(function, monitor, newClassSpec);
+			if (processReturnStructure(function)) {
+				JCoStructure classBasicData = function.getExportParameterList().getStructure("CLASSBASICDATA");
+				object.setStatus(VcmlUtils.createStatusFromInt(classBasicData.getInt("STATUS")));
+				object.setGroup(nullIfEmpty(classBasicData.getString("CLASSGROUP")));
+				JCoTable classCharacteristics =
+						function.getTableParameterList().getTable("CLASSCHARACTERISTICS");
+				if (classCharacteristics.getNumRows()>0) {
+					List<Characteristic> characteristics = object.getCharacteristics();
+					for (int i = 0; i < classCharacteristics.getNumRows(); i++) {
+						classCharacteristics.setRow(i);
+						String csticName = classCharacteristics.getString("NAME_CHAR");
+						String charInherited = classCharacteristics.getString("CHAR_INHERITED");
+						if (!"X".equals(charInherited)) {
+							// TODO move this read / proxy mechanism to CharacteristicReader
+							Characteristic cstic = null;
+							if(recurse) {
+								if(monitor.isCanceled()) {
+									return null;
+								}
+								cstic = csticReader.read(csticName, model, monitor, seenObjects, recurse);
+							}
+							if (cstic==null) {
+								cstic = VCMLProxyFactory.createCharacteristicProxy(model.eResource(), csticName);
+							}
+							characteristics.add(cstic);
+						}
+					}
+				}
+				object.setDescription(readDescription(function.getTableParameterList().getTable("CLASSDESCRIPTIONS"), "LANGU_ISO", "LANGU", "CATCHWORD"));
+			}
+		}
+		{
+			JCoFunction function = getJCoFunction("BAPI_HIERA_GETSUPERCLASSALLOCS", monitor);
+			JCoParameterList ipl = function.getImportParameterList();
+			ipl.setValue("CLASSTYPE", classType);
+			ipl.setValue("CLASSNUM", className);
+			try {
+				execute(function, monitor, newClassSpec);
+				JCoTable classList = function.getTableParameterList().getTable("SUPERCLASSESLIST");
+				for (int i = 0; i < classList.getNumRows(); i++) {
+					classList.setRow(i);
+					String superclassName = classList.getString("CLASSNAME");
+					String superclassType = classList.getString("CLASSTYPE");
+					String superclassSpec = "(" + superclassType + ")" + superclassName;
+					Class superclass = null;
 					if(recurse) {
 						if(monitor.isCanceled()) {
 							return null;
 						}
-						cstic = csticReader.read(csticName, model, monitor, seenObjects, recurse);
+						superclass = read(superclassSpec, model, monitor, seenObjects, recurse);
 					}
-					if (cstic==null) {
-						cstic = VCMLProxyFactory.createCharacteristicProxy(model.eResource(), csticName);
+					if (superclass==null) {
+						superclass = VCMLProxyFactory.createClassProxy(model.eResource(), superclassSpec);
 					}
-					characteristics.add(cstic);
+					object.getSuperClasses().add(superclass);
 				}
+			} catch (JCoException ex) {
+				ex.printStackTrace();
+				// FIXME remove try/catch when permissions in customer's SAP system are correct
 			}
-			object.setDescription(readDescription(function.getTableParameterList().getTable("CLASSDESCRIPTIONS"), "LANGU_ISO", "LANGU", "CATCHWORD"));
 		}
+		
 		return object;
 	}
 
