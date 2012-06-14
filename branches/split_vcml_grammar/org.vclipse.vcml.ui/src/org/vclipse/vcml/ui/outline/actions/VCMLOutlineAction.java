@@ -45,6 +45,7 @@ import org.eclipse.xtext.diagnostics.Diagnostic;
 import org.eclipse.xtext.diagnostics.IDiagnosticConsumer;
 import org.eclipse.xtext.diagnostics.Severity;
 import org.eclipse.xtext.resource.IResourceFactory;
+import org.eclipse.xtext.resource.SaveOptions;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.resource.XtextResourceSet;
 import org.eclipse.xtext.ui.editor.model.IXtextDocument;
@@ -151,6 +152,7 @@ public class VCMLOutlineAction extends Action implements ISelectionChangedListen
 		}
 		if(resultResource != null) {
 			final Resource finalSourceResource = resultResource;
+			createOutputVcmlResource(outputToFile, finalSourceResource, VCML.createModel(), new NullProgressMonitor());
 			final Model vcmlModel = (Model)finalSourceResource.getContents().get(0);
 			Job job = new Job(getDescription()) {
 				protected IStatus run(IProgressMonitor monitor) {
@@ -203,36 +205,40 @@ public class VCMLOutlineAction extends Action implements ISelectionChangedListen
 							}
 						});
 					}
-
-					try {
-						if(outputToFile) {
-							finalSourceResource.save(null);
-						} else {
-							if (!vcmlModel.getObjects().isEmpty()) {
-								result.println(((XtextResource)finalSourceResource).getSerializer().serialize(vcmlModel));
-							}
-							finalSourceResource.delete(null);
-						}
-					} catch (Exception e) {
-						// currently, there can be exceptions if objects are not completeley initialized or linking fails
-						// or IOExceptions
-						e.printStackTrace(err);
-					}
-					
-					IFile file = ResourceUtil.getFile(finalSourceResource);
-					if(file != null && file.isAccessible()) {
-						try {
-							file.refreshLocal(IResource.DEPTH_ONE, monitor);
-						} catch(CoreException exception) {
-							exception.printStackTrace();
-						}
-					}
+					createOutputVcmlResource(outputToFile, finalSourceResource, vcmlModel, monitor);
 					result.println("Task finished: " + taskName);
 					return Status.OK_STATUS;
 				}
+
+				
 			};
 			job.setPriority(Job.LONG);
 			job.schedule();
+		}
+	}
+	
+	private void createOutputVcmlResource(final boolean outputToFile, final Resource finalSourceResource, final Model vcmlModel, IProgressMonitor monitor) {
+		try {
+			if(outputToFile) {
+				finalSourceResource.save(SaveOptions.defaultOptions().toOptionsMap());
+			} else {
+				if (!vcmlModel.getObjects().isEmpty()) {
+					result.println(((XtextResource)finalSourceResource).getSerializer().serialize(vcmlModel));
+				}
+				finalSourceResource.delete(null);
+			}
+		} catch (Exception exception) {
+			// currently, there can be exceptions if objects are not completeley initialized or linking fails or IOExceptions
+			exception.printStackTrace(err);
+		}
+		
+		IFile file = ResourceUtil.getFile(finalSourceResource);
+		if(file != null && file.isAccessible()) {
+			try {
+				file.refreshLocal(IResource.DEPTH_ONE, monitor);
+			} catch(CoreException exception) {
+				exception.printStackTrace();
+			}
 		}
 	}
 
