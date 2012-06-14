@@ -26,12 +26,10 @@ public class VcmlHyperlinkLabelProvider extends VCMLLabelProvider {
 
 	@Override
 	public String getText(Object element) {
-		if(element instanceof ConditionSource ||
-				element instanceof ConstraintSource ||
-					element instanceof ProcedureSource) {
+		if(element instanceof ConditionSource || element instanceof ConstraintSource || element instanceof ProcedureSource) {
 			VCObject dependency = sourceUtils.getDependency((EObject)element);
 			if(dependency != null) {
-				return "Show source code for " + dependency.getName();
+				return "Go to dependency source";
 			} else {
 				logger.warn("Found dependency object is null.");
 			}
