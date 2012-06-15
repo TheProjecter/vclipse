@@ -7,6 +7,7 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.validation.Check;
+import org.vclipse.base.BasePlugin;
 import org.vclipse.vcml.utils.DependencySourceUtils;
 import org.vclipse.vcml.vcml.BinaryExpression;
 import org.vclipse.vcml.vcml.CharacteristicReference_C;
@@ -36,24 +37,29 @@ public class DependencyJavaValidator extends AbstractDependencyJavaValidator {
 		URI vcmlUri = sourceUtils.getVcmlResourceURI(sourceResource.getURI());
 		if(vcmlUri != null) {
 			final String fileName = sourceResource.getURI().trimFileExtension().lastSegment();
-			Resource vcmlResource = sourceResource.getResourceSet().getResource(vcmlUri, true);
-			EList<EObject> contents = vcmlResource.getContents();
-			if(!contents.isEmpty()) {
+			try {
+				Resource vcmlResource = sourceResource.getResourceSet().getResource(vcmlUri, true);
+				EList<EObject> contents = vcmlResource.getContents();
 				if(!contents.isEmpty()) {
-					Iterator<VCObject> iterator = Iterables.filter(((Model)contents.get(0)).getObjects(), new Predicate<VCObject>() {
-						public boolean apply(VCObject object) {
-							return object.getName().equals(fileName);
+					if(!contents.isEmpty()) {
+						Iterator<VCObject> iterator = Iterables.filter(((Model)contents.get(0)).getObjects(), new Predicate<VCObject>() {
+							public boolean apply(VCObject object) {
+								return object.getName().equals(fileName);
+							}
+						}).iterator();
+						if(!iterator.hasNext()) {
+							String sourceName = source.eClass().getName();
+							String objectName = sourceName.replace("Source", "");
+							warning(objectName + " object does not exist for the " + sourceName,
+									source, null, "Not_Existent_Source_Object", 
+										new String[]{source.eClass().getName().replace("Source", ""), 
+											fileName, vcmlResource.getURI().toString()});
 						}
-					}).iterator();
-					if(!iterator.hasNext()) {
-						String sourceName = source.eClass().getName();
-						String objectName = sourceName.replace("Source", "");
-						warning(objectName + " object does not exist for the " + sourceName,
-								source, null, "Not_Existent_Source_Object", 
-									new String[]{source.eClass().getName().replace("Source", ""), 
-										fileName, vcmlResource.getURI().toString()});
 					}
 				}
+			} catch(Exception exception) {
+				// resource does not exist
+				BasePlugin.log(exception.getMessage(), exception);
 			}
 		}
 	}
