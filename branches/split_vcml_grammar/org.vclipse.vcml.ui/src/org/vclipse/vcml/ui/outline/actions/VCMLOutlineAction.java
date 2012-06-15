@@ -63,6 +63,8 @@ import com.google.inject.Inject;
 
 public class VCMLOutlineAction extends Action implements ISelectionChangedListener {
 	
+	private static final String EXTRACTED_EXTENSION = "extracted.";
+
 	private final Map<String, IVCMLOutlineActionHandler<?>> actionHandlers;
 	
 	private final List<EObject> selectedObjects;
@@ -127,9 +129,7 @@ public class VCMLOutlineAction extends Action implements ISelectionChangedListen
 			}
 		
 			URI sourceUri = sourceResource.getURI();
-			String platformString = sourceUri.toPlatformString(true);
-			String extension = "." + sourceUri.fileExtension();
-			URI resultsUri = URI.createURI(platformString.substring(0, platformString.lastIndexOf(extension)) + "_results_" + extension);
+			URI resultsUri = sourceUri.trimFileExtension().appendFileExtension(EXTRACTED_EXTENSION + sourceUri.fileExtension());
 			
 			resultResource = resourceSet.createResource(resultsUri, "UTF-8");
 			resultResource.getContents().add(VCML.createModel());
