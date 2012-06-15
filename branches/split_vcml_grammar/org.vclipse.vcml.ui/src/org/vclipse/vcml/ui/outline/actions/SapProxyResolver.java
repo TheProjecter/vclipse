@@ -35,7 +35,7 @@ public class SapProxyResolver {
 					Object referenceValue = semanticElement.eGet(GrammarUtil.getReference((CrossReference)grammarElement, semanticElement.eClass()));
 					if(referenceValue instanceof EObject) {
 						EObject eobject = (EObject)referenceValue;
-						eobject.eSet(VcmlPackage.eINSTANCE.getVCObject_Name(), childNode.getText());
+						eobject.eSet(VcmlPackage.eINSTANCE.getVCObject_Name(), childNode.getText().trim());
 						for(IVcmlOutlineActionHandler<?> handler : extensionPointReader.getHandler(eobject.eClass().getInstanceClassName())) {
 							if(handler.getClass().getSimpleName().contains("Extract")) {
 								try {
