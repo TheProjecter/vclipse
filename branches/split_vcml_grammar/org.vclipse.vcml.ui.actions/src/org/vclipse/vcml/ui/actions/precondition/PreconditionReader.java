@@ -58,7 +58,7 @@ public class PreconditionReader extends BAPIUtils {
 			readSource(tpl.getTable("SOURCE"), object);
 			
 			ConditionSource conditionSource = sourceUtils.getPreconditionSource(object);
-			if(conditionSource!=null) {
+			if(conditionSource!=null && recurse) {
 				sapProxyResolver.resolveProxies(conditionSource, seenObjects, object.eResource());
 			}
 		} catch (AbapException e) {

@@ -58,7 +58,7 @@ public class ProcedureReader extends BAPIUtils {
 			readSource(tpl.getTable("SOURCE"), object);
 			
 			ProcedureSource procedureSource = sourceUtils.getProcedureSource(object);
-			if(procedureSource!=null) {
+			if(procedureSource!=null && recurse) {
 				sapProxyResolver.resolveProxies(procedureSource, seenObjects, object.eResource());
 			}
 		} catch (AbapException e) {

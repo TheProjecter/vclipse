@@ -58,7 +58,7 @@ public class SelectionConditionReader extends BAPIUtils {
 			readSource(tpl.getTable("SOURCE"), object);
 			
 			ConditionSource selectionConditionSource = sourceUtils.getSelectionConditionSource(object);
-			if(selectionConditionSource!=null) {
+			if(selectionConditionSource!=null && recurse) {
 				sapProxyResolver.resolveProxies(selectionConditionSource, seenObjects, object.eResource());
 			}
 		} catch (AbapException e) {
