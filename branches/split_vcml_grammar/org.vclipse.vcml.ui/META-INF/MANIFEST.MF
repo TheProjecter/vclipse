@@ -29,7 +29,6 @@ Export-Package: org.vclipse.vcml.ui,
  org.vclipse.vcml.ui.extension,
  org.vclipse.vcml.ui.internal,
  org.vclipse.vcml.ui.outline.actions,
- org.vclipse.vcml.ui.outline.actions.utils,
  org.vclipse.vcml.ui.quickfix
 Bundle-Activator: org.vclipse.vcml.ui.internal.VCMLActivator
 Import-Package: org.apache.log4j

@@ -27,7 +27,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.xtext.util.Strings;
 import org.vclipse.connection.IConnectionHandler;
 import org.vclipse.vcml.ui.outline.actions.OutlineActionCanceledException;
-import org.vclipse.vcml.ui.outline.actions.utils.SapProxyResolver;
+import org.vclipse.vcml.ui.outline.actions.SapProxyResolver;
 import org.vclipse.vcml.utils.DependencySourceUtils;
 import org.vclipse.vcml.utils.DescriptionHandler;
 import org.vclipse.vcml.utils.DocumentationHandler;

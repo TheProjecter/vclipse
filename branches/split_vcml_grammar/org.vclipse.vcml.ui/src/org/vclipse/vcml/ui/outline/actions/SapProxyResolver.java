@@ -1,4 +1,4 @@
-package org.vclipse.vcml.ui.outline.actions.utils;
+package org.vclipse.vcml.ui.outline.actions;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -11,8 +11,6 @@ import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.vclipse.vcml.ui.extension.IExtensionPointUtilities;
-import org.vclipse.vcml.ui.outline.actions.IVCMLOutlineActionHandler;
-import org.vclipse.vcml.ui.outline.actions.OutlineActionCanceledException;
 
 import com.google.inject.Inject;
 
