@@ -29,6 +29,7 @@ import org.vclipse.vcml.vcml.Characteristic;
 import org.vclipse.vcml.vcml.CharacteristicType;
 import org.vclipse.vcml.vcml.CharacteristicValue;
 import org.vclipse.vcml.vcml.Class;
+import org.vclipse.vcml.vcml.Constraint;
 import org.vclipse.vcml.vcml.Dependency;
 import org.vclipse.vcml.vcml.DependencyNet;
 import org.vclipse.vcml.vcml.InterfaceDesign;
@@ -38,7 +39,10 @@ import org.vclipse.vcml.vcml.NumberListEntry;
 import org.vclipse.vcml.vcml.NumericCharacteristicValue;
 import org.vclipse.vcml.vcml.NumericLiteral;
 import org.vclipse.vcml.vcml.NumericType;
+import org.vclipse.vcml.vcml.Precondition;
+import org.vclipse.vcml.vcml.Procedure;
 import org.vclipse.vcml.vcml.Row;
+import org.vclipse.vcml.vcml.SelectionCondition;
 import org.vclipse.vcml.vcml.SimpleDescription;
 import org.vclipse.vcml.vcml.SymbolicLiteral;
 import org.vclipse.vcml.vcml.SymbolicType;
@@ -296,7 +300,34 @@ public class VCMLJavaValidator extends AbstractVCMLJavaValidator {
 //	}
 	
 	@Check
-	public void checkDependencySource(Dependency dependency) {
+	public void checkConstraintSource(Constraint dependency) {
+		if (dependency.getDescription()!=null) {
+			checkDependencySource(dependency);
+		}
+	}
+
+	@Check
+	public void checkProcedureSource(Procedure dependency) {
+		if (dependency.getDescription()!=null) {
+			checkDependencySource(dependency);
+		}
+	}
+
+	@Check
+	public void checkSelectionConditionSource(SelectionCondition dependency) {
+		if (dependency.getDescription()!=null) {
+			checkDependencySource(dependency);
+		}
+	}
+
+	@Check
+	public void checkPreconditionSource(Precondition dependency) {
+		if (dependency.getDescription()!=null) {
+			checkDependencySource(dependency);
+		}
+	}
+
+	private void checkDependencySource(Dependency dependency) {
 		EObject source = dependencySourceUtils.getSource(dependency);
 		if(source == null) {
 			String name = nameProvider.getFullyQualifiedName(dependency).getLastSegment();
