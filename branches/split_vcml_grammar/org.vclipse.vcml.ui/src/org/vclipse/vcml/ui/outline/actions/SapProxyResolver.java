@@ -30,22 +30,14 @@ public class SapProxyResolver {
 							try {
 								Method method = handler.getClass().getMethod("run", new Class[]{getInstanceType(crossReference), Resource.class, IProgressMonitor.class, Set.class});
 								method.invoke(handler, new Object[]{crossReference, output == null ? object.eResource() : output, new NullProgressMonitor(), seenObjects});
-							} catch (NoSuchMethodException e) {
-								e.printStackTrace();
-							} catch (IllegalAccessException e) {
-								e.printStackTrace();
-							} catch (InvocationTargetException e) {
-								Throwable targetException = e.getTargetException();
-								if (targetException instanceof OutlineActionCanceledException) {
+							} catch(InvocationTargetException exception) {
+								if(exception.getTargetException() instanceof OutlineActionCanceledException) {
 									break;
 								} else {
-									e.printStackTrace();
+									exception.printStackTrace();
 								}
-							} catch (SecurityException e) {
-								e.printStackTrace();
-							} catch (ClassNotFoundException e) {
-								e.printStackTrace();
-							} catch (Exception e) {
+							} catch(Exception exception) {
+								exception.printStackTrace();
 							}
 						}
 					}
