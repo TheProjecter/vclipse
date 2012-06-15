@@ -37,9 +37,13 @@ public class PreferencesInitializer extends AbstractPreferenceInitializer {
 	public PreferencesInitializer() throws IOException {
 		properties = new Properties();
 		try {
-			properties.load(FileLocator.openStream(VCMLActivator.getInstance().getBundle(), new Path("src/org/vclipse/vcml/ui/preferences/sap_overridden_settings.properties"), false));
+			properties.load(
+					FileLocator.openStream(VCMLActivator.getInstance().getBundle(), 
+							new Path("src/org/vclipse/vcml/ui/preferences/sap_overridden_settings.properties"), false));
 		} catch(Exception exception) {
-			properties.load(FileLocator.openStream(VCMLActivator.getInstance().getBundle(), new Path("src/org/vclipse/vcml/ui/preferences/sap_default_settings.properties"), false));			
+			properties.load(
+					FileLocator.openStream(VCMLActivator.getInstance().getBundle(), 
+							new Path("src/org/vclipse/vcml/ui/preferences/sap_default_settings.properties"), false));			
 		}
 	}
 	
