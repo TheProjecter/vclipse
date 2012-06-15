@@ -10,6 +10,8 @@
  ******************************************************************************/
 package org.vclipse.vcml.validation;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -328,8 +330,11 @@ public class VCMLJavaValidator extends AbstractVCMLJavaValidator {
 	}
 
 	private void checkDependencySource(Dependency dependency) {
-		EObject source = dependencySourceUtils.getSource(dependency);
-		if(source == null) {
+		try {
+			// try to check whether file exists, but do not parse
+			// TODO could be improved
+			dependencySourceUtils.getInputStream(dependency);
+		} catch (IOException ex) {
 			String name = nameProvider.getFullyQualifiedName(dependency).getLastSegment();
 			String fileName = dependencySourceUtils.getFilename(dependency);
 			error("Source element for " + dependency.eClass().getName().toLowerCase() + " " + 
