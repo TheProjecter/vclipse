@@ -159,29 +159,16 @@ public class VCMLOutlineAction extends Action implements ISelectionChangedListen
 							try {
 								Method method = actionHandler.getClass().getMethod("run", new Class[]{getInstanceType(obj), Resource.class, IProgressMonitor.class, Set.class});
 								method.invoke(actionHandler, new Object[]{obj, finalSourceResource, monitor, seenObjects});
-							} catch (NoSuchMethodException e) {
-								e.printStackTrace();
-								// ignore 
-							} catch (IllegalAccessException e) {
-								e.printStackTrace();
-								// ignore 
 							} catch (InvocationTargetException e) {
-								Throwable targetException = e.getTargetException();
-								if (targetException instanceof OutlineActionCanceledException) {
+								if(e.getTargetException() instanceof OutlineActionCanceledException) {
 									err.println("// canceled");
 									break;
 								} else {
 									e.printStackTrace();
-									targetException.printStackTrace(err); // display original cause in VClipse console
+									e.getTargetException().printStackTrace(err); // display original cause in VClipse console
 								}
-							} catch (SecurityException e) {
-								e.printStackTrace();
-								// ignore 
-							} catch (ClassNotFoundException e) {
-								e.printStackTrace();
-								// ignore 
-							} catch (Exception e) {
-								e.printStackTrace(err); // this can be a JCoException or an AbapExeption
+							} catch(Exception exception) {
+								exception.printStackTrace(err); // this can be a JCoException or an AbapExeption
 							}
 						}
 					}
@@ -257,17 +244,8 @@ public class VCMLOutlineAction extends Action implements ISelectionChangedListen
 						} else {
 							enabled = false;
 						}
-					} catch (NoSuchMethodException e) {
-						e.printStackTrace();
-						enabled = false;
-					} catch (IllegalAccessException e) {
-						e.printStackTrace();
-						enabled = false;
-					} catch (InvocationTargetException e) {
-						e.printStackTrace();
-						enabled = false;
-					} catch (ClassNotFoundException e) {
-						e.printStackTrace();
+					} catch(Exception exception) {
+						exception.printStackTrace();
 						enabled = false;
 					}
 					setEnabled(visitedSomeAction && enabled);
