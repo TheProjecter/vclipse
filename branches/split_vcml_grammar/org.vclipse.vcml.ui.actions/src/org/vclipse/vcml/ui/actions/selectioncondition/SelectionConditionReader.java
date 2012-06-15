@@ -14,7 +14,6 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.xtext.resource.impl.ListBasedDiagnosticConsumer;
 import org.vclipse.vcml.ui.actions.BAPIUtils;
 import org.vclipse.vcml.utils.VcmlUtils;
 import org.vclipse.vcml.vcml.ConditionSource;
@@ -59,10 +58,8 @@ public class SelectionConditionReader extends BAPIUtils {
 			readSource(tpl.getTable("SOURCE"), object);
 			
 			ConditionSource selectionConditionSource = sourceUtils.getSelectionConditionSource(object);
-			if (selectionConditionSource!=null) {
-				sapRequestObjectLinker.setSeenObjects(seenObjects);
-				sapRequestObjectLinker.setOutput(object.eResource());
-				sapRequestObjectLinker.linkModel(selectionConditionSource, new ListBasedDiagnosticConsumer());
+			if(selectionConditionSource!=null) {
+				sapProxyResolver.resolveProxies(selectionConditionSource, seenObjects, object.eResource());
 			}
 		} catch (AbapException e) {
 			handleAbapException(e);

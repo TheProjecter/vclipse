@@ -9,56 +9,19 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.xtext.diagnostics.IDiagnosticConsumer;
-import org.eclipse.xtext.nodemodel.INode;
-import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
-import org.eclipse.xtext.util.SimpleAttributeResolver;
-import org.vclipse.vcml.linking.VCMLLinker;
 import org.vclipse.vcml.ui.extension.IExtensionPointUtilities;
 import org.vclipse.vcml.ui.outline.actions.IVCMLOutlineActionHandler;
 import org.vclipse.vcml.ui.outline.actions.OutlineActionCanceledException;
 
-import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
-public class SapRequestObjectLinker extends VCMLLinker {
+public class SapProxyResolver {
 
 	@Inject
 	private IExtensionPointUtilities extensionPointReader;
 	
-	private Set<String> seenObjects;
-	private Resource output;
-	
-	public SapRequestObjectLinker() {
-		seenObjects = Sets.newHashSet();
-	}
-	
-	public void setSeenObjects(Set<String> seenObjects) {
-		this.seenObjects = seenObjects;
-	}
-	
-	public void setOutput(Resource output) {
-		this.output = output;
-	}
-	
-	@Override
-	protected EObject createProxy(EObject object, INode node, EReference reference) {
-		EObject proxyObject = super.createProxy(object, node, reference);
-		String text = NodeModelUtils.getTokenText(node);
-		if(text != null) {
-			proxyObject.eSet(SimpleAttributeResolver.NAME_RESOLVER.getAttribute(proxyObject), text);
-		}
-		return proxyObject;
-	}
-	
-	@Override
-	protected void afterModelLinked(EObject model, IDiagnosticConsumer diagnosticsConsumer) {
-		resolveProxies(model);
-	}
-	
-	private void resolveProxies(EObject object) {
+	public void resolveProxies(EObject object, Set<String> seenObjects, Resource output) {
 		TreeIterator<EObject> treeIterator = object.eAllContents();
 		while(treeIterator.hasNext()) {
 			for(EObject crossReference : treeIterator.next().eCrossReferences()) {
@@ -71,26 +34,20 @@ public class SapRequestObjectLinker extends VCMLLinker {
 								method.invoke(handler, new Object[]{crossReference, output == null ? object.eResource() : output, new NullProgressMonitor(), seenObjects});
 							} catch (NoSuchMethodException e) {
 								e.printStackTrace();
-								// ignore 
 							} catch (IllegalAccessException e) {
 								e.printStackTrace();
-								// ignore 
 							} catch (InvocationTargetException e) {
 								Throwable targetException = e.getTargetException();
 								if (targetException instanceof OutlineActionCanceledException) {
 									break;
 								} else {
 									e.printStackTrace();
-									//targetException.printStackTrace(err); // display original cause in VClipse console
 								}
 							} catch (SecurityException e) {
 								e.printStackTrace();
-								// ignore 
 							} catch (ClassNotFoundException e) {
 								e.printStackTrace();
-								// ignore 
 							} catch (Exception e) {
-								//e.printStackTrace(err); // this can be a JCoException or an AbapExeption
 							}
 						}
 					}
@@ -98,7 +55,7 @@ public class SapRequestObjectLinker extends VCMLLinker {
 			}
 		}
 	}
-
+	
 	private Class<?> getInstanceType(EObject obj) throws ClassNotFoundException {
 		return Class.forName(getInstanceTypeName(obj));
 	}

@@ -41,10 +41,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
-import org.eclipse.xtext.diagnostics.Diagnostic;
-import org.eclipse.xtext.diagnostics.IDiagnosticConsumer;
-import org.eclipse.xtext.diagnostics.Severity;
-import org.eclipse.xtext.resource.IResourceFactory;
 import org.eclipse.xtext.resource.SaveOptions;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.resource.XtextResourceSet;
@@ -57,7 +53,6 @@ import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 import org.vclipse.console.CMConsolePlugin;
 import org.vclipse.console.CMConsolePlugin.Kind;
 import org.vclipse.vcml.ui.IUiConstants;
-import org.vclipse.vcml.ui.outline.actions.utils.SapRequestObjectLinker;
 import org.vclipse.vcml.vcml.Import;
 import org.vclipse.vcml.vcml.Model;
 import org.vclipse.vcml.vcml.VCObject;
@@ -68,37 +63,30 @@ import com.google.inject.Inject;
 
 public class VCMLOutlineAction extends Action implements ISelectionChangedListener {
 	
-	private IResourceFactory resourceFactory;
-	
 	private final Map<String, IVCMLOutlineActionHandler<?>> actionHandlers;
 	
 	private final List<EObject> selectedObjects;
 	
 	private static final VcmlFactory VCML = VcmlFactory.eINSTANCE;
 	
-	//private PrintStream out; 
 	private PrintStream result; 
 	private PrintStream err;
 	
 	private final IContentOutlinePage page;
-	private final SapRequestObjectLinker linker;
 	private final IPreferenceStore preferenceStore;
 	
 	private XtextResourceSet resourceSet;
 	
 	@Inject
-	public VCMLOutlineAction(IPreferenceStore preferenceStore, IResourceFactory resourceFactory, IContentOutlinePage outlinePage, SapRequestObjectLinker linker) {
+	public VCMLOutlineAction(IPreferenceStore preferenceStore, IContentOutlinePage outlinePage) {
 		actionHandlers = new HashMap<String, IVCMLOutlineActionHandler<?>>();
 		selectedObjects = new ArrayList<EObject>();
 		
 		CMConsolePlugin consolePlugin = CMConsolePlugin.getDefault();
-		//out = new PrintStream(consolePlugin.getConsole(Kind.Task));
 		result = new PrintStream(consolePlugin.getConsole(Kind.Result));
 		err = new PrintStream(consolePlugin.getConsole(Kind.Error));
 		
 		this.page = outlinePage;
-		this.linker = linker;
-		this.resourceFactory = resourceFactory;
 		this.preferenceStore = preferenceStore;
 	}
 
@@ -142,12 +130,13 @@ public class VCMLOutlineAction extends Action implements ISelectionChangedListen
 			String platformString = sourceUri.toPlatformString(true);
 			String extension = "." + sourceUri.fileExtension();
 			URI resultsUri = URI.createURI(platformString.substring(0, platformString.lastIndexOf(extension)) + "_results_" + extension);
-			resultResource = resourceFactory.createResource(resultsUri);
+			
+			resultResource = resourceSet.createResource(resultsUri, "UTF-8");
 			resultResource.getContents().add(VCML.createModel());
 			collectImportedObjects(seenObjects, sourceResource, resultResource);
 			createResultFile(sourceResource);
 		} else {
-			resultResource = resourceFactory.createResource(URI.createURI("results"));
+			resultResource = resourceSet.createResource(URI.createURI("results"));
 			resourceSet.getResources().add(resultResource);
 		}
 		if(resultResource != null) {
@@ -163,7 +152,8 @@ public class VCMLOutlineAction extends Action implements ISelectionChangedListen
 							break;
 						}
 						IVCMLOutlineActionHandler<?> actionHandler = actionHandlers.get(getInstanceTypeName(obj));
-						taskName = "Executing " + actionHandler.getClass().getSimpleName() + " for " + SimpleAttributeResolver.NAME_RESOLVER.apply(obj);
+						String simpleName = actionHandler.getClass().getSimpleName();
+						taskName = "Executing " + simpleName + " for " + SimpleAttributeResolver.NAME_RESOLVER.apply(obj);
 						monitor.setTaskName(taskName);
 						if (actionHandler != null) {
 							try {
@@ -195,22 +185,10 @@ public class VCMLOutlineAction extends Action implements ISelectionChangedListen
 							}
 						}
 					}
-					linker.setSeenObjects(seenObjects);
-					if(linker != null) {
-						linker.linkModel(vcmlModel, new IDiagnosticConsumer() {
-							public void consume(Diagnostic diagnostic, Severity severity) {
-							}
-							public boolean hasConsumedDiagnostics(Severity severity) {
-								return false;
-							}
-						});
-					}
 					createOutputVcmlResource(outputToFile, finalSourceResource, vcmlModel, monitor);
 					result.println("Task finished: " + taskName);
 					return Status.OK_STATUS;
 				}
-
-				
 			};
 			job.setPriority(Job.LONG);
 			job.schedule();

@@ -14,7 +14,6 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.xtext.resource.impl.ListBasedDiagnosticConsumer;
 import org.vclipse.vcml.ui.actions.BAPIUtils;
 import org.vclipse.vcml.utils.VcmlUtils;
 import org.vclipse.vcml.vcml.Model;
@@ -59,10 +58,8 @@ public class ProcedureReader extends BAPIUtils {
 			readSource(tpl.getTable("SOURCE"), object);
 			
 			ProcedureSource procedureSource = sourceUtils.getProcedureSource(object);
-			if (procedureSource!=null) {
-				sapRequestObjectLinker.setSeenObjects(seenObjects);
-				sapRequestObjectLinker.setOutput(object.eResource());
-				sapRequestObjectLinker.linkModel(procedureSource, new ListBasedDiagnosticConsumer());
+			if(procedureSource!=null) {
+				sapProxyResolver.resolveProxies(procedureSource, seenObjects, object.eResource());
 			}
 		} catch (AbapException e) {
 			handleAbapException(e);

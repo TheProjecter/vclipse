@@ -14,7 +14,6 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.xtext.resource.impl.ListBasedDiagnosticConsumer;
 import org.vclipse.vcml.ui.actions.BAPIUtils;
 import org.vclipse.vcml.utils.VcmlUtils;
 import org.vclipse.vcml.vcml.Constraint;
@@ -51,10 +50,8 @@ public class ConstraintReader extends BAPIUtils {
 			readSource(tpl.getTable("SOURCE"), object);
 			
 			ConstraintSource constraintSource = sourceUtils.getConstraintSource(object);
-			if (constraintSource!=null) {
-				sapRequestObjectLinker.setSeenObjects(seenObjects);
-				sapRequestObjectLinker.setOutput(object.eResource());
-				sapRequestObjectLinker.linkModel(constraintSource, new ListBasedDiagnosticConsumer());
+			if(constraintSource!=null) {
+				sapProxyResolver.resolveProxies(constraintSource, seenObjects, object.eResource());
 			}
 		} catch (AbapException e) {
 			handleAbapException(e);
