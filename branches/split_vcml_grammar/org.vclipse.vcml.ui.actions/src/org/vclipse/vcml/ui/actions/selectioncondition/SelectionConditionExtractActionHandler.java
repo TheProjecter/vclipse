@@ -14,12 +14,12 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.vclipse.vcml.ui.outline.actions.IVCMLOutlineActionHandler;
+import org.vclipse.vcml.ui.outline.actions.IVcmlOutlineActionHandler;
 import org.vclipse.vcml.vcml.SelectionCondition;
 
 import com.sap.conn.jco.JCoException;
 
-public class SelectionConditionExtractActionHandler extends SelectionConditionReader implements IVCMLOutlineActionHandler<SelectionCondition>{
+public class SelectionConditionExtractActionHandler extends SelectionConditionReader implements IVcmlOutlineActionHandler<SelectionCondition>{
 
 	public boolean isEnabled(SelectionCondition object) {
 		return isConnected();

@@ -14,12 +14,12 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.vclipse.vcml.ui.outline.actions.IVCMLOutlineActionHandler;
+import org.vclipse.vcml.ui.outline.actions.IVcmlOutlineActionHandler;
 import org.vclipse.vcml.vcml.Constraint;
 
 import com.sap.conn.jco.JCoException;
 
-public class ConstraintExtractActionHandler extends ConstraintReader implements IVCMLOutlineActionHandler<Constraint> {
+public class ConstraintExtractActionHandler extends ConstraintReader implements IVcmlOutlineActionHandler<Constraint> {
 
 	public boolean isEnabled(Constraint object) {
 		return isConnected();

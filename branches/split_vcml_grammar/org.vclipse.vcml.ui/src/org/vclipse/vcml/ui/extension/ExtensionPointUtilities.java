@@ -13,15 +13,15 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.vclipse.vcml.ui.VCMLUiPlugin;
-import org.vclipse.vcml.ui.outline.actions.VcmlOutlineActionProvider;
-import org.vclipse.vcml.ui.outline.actions.IVCMLOutlineActionHandler;
-import org.vclipse.vcml.ui.outline.actions.VCMLOutlineAction;
+import org.vclipse.vcml.ui.outline.actions.IVcmlOutlineActionHandler;
+import org.vclipse.vcml.ui.outline.actions.VcmlOutlineAction;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 public class ExtensionPointUtilities implements IExtensionPointUtilities {
 	
@@ -42,21 +42,21 @@ public class ExtensionPointUtilities implements IExtensionPointUtilities {
 	private static final String ATTRIBUTE_HANDLER = "handler";
 	private static final String ATTRIBUTE_ACTION = "action";
 	
-	private final Multimap<String, IVCMLOutlineActionHandler<?>> type2Action;
-	private final List<VCMLOutlineAction> vcmlOutlineActions;
-	private final Map<String, VCMLOutlineAction> id2Action;
-	private final Map<VCMLOutlineAction, String> action2Path;
+	private final Multimap<String, IVcmlOutlineActionHandler<?>> type2Action;
+	private final List<VcmlOutlineAction> vcmlOutlineActions;
+	private final Map<String, VcmlOutlineAction> id2Action;
+	private final Map<VcmlOutlineAction, String> action2Path;
 
-	private VcmlOutlineActionProvider vcmlOutlineActionProvider;
+	private Provider<VcmlOutlineAction> provider;
 	
 	@Inject
-	public ExtensionPointUtilities(VcmlOutlineActionProvider vcmlOutlineActionProvider) {
+	public ExtensionPointUtilities(Provider<VcmlOutlineAction> provider) {
 		type2Action = HashMultimap.create();
 		id2Action = Maps.newHashMap();
-		action2Path = new LinkedHashMap<VCMLOutlineAction, String>();
+		action2Path = new LinkedHashMap<VcmlOutlineAction, String>();
 		vcmlOutlineActions = Lists.newArrayList();
 		
-		this.vcmlOutlineActionProvider = vcmlOutlineActionProvider;
+		this.provider = provider;
 	}
 
 	private void read() {
@@ -78,12 +78,12 @@ public class ExtensionPointUtilities implements IExtensionPointUtilities {
 	private void handleHandlerElement(IConfigurationElement element) {
 		String actionId = element.getAttribute(ATTRIBUTE_ACTION);
 		if(actionId != null) {
-			VCMLOutlineAction action = id2Action.get(actionId);
+			VcmlOutlineAction action = id2Action.get(actionId);
 			if(action != null) {
 				try {
 					Object handler = element.createExecutableExtension(ATTRIBUTE_HANDLER);
-					if(handler instanceof IVCMLOutlineActionHandler<?>) {
-						IVCMLOutlineActionHandler<?> actionHandler = (IVCMLOutlineActionHandler<?>)handler;
+					if(handler instanceof IVcmlOutlineActionHandler<?>) {
+						IVcmlOutlineActionHandler<?> actionHandler = (IVcmlOutlineActionHandler<?>)handler;
 						String type = element.getAttribute(ATTRIBUTE_TYPE);
 						if(type != null) {			
 							action.addHandler(type, actionHandler);
@@ -99,7 +99,7 @@ public class ExtensionPointUtilities implements IExtensionPointUtilities {
 	}
 
 	private void handleActionElement(String contributingPluginID, IConfigurationElement element) {
-		VCMLOutlineAction action = vcmlOutlineActionProvider.get();
+		VcmlOutlineAction action = provider.get();
 		vcmlOutlineActions.add(action);
 		String id = element.getAttribute(ATTRIBUTE_ID);
 		if(id != null) {
@@ -144,21 +144,21 @@ public class ExtensionPointUtilities implements IExtensionPointUtilities {
 		}
 	}
 	
-	public Collection<IVCMLOutlineActionHandler<?>> getHandler(String type) {
+	public Collection<IVcmlOutlineActionHandler<?>> getHandler(String type) {
 		if(type2Action.isEmpty()) {
 			read();
 		}
 		return type2Action.get(type);
 	}
 
-	public List<VCMLOutlineAction> getActions() {
+	public List<VcmlOutlineAction> getActions() {
 		if(vcmlOutlineActions.isEmpty()) {
 			read();
 		}
 		return vcmlOutlineActions;
 	}
 
-	public Map<VCMLOutlineAction, String> getPathes() {
+	public Map<VcmlOutlineAction, String> getPathes() {
 		if(action2Path.isEmpty()) {
 			read();
 		}

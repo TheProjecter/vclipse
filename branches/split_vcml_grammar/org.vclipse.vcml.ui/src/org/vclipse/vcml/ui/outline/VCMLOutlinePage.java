@@ -30,7 +30,7 @@ import org.eclipse.xtext.ui.editor.outline.impl.OutlinePage;
 import org.vclipse.base.ui.util.IExtendedImageHelper;
 import org.vclipse.vcml.ui.IUiConstants;
 import org.vclipse.vcml.ui.extension.IExtensionPointUtilities;
-import org.vclipse.vcml.ui.outline.actions.VCMLOutlineAction;
+import org.vclipse.vcml.ui.outline.actions.VcmlOutlineAction;
 import org.vclipse.vcml.utils.ISapConstants;
 
 import com.google.inject.Inject;
@@ -76,8 +76,8 @@ public class VCMLOutlinePage extends OutlinePage implements IPropertyChangeListe
 	}
 
 	private void createPopupMenuAction(TreeViewer treeViewer, IToolBarManager toolBarManager) {
-		List<VCMLOutlineAction> actions = extensionPointUtilities.getActions();
-		for(VCMLOutlineAction action : actions) {
+		List<VcmlOutlineAction> actions = extensionPointUtilities.getActions();
+		for(VcmlOutlineAction action : actions) {
 			treeViewer.addSelectionChangedListener(action);
 		}
 	}
@@ -117,7 +117,7 @@ public class VCMLOutlinePage extends OutlinePage implements IPropertyChangeListe
 		menuManager.setRemoveAllWhenShown(true);
 		menuManager.addMenuListener(new IMenuListener() {	
 			public void menuAboutToShow(final IMenuManager manager) {
-				for(Map.Entry<VCMLOutlineAction, String> entry : extensionPointUtilities.getPathes().entrySet()) {
+				for(Map.Entry<VcmlOutlineAction, String> entry : extensionPointUtilities.getPathes().entrySet()) {
 					GroupMarker groupMarker = new GroupMarker(entry.getValue());
 					manager.add(groupMarker);
 					manager.appendToGroup(groupMarker.getGroupName(), entry.getKey());

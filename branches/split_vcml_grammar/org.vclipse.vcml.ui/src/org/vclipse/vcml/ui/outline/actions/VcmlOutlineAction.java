@@ -14,6 +14,7 @@ import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -37,14 +38,11 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeSelection;
-import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eclipse.xtext.resource.SaveOptions;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.resource.XtextResourceSet;
-import org.eclipse.xtext.ui.editor.model.IXtextDocument;
 import org.eclipse.xtext.ui.editor.outline.impl.EObjectNode;
 import org.eclipse.xtext.ui.util.ResourceUtil;
 import org.eclipse.xtext.util.SimpleAttributeResolver;
@@ -61,11 +59,11 @@ import org.vclipse.vcml.vcml.VcmlFactory;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
-public class VCMLOutlineAction extends Action implements ISelectionChangedListener {
+public class VcmlOutlineAction extends Action implements ISelectionChangedListener {
 	
 	private static final String EXTRACTED_EXTENSION = "extracted.";
 
-	private final Map<String, IVCMLOutlineActionHandler<?>> actionHandlers;
+	private final Map<String, IVcmlOutlineActionHandler<?>> actionHandlers;
 	
 	private final List<EObject> selectedObjects;
 	
@@ -74,21 +72,18 @@ public class VCMLOutlineAction extends Action implements ISelectionChangedListen
 	private PrintStream result; 
 	private PrintStream err;
 	
-	private final IContentOutlinePage page;
 	private final IPreferenceStore preferenceStore;
 	
 	private XtextResourceSet resourceSet;
 	
 	@Inject
-	public VCMLOutlineAction(IPreferenceStore preferenceStore, IContentOutlinePage outlinePage) {
-		actionHandlers = new HashMap<String, IVCMLOutlineActionHandler<?>>();
+	public VcmlOutlineAction(IPreferenceStore preferenceStore) {
+		actionHandlers = new HashMap<String, IVcmlOutlineActionHandler<?>>();
 		selectedObjects = new ArrayList<EObject>();
 		
 		CMConsolePlugin consolePlugin = CMConsolePlugin.getDefault();
 		result = new PrintStream(consolePlugin.getConsole(Kind.Result));
 		err = new PrintStream(consolePlugin.getConsole(Kind.Error));
-		
-		this.page = outlinePage;
 		this.preferenceStore = preferenceStore;
 	}
 
@@ -98,34 +93,14 @@ public class VCMLOutlineAction extends Action implements ISelectionChangedListen
 		
 		Resource resultResource = null;
 		Resource sourceResource = null;
-		IXtextDocument document = null;
 		
 		final boolean outputToFile = preferenceStore.getBoolean(IUiConstants.OUTPUT_TO_FILE);
 		
 		final Set<String> seenObjects = Sets.newHashSet();
 		if(outputToFile) {
-			selectedObjects.clear();
-			ISelection selection = page.getSelection();
-			if(selection instanceof IStructuredSelection) {
-				Iterator<?> iterator = ((IStructuredSelection)selection).iterator();
-				while(iterator.hasNext()) {
-					Object next = iterator.next();
-					if(next instanceof EObjectNode) {
-						EObjectNode objectNode = (EObjectNode)next;
-						if(document == null) {
-							document = objectNode.getDocument();
-						}
-						if(sourceResource == null) {
-							EObject root = document.readOnly(new IUnitOfWork<EObject, XtextResource>() {
-								public EObject exec(XtextResource resource) throws Exception {
-									return resource.getParseResult().getRootASTElement();
-								}
-							});
-							sourceResource = root.eResource();
-						}
-						selectedObjects.add(objectNode.getEObject(sourceResource));
-					}
-				}
+			List<EObject> selected = getSelectedObjects();
+			if(selected.size() > 0) {
+				sourceResource = selected.get(0).eResource();
 			}
 		
 			URI sourceUri = sourceResource.getURI();
@@ -151,7 +126,7 @@ public class VCMLOutlineAction extends Action implements ISelectionChangedListen
 						if(monitor.isCanceled()) {
 							break;
 						}
-						IVCMLOutlineActionHandler<?> actionHandler = actionHandlers.get(getInstanceTypeName(obj));
+						IVcmlOutlineActionHandler<?> actionHandler = actionHandlers.get(getInstanceTypeName(obj));
 						String simpleName = actionHandler.getClass().getSimpleName();
 						taskName = "Executing " + simpleName + " for " + SimpleAttributeResolver.NAME_RESOLVER.apply(obj);
 						monitor.setTaskName(taskName);
@@ -207,23 +182,24 @@ public class VCMLOutlineAction extends Action implements ISelectionChangedListen
 		}
 	}
 
-	public synchronized void addHandler(String type, IVCMLOutlineActionHandler<?> handler) {
+	public synchronized void addHandler(String type, IVcmlOutlineActionHandler<?> handler) {
 		if(handler != null) {
 			actionHandlers.put(type, handler);
 		}
 	}
 	
-	private synchronized EObject[] getSelectedObjects() {
-		return selectedObjects.toArray(new EObject[selectedObjects.size()]);
+	private synchronized List<EObject> getSelectedObjects() {
+		return Collections.unmodifiableList(selectedObjects);
 	}
 
 	public void selectionChanged(SelectionChangedEvent event) {
+		selectedObjects.clear();
 		ISelection selection = event.getSelection();
 		if(selection instanceof TreeSelection) {
 			boolean enabled = true;
 			boolean visitedSomeAction = false;
 			Iterator<?> iterator = ((TreeSelection)selection).iterator();
-			if(enabled && iterator.hasNext()) {
+			while(enabled && iterator.hasNext()) {
 				Object object = iterator.next();
 				if(object instanceof EObjectNode) {
 					try {
@@ -233,11 +209,12 @@ public class VCMLOutlineAction extends Action implements ISelectionChangedListen
 							}
 						});
 						if(eobject != null) {
-							IVCMLOutlineActionHandler<?> actionHandler = actionHandlers.get(getInstanceTypeName(eobject));
+							IVcmlOutlineActionHandler<?> actionHandler = actionHandlers.get(getInstanceTypeName(eobject));
 							if(actionHandler!=null) {
 								visitedSomeAction = true;
 								Method method = actionHandler.getClass().getMethod("isEnabled", new Class[]{getInstanceType(eobject)});
 								enabled &= (Boolean)method.invoke(actionHandler, eobject);
+								selectedObjects.add(eobject);
 							} else {
 								enabled = false;
 							}

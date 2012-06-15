@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.common.util.WrappedException;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.vclipse.vcml.ui.actions.BAPIUtils;
-import org.vclipse.vcml.ui.outline.actions.IVCMLOutlineActionHandler;
+import org.vclipse.vcml.ui.outline.actions.IVcmlOutlineActionHandler;
 import org.vclipse.vcml.vcml.Characteristic;
 import org.vclipse.vcml.vcml.CharacteristicValue;
 import org.vclipse.vcml.vcml.DateCharacteristicValue;
@@ -43,7 +43,7 @@ import com.sap.conn.jco.JCoFunction;
 import com.sap.conn.jco.JCoParameterList;
 import com.sap.conn.jco.JCoTable;
 
-public class CharacteristicCreateChangeActionHandler extends BAPIUtils implements IVCMLOutlineActionHandler<Characteristic> {
+public class CharacteristicCreateChangeActionHandler extends BAPIUtils implements IVcmlOutlineActionHandler<Characteristic> {
 	
 	public void run(final Characteristic object, Resource resource, final IProgressMonitor monitor, Set<String> seenObjects) throws JCoException {
 		final DocumentationHandler documentationHandler = new DocumentationHandler(monitor);

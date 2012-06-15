@@ -15,7 +15,7 @@ import java.util.Set;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.resource.Resource;
 
-public interface IVCMLOutlineActionHandler<T> {
+public interface IVcmlOutlineActionHandler<T> {
 	
 	public void run(T object, Resource resource, IProgressMonitor monitor, Set<String> seenObjects) throws Exception;
 

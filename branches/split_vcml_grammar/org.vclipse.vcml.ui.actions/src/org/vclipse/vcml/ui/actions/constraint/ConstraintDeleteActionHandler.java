@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.vclipse.vcml.ui.actions.BAPIUtils;
-import org.vclipse.vcml.ui.outline.actions.IVCMLOutlineActionHandler;
+import org.vclipse.vcml.ui.outline.actions.IVcmlOutlineActionHandler;
 import org.vclipse.vcml.vcml.Constraint;
 import org.vclipse.vcml.vcml.DependencyNet;
 import org.vclipse.vcml.vcml.Model;
@@ -27,7 +27,7 @@ import com.sap.conn.jco.JCoException;
 import com.sap.conn.jco.JCoFunction;
 import com.sap.conn.jco.JCoParameterList;
 
-public class ConstraintDeleteActionHandler  extends BAPIUtils implements IVCMLOutlineActionHandler<Constraint> {
+public class ConstraintDeleteActionHandler  extends BAPIUtils implements IVcmlOutlineActionHandler<Constraint> {
 
 	public boolean isEnabled(Constraint object) {
 		return isConnected();

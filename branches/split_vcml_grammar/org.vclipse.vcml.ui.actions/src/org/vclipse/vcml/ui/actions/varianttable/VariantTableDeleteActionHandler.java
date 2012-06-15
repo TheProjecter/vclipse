@@ -15,7 +15,7 @@ import java.util.Set;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.vclipse.vcml.ui.actions.BAPIUtils;
-import org.vclipse.vcml.ui.outline.actions.IVCMLOutlineActionHandler;
+import org.vclipse.vcml.ui.outline.actions.IVcmlOutlineActionHandler;
 import org.vclipse.vcml.vcml.VariantTable;
 
 import com.sap.conn.jco.AbapException;
@@ -23,7 +23,7 @@ import com.sap.conn.jco.JCoException;
 import com.sap.conn.jco.JCoFunction;
 import com.sap.conn.jco.JCoTable;
 
-public class VariantTableDeleteActionHandler extends BAPIUtils implements IVCMLOutlineActionHandler<VariantTable>{
+public class VariantTableDeleteActionHandler extends BAPIUtils implements IVcmlOutlineActionHandler<VariantTable>{
 
 	@Override
 	public boolean isEnabled(VariantTable object) {

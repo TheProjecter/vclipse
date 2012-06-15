@@ -14,13 +14,13 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.vclipse.vcml.ui.outline.actions.IVCMLOutlineActionHandler;
+import org.vclipse.vcml.ui.outline.actions.IVcmlOutlineActionHandler;
 import org.vclipse.vcml.vcml.Model;
 import org.vclipse.vcml.vcml.VariantTable;
 
 import com.sap.conn.jco.JCoException;
 
-public class VariantTableExtractActionHandler extends VariantTableReader implements IVCMLOutlineActionHandler<VariantTable>{
+public class VariantTableExtractActionHandler extends VariantTableReader implements IVcmlOutlineActionHandler<VariantTable>{
 
 	public boolean isEnabled(VariantTable object) {
 		return isConnected();

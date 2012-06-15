@@ -14,12 +14,12 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.vclipse.vcml.ui.outline.actions.IVCMLOutlineActionHandler;
+import org.vclipse.vcml.ui.outline.actions.IVcmlOutlineActionHandler;
 import org.vclipse.vcml.vcml.Material;
 
 import com.sap.conn.jco.JCoException;
 
-public class MaterialDisplayActionHandler extends MaterialReader implements IVCMLOutlineActionHandler<Material> {
+public class MaterialDisplayActionHandler extends MaterialReader implements IVcmlOutlineActionHandler<Material> {
 
 	public boolean isEnabled(Material object) {
 		return isConnected();

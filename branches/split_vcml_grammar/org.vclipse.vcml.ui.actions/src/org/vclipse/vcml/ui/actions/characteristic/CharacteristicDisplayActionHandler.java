@@ -14,13 +14,13 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.vclipse.vcml.ui.outline.actions.IVCMLOutlineActionHandler;
+import org.vclipse.vcml.ui.outline.actions.IVcmlOutlineActionHandler;
 import org.vclipse.vcml.vcml.Characteristic;
 import org.vclipse.vcml.vcml.Model;
 
 import com.sap.conn.jco.JCoException;
 
-public class CharacteristicDisplayActionHandler extends CharacteristicReader implements IVCMLOutlineActionHandler<Characteristic> {
+public class CharacteristicDisplayActionHandler extends CharacteristicReader implements IVcmlOutlineActionHandler<Characteristic> {
 
 	public boolean isEnabled(Characteristic object) {
 		return isConnected();

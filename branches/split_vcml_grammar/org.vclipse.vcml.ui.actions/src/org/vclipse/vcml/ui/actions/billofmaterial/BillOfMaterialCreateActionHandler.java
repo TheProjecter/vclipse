@@ -15,7 +15,7 @@ import java.util.Set;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.vclipse.vcml.ui.actions.BAPIUtils;
-import org.vclipse.vcml.ui.outline.actions.IVCMLOutlineActionHandler;
+import org.vclipse.vcml.ui.outline.actions.IVcmlOutlineActionHandler;
 import org.vclipse.vcml.vcml.BOMItem;
 import org.vclipse.vcml.vcml.BillOfMaterial;
 import org.vclipse.vcml.vcml.Material;
@@ -26,7 +26,7 @@ import com.sap.conn.jco.JCoFunction;
 import com.sap.conn.jco.JCoParameterList;
 import com.sap.conn.jco.JCoTable;
 
-public class BillOfMaterialCreateActionHandler extends BAPIUtils implements IVCMLOutlineActionHandler<BillOfMaterial>{
+public class BillOfMaterialCreateActionHandler extends BAPIUtils implements IVcmlOutlineActionHandler<BillOfMaterial>{
 
 	public boolean isEnabled(BillOfMaterial object) {
 		return isConnected();

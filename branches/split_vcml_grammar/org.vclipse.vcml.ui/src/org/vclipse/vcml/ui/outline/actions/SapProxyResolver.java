@@ -24,8 +24,8 @@ public class SapProxyResolver {
 		while(treeIterator.hasNext()) {
 			for(EObject crossReference : treeIterator.next().eCrossReferences()) {
 				if(crossReference.eIsProxy()) {
-					Collection<IVCMLOutlineActionHandler<?>> handlers = extensionPointReader.getHandler(crossReference.eClass().getInstanceClassName());
-					for(IVCMLOutlineActionHandler<?> handler : handlers) {
+					Collection<IVcmlOutlineActionHandler<?>> handlers = extensionPointReader.getHandler(crossReference.eClass().getInstanceClassName());
+					for(IVcmlOutlineActionHandler<?> handler : handlers) {
 						if(handler.getClass().getSimpleName().contains("Extract")) {
 							try {
 								Method method = handler.getClass().getMethod("run", new Class[]{getInstanceType(crossReference), Resource.class, IProgressMonitor.class, Set.class});

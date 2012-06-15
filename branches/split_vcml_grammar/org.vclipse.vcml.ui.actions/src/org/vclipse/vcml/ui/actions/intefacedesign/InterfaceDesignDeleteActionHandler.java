@@ -15,13 +15,13 @@ import java.util.Set;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.vclipse.vcml.ui.actions.BAPIUtils;
-import org.vclipse.vcml.ui.outline.actions.IVCMLOutlineActionHandler;
+import org.vclipse.vcml.ui.outline.actions.IVcmlOutlineActionHandler;
 import org.vclipse.vcml.vcml.InterfaceDesign;
 
 import com.sap.conn.jco.JCoException;
 import com.sap.conn.jco.JCoFunction;
 
-public class InterfaceDesignDeleteActionHandler extends BAPIUtils implements IVCMLOutlineActionHandler<InterfaceDesign> {
+public class InterfaceDesignDeleteActionHandler extends BAPIUtils implements IVcmlOutlineActionHandler<InterfaceDesign> {
 
 	public boolean isEnabled(InterfaceDesign object) {
 		return isConnected();

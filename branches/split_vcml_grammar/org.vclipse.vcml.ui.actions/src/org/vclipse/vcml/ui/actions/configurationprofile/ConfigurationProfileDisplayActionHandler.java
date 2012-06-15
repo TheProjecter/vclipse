@@ -14,13 +14,13 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.vclipse.vcml.ui.outline.actions.IVCMLOutlineActionHandler;
+import org.vclipse.vcml.ui.outline.actions.IVcmlOutlineActionHandler;
 import org.vclipse.vcml.vcml.ConfigurationProfile;
 import org.vclipse.vcml.vcml.Material;
 
 import com.sap.conn.jco.JCoException;
 
-public class ConfigurationProfileDisplayActionHandler extends ConfigurationProfileReader implements IVCMLOutlineActionHandler<ConfigurationProfile>{
+public class ConfigurationProfileDisplayActionHandler extends ConfigurationProfileReader implements IVcmlOutlineActionHandler<ConfigurationProfile>{
 
 	public boolean isEnabled(ConfigurationProfile object) {
 		return isConnected();

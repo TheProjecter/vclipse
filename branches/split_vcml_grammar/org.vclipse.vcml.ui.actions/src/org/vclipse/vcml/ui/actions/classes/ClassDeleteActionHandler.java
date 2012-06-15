@@ -15,7 +15,7 @@ import java.util.Set;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.vclipse.vcml.ui.actions.BAPIUtils;
-import org.vclipse.vcml.ui.outline.actions.IVCMLOutlineActionHandler;
+import org.vclipse.vcml.ui.outline.actions.IVcmlOutlineActionHandler;
 import org.vclipse.vcml.vcml.Class;
 import org.vclipse.vcml.utils.VcmlUtils;
 
@@ -23,7 +23,7 @@ import com.sap.conn.jco.JCoException;
 import com.sap.conn.jco.JCoFunction;
 import com.sap.conn.jco.JCoParameterList;
 
-public class ClassDeleteActionHandler extends BAPIUtils implements IVCMLOutlineActionHandler<Class> {
+public class ClassDeleteActionHandler extends BAPIUtils implements IVcmlOutlineActionHandler<Class> {
 	
 	public boolean isEnabled(Class object) {
 		return isConnected();

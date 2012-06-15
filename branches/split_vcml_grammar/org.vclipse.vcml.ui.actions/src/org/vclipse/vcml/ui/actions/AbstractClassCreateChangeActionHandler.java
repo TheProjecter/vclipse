@@ -15,7 +15,7 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.vclipse.vcml.ui.outline.actions.IVCMLOutlineActionHandler;
+import org.vclipse.vcml.ui.outline.actions.IVcmlOutlineActionHandler;
 import org.vclipse.vcml.vcml.Characteristic;
 import org.vclipse.vcml.vcml.Class;
 import org.vclipse.vcml.vcml.Language;
@@ -28,7 +28,7 @@ import com.sap.conn.jco.JCoParameterList;
 import com.sap.conn.jco.JCoStructure;
 import com.sap.conn.jco.JCoTable;
 
-public abstract class AbstractClassCreateChangeActionHandler extends BAPIUtils implements IVCMLOutlineActionHandler<Class> {
+public abstract class AbstractClassCreateChangeActionHandler extends BAPIUtils implements IVcmlOutlineActionHandler<Class> {
 
 	protected abstract String getAction();
 	protected abstract String getBAPI();

@@ -14,13 +14,13 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.vclipse.vcml.ui.outline.actions.IVCMLOutlineActionHandler;
+import org.vclipse.vcml.ui.outline.actions.IVcmlOutlineActionHandler;
 import org.vclipse.vcml.vcml.Model;
 import org.vclipse.vcml.vcml.VariantFunction;
 
 import com.sap.conn.jco.JCoException;
 
-public class VariantFunctionDisplayActionHandler extends VariantFunctionReader implements IVCMLOutlineActionHandler<VariantFunction>{
+public class VariantFunctionDisplayActionHandler extends VariantFunctionReader implements IVcmlOutlineActionHandler<VariantFunction>{
 
 	public boolean isEnabled(VariantFunction object) {
 		return isConnected();

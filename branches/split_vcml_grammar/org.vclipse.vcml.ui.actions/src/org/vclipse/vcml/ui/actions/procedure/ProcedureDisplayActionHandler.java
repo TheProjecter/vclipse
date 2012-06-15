@@ -14,12 +14,12 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.vclipse.vcml.ui.outline.actions.IVCMLOutlineActionHandler;
+import org.vclipse.vcml.ui.outline.actions.IVcmlOutlineActionHandler;
 import org.vclipse.vcml.vcml.Procedure;
 
 import com.sap.conn.jco.JCoException;
 
-public class ProcedureDisplayActionHandler extends ProcedureReader implements IVCMLOutlineActionHandler<Procedure>{
+public class ProcedureDisplayActionHandler extends ProcedureReader implements IVcmlOutlineActionHandler<Procedure>{
 
 	public boolean isEnabled(Procedure object) {
 		return isConnected();

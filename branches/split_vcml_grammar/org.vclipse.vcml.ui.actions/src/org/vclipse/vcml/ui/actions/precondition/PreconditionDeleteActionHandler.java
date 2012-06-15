@@ -15,12 +15,12 @@ import java.util.Set;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.vclipse.vcml.ui.actions.AbstractDependencyDeleteActionHandler;
-import org.vclipse.vcml.ui.outline.actions.IVCMLOutlineActionHandler;
+import org.vclipse.vcml.ui.outline.actions.IVcmlOutlineActionHandler;
 import org.vclipse.vcml.vcml.Precondition;
 
 import com.sap.conn.jco.JCoException;
 
-public class PreconditionDeleteActionHandler extends AbstractDependencyDeleteActionHandler implements IVCMLOutlineActionHandler<Precondition> {
+public class PreconditionDeleteActionHandler extends AbstractDependencyDeleteActionHandler implements IVcmlOutlineActionHandler<Precondition> {
 
 	public boolean isEnabled(Precondition object) {
 		return isConnected();

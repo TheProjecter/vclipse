@@ -15,7 +15,7 @@ import java.util.Set;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.vclipse.vcml.ui.actions.BAPIUtils;
-import org.vclipse.vcml.ui.outline.actions.IVCMLOutlineActionHandler;
+import org.vclipse.vcml.ui.outline.actions.IVcmlOutlineActionHandler;
 import org.vclipse.vcml.vcml.Language;
 import org.vclipse.vcml.vcml.VariantTable;
 import org.vclipse.vcml.vcml.VariantTableArgument;
@@ -28,7 +28,7 @@ import com.sap.conn.jco.JCoFunction;
 import com.sap.conn.jco.JCoParameterList;
 import com.sap.conn.jco.JCoTable;
 
-public class VariantTableCreateChangeActionHandler extends BAPIUtils implements IVCMLOutlineActionHandler<VariantTable>{
+public class VariantTableCreateChangeActionHandler extends BAPIUtils implements IVcmlOutlineActionHandler<VariantTable>{
 
 	@Override
 	public boolean isEnabled(VariantTable object) {

@@ -15,7 +15,7 @@ import java.util.Set;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.vclipse.vcml.ui.actions.BAPIUtils;
-import org.vclipse.vcml.ui.outline.actions.IVCMLOutlineActionHandler;
+import org.vclipse.vcml.ui.outline.actions.IVcmlOutlineActionHandler;
 import org.vclipse.vcml.vcml.Precondition;
 import org.vclipse.vcml.utils.VcmlUtils;
 
@@ -25,7 +25,7 @@ import com.sap.conn.jco.JCoFunction;
 import com.sap.conn.jco.JCoParameterList;
 import com.sap.conn.jco.JCoStructure;
 
-public class PreconditionCreateChangeActionHandler extends BAPIUtils implements IVCMLOutlineActionHandler<Precondition> {
+public class PreconditionCreateChangeActionHandler extends BAPIUtils implements IVcmlOutlineActionHandler<Precondition> {
 
 	public boolean isEnabled(Precondition object) {
 		return isConnected();

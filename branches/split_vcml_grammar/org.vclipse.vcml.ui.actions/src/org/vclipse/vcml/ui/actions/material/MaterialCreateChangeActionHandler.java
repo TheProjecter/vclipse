@@ -15,7 +15,7 @@ import java.util.Set;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.vclipse.vcml.ui.actions.BAPIUtils;
-import org.vclipse.vcml.ui.outline.actions.IVCMLOutlineActionHandler;
+import org.vclipse.vcml.ui.outline.actions.IVcmlOutlineActionHandler;
 import org.vclipse.vcml.vcml.Language;
 import org.vclipse.vcml.vcml.Material;
 import org.vclipse.vcml.utils.DescriptionHandler;
@@ -26,7 +26,7 @@ import com.sap.conn.jco.JCoParameterList;
 import com.sap.conn.jco.JCoStructure;
 import com.sap.conn.jco.JCoTable;
 
-public class MaterialCreateChangeActionHandler extends BAPIUtils implements IVCMLOutlineActionHandler<Material> {
+public class MaterialCreateChangeActionHandler extends BAPIUtils implements IVcmlOutlineActionHandler<Material> {
 	
 	public void run(Material object, Resource resource, IProgressMonitor monitor, Set<String> seenObjects) throws JCoException {
 		beginTransaction();
