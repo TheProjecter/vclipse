@@ -28,4 +28,3 @@ Export-Package: org.vclipse.dependency,
  org.vclipse.dependency.parser.antlr,
  org.vclipse.dependency.parser.antlr.internal,
  org.vclipse.dependency.parser.antlr.lexer
-
