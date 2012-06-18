@@ -5,7 +5,7 @@ import org.eclipse.xtext.generator.*
 import org.eclipse.xtext.ui.generator.*
 
 var grammarURI = "classpath:/org/vclipse/procedure/Procedure.xtext"
-var file.extensions = "proc,sapprocedure"
+var file.extensions = "proc"
 var projectName = "org.vclipse.procedure"
 var runtimeProject = "../${projectName}"
 
