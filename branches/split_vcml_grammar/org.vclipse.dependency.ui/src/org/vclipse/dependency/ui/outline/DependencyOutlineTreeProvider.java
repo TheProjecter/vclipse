@@ -3,12 +3,20 @@
 */
 package org.vclipse.dependency.ui.outline;
 
-import org.eclipse.xtext.ui.editor.outline.impl.DefaultOutlineTreeProvider;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.vclipse.vcml.ui.outline.VCMLOutlineTreeProvider;
+
+import com.google.inject.Inject;
 
 /**
  * customization of the default outline structure
  * 
  */
-public class DependencyOutlineTreeProvider extends DefaultOutlineTreeProvider {
-	
+public class DependencyOutlineTreeProvider extends VCMLOutlineTreeProvider {
+
+	@Inject
+	public DependencyOutlineTreeProvider(IPreferenceStore preferenceStore) {
+		super(preferenceStore);
+	}
 }
+
