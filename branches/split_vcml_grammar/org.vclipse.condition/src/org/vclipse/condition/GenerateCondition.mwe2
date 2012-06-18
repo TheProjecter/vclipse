@@ -5,7 +5,7 @@ import org.eclipse.xtext.generator.*
 import org.eclipse.xtext.ui.generator.*
 
 var grammarURI = "classpath:/org/vclipse/condition/Condition.xtext"
-var file.extensions = "cond,sapconstraint"
+var file.extensions = "pre,sel"
 var projectName = "org.vclipse.condition"
 var runtimeProject = "../${projectName}"
 

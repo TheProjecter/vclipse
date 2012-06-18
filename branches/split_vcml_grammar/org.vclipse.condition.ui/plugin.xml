@@ -9,7 +9,7 @@
             class="org.vclipse.condition.ui.ConditionExecutableExtensionFactory:org.eclipse.xtext.ui.editor.XtextEditor"
             contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
             default="true"
-            extensions="cond"
+            extensions="sel,cond,sapconstraint"
             id="org.vclipse.condition.Condition"
             name="Condition Editor">
         </editor>
