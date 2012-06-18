@@ -29,4 +29,3 @@ Export-Package: org.vclipse.constraint,
  org.vclipse.constraint.parser.antlr,
  org.vclipse.constraint.parser.antlr.internal,
  org.vclipse.constraint.parser.antlr.lexer
-
