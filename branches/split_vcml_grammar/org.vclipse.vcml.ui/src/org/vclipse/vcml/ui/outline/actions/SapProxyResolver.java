@@ -1,5 +1,6 @@
 package org.vclipse.vcml.ui.outline.actions;
 
+import java.awt.List;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Set;
@@ -39,7 +40,7 @@ public class SapProxyResolver {
 						for(IVcmlOutlineActionHandler<?> handler : extensionPointReader.getHandler(eobject.eClass().getInstanceClassName())) {
 							if(handler.getClass().getSimpleName().contains("Extract")) {
 								try {
-									Method method = handler.getClass().getMethod("run", new Class[]{getInstanceType(eobject), Resource.class, IProgressMonitor.class, Set.class});
+									Method method = handler.getClass().getMethod("run", new Class[]{getInstanceType(eobject), Resource.class, IProgressMonitor.class, Set.class, List.class});
 									method.invoke(handler, new Object[]{eobject, output == null ? object.eResource() : output, new NullProgressMonitor(), seenObjects});
 								} catch(InvocationTargetException exception) {
 									if(exception.getTargetException() instanceof OutlineActionCanceledException) {
