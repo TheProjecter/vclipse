@@ -49,7 +49,7 @@ public class ClassReader extends BAPIUtils {
 			JCoFunction function = getJCoFunction("BAPI_CLASS_GETDETAIL", monitor);
 			JCoParameterList ipl = function.getImportParameterList();
 			
-			handleOptions(options, ipl, null, "KEYDATE");
+			handleOptions2(options, ipl, null, "KEYDATE");
 			
 			ipl.setValue("CLASSTYPE", classType);
 			ipl.setValue("CLASSNUM", className);

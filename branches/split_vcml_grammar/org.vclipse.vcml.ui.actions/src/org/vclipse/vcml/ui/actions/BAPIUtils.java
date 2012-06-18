@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
@@ -532,6 +533,18 @@ public class BAPIUtils {
 		}
 	}
 
+	protected void handleOptions2(List<Option> options, JCoParameterList ipl, String ecmName, String keyDateName) {
+		String ecm = getECM(options);
+		if (ecmName!=null && ecm!=null) {
+			ipl.setValue(ecmName, ecm);
+		} else {
+			String keyDate = getKeyDate2(options);
+			if (keyDateName!=null && keyDate != null) {
+				ipl.setValue(keyDateName, keyDate);
+			}
+		}
+	}
+
 
 	private String getECM(List<Option> options) {
 		for(Option o : options) {
@@ -541,11 +554,27 @@ public class BAPIUtils {
 		}
 		return null;
 	}
+
+	final private SimpleDateFormat FORMAT_DDMMYYYY = new SimpleDateFormat("dd.MM.yyyy");
+	final private SimpleDateFormat FORMAT_YYYYMMDD = new SimpleDateFormat("yyyyMMdd");
 	
 	private String getKeyDate(List<Option> options) {
 		for(Option o : options) {
 			if(o.getName() == OptionType.KEY_DATE) {
-				return o.getValue();
+				o.getValue();
+			}
+		}
+		return null;
+	}
+	
+	private String getKeyDate2(List<Option> options) {
+		for(Option o : options) {
+			if(o.getName() == OptionType.KEY_DATE) {
+				try {
+					return FORMAT_YYYYMMDD.format(FORMAT_DDMMYYYY.parse(o.getValue()));
+				} catch (ParseException e) {
+					return null;
+				}
 			}
 		}
 		return null;

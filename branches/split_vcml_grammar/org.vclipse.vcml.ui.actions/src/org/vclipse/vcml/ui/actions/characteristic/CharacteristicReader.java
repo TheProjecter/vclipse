@@ -62,7 +62,7 @@ public class CharacteristicReader extends BAPIUtils {
 		JCoParameterList ipl = function.getImportParameterList();
 		ipl.setValue("CHARACTNAME", csticName);
 		
-		handleOptions(options, ipl, null, "keydate");
+		handleOptions2(options, ipl, null, "KEYDATE");
 		
 		execute(function, monitor, csticName);
 		if(processReturnTable(function)) {
