@@ -4,7 +4,7 @@
 package org.vclipse.condition.ui.labeling;
 
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
-import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider;
+import org.vclipse.dependency.ui.labeling.DependencyLabelProvider;
 
 import com.google.inject.Inject;
 
@@ -13,22 +13,11 @@ import com.google.inject.Inject;
  * 
  * see http://www.eclipse.org/Xtext/documentation/latest/xtext.html#labelProvider
  */
-public class ConditionLabelProvider extends DefaultEObjectLabelProvider {
+public class ConditionLabelProvider extends DependencyLabelProvider {
 
 	@Inject
 	public ConditionLabelProvider(AdapterFactoryLabelProvider delegate) {
 		super(delegate);
 	}
-
-/*
-	//Labels and icons can be computed like this:
-	
-	String text(MyModel ele) {
-	  return "my "+ele.getName();
-	}
-	 
-    String image(MyModel ele) {
-      return "MyModel.gif";
-    }
-*/
 }
+

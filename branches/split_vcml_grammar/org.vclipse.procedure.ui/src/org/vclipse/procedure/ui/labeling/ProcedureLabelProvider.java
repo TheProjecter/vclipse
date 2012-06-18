@@ -4,7 +4,15 @@
 package org.vclipse.procedure.ui.labeling;
 
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
-import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider;
+import org.vclipse.dependency.ui.labeling.DependencyLabelProvider;
+import org.vclipse.vcml.vcml.Assignment;
+import org.vclipse.vcml.vcml.CharacteristicReference_P;
+import org.vclipse.vcml.vcml.CompoundStatement;
+import org.vclipse.vcml.vcml.ConditionalStatement;
+import org.vclipse.vcml.vcml.DelDefault;
+import org.vclipse.vcml.vcml.IsSpecified_P;
+import org.vclipse.vcml.vcml.ProcedureLocation;
+import org.vclipse.vcml.vcml.SetDefault;
 
 import com.google.inject.Inject;
 
@@ -13,22 +21,39 @@ import com.google.inject.Inject;
  * 
  * see http://www.eclipse.org/Xtext/documentation/latest/xtext.html#labelProvider
  */
-public class ProcedureLabelProvider extends DefaultEObjectLabelProvider {
+public class ProcedureLabelProvider extends DependencyLabelProvider {
 
 	@Inject
 	public ProcedureLabelProvider(AdapterFactoryLabelProvider delegate) {
 		super(delegate);
 	}
 
-/*
-	//Labels and icons can be computed like this:
-	
-	String text(MyModel ele) {
-	  return "my "+ele.getName();
+	public String text(Assignment element) {
+		return text(element.getCharacteristic()) + " = ...";
 	}
-	 
-    String image(MyModel ele) {
-      return "MyModel.gif";
-    }
-*/
+	
+	public String text(CharacteristicReference_P element) {
+		ProcedureLocation location = element.getLocation();
+		return (location!=null ? location.getLiteral() + "." : "") + text(element.getCharacteristic());
+	}
+	
+	public String text(CompoundStatement element) {
+		return "(..., ...)";
+	}
+	
+	public String text(ConditionalStatement element) {
+		return "... if ...";
+	}
+	
+	public String text(DelDefault element) {
+		return "$del_default " + text(element.getCharacteristic());
+	}
+	
+	public String text(IsSpecified_P element) {
+		return text(element.getCharacteristic()) + "is specified";
+	}
+	
+	public String text(SetDefault element) {
+		return text(element.getCharacteristic()) + " ?= ...";
+	}
 }

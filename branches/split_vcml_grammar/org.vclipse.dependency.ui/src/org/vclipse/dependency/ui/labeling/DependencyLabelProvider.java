@@ -4,7 +4,10 @@
 package org.vclipse.dependency.ui.labeling;
 
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
-import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider;
+import org.vclipse.vcml.ui.labeling.AbstractVClipseLabelProvider;
+import org.vclipse.vcml.vcml.Function;
+import org.vclipse.vcml.vcml.IsInvisible;
+import org.vclipse.vcml.vcml.Table;
 
 import com.google.inject.Inject;
 
@@ -13,22 +16,23 @@ import com.google.inject.Inject;
  * 
  * see http://www.eclipse.org/Xtext/documentation/latest/xtext.html#labelProvider
  */
-public class DependencyLabelProvider extends DefaultEObjectLabelProvider {
+public class DependencyLabelProvider extends AbstractVClipseLabelProvider {
 
 	@Inject
 	public DependencyLabelProvider(AdapterFactoryLabelProvider delegate) {
 		super(delegate);
 	}
 
-/*
-	//Labels and icons can be computed like this:
-	
-	String text(MyModel ele) {
-	  return "my "+ele.getName();
+	public String text(IsInvisible element) {
+		return text(element.getCharacteristic()) + "is invisible ";
 	}
-	 
-    String image(MyModel ele) {
-      return "MyModel.gif";
-    }
-*/
+	
+	public String text(Function element) {
+		return text(element.getFunction()) + " (...)";
+	}
+
+	public String text(Table element) {
+		return text(element.getTable()) + " (...)";
+	}
+	
 }

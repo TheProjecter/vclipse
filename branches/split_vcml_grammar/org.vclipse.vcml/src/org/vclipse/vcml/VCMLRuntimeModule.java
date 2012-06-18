@@ -95,5 +95,5 @@ public class VCMLRuntimeModule extends org.vclipse.vcml.AbstractVCMLRuntimeModul
 	
 	public Class<? extends INamesAreUniqueValidationHelper> bindNamesAreUniqueValidationHelper() {
 		return VcmlNamesAreUniqueValidationHelper.class;
-	}
+	} 
 }
