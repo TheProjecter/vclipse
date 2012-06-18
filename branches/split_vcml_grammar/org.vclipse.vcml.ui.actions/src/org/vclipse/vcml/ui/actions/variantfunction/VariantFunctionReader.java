@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.vclipse.vcml.ui.actions.variantfunction;
 
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -20,6 +21,7 @@ import org.vclipse.vcml.utils.VCMLProxyFactory;
 import org.vclipse.vcml.utils.VcmlUtils;
 import org.vclipse.vcml.vcml.Characteristic;
 import org.vclipse.vcml.vcml.Model;
+import org.vclipse.vcml.vcml.Option;
 import org.vclipse.vcml.vcml.VariantFunction;
 import org.vclipse.vcml.vcml.VariantFunctionArgument;
 
@@ -36,7 +38,7 @@ public class VariantFunctionReader extends BAPIUtils {
 	@Inject
 	private CharacteristicReader csticReader;
 	
-	public VariantFunction read(String variantFunctionName, Model vcmlModel, IProgressMonitor monitor, Set<String> seenObjects, boolean recurse) throws JCoException {
+	public VariantFunction read(String variantFunctionName, Model vcmlModel, IProgressMonitor monitor, Set<String> seenObjects, List<Option> options, boolean recurse) throws JCoException {
 		if(variantFunctionName == null || !seenObjects.add("VariantFunction/" + variantFunctionName.toUpperCase()) || monitor.isCanceled()) {
 			return null;
 		}
@@ -46,6 +48,9 @@ public class VariantFunctionReader extends BAPIUtils {
 		JCoFunction function = getJCoFunction("CARD_FUNCTION_READ", monitor);
 		JCoParameterList ipl = function.getImportParameterList();
 		ipl.setValue("FUNCTION_NAME", variantFunctionName);
+		
+		handleOptions(options, ipl, null, "DATE");
+		
 		try {
 			execute(function, monitor, variantFunctionName);
 			JCoParameterList epl = function.getExportParameterList();
@@ -66,7 +71,7 @@ public class VariantFunctionReader extends BAPIUtils {
 					if(monitor.isCanceled()) {
 						return null;
 					}
-					cstic = csticReader.read(csticName, vcmlModel, monitor, seenObjects, recurse);
+					cstic = csticReader.read(csticName, vcmlModel, monitor, seenObjects, options, recurse);
 				}
 				if (cstic==null) {
 					cstic = VCMLProxyFactory.createCharacteristicProxy(vcmlModel.eResource(), csticName);

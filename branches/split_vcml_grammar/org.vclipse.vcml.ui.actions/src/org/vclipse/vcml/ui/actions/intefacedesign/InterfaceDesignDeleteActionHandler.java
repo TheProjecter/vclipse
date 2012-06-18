@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.vclipse.vcml.ui.actions.intefacedesign;
 
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -17,9 +18,11 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.vclipse.vcml.ui.actions.BAPIUtils;
 import org.vclipse.vcml.ui.outline.actions.IVcmlOutlineActionHandler;
 import org.vclipse.vcml.vcml.InterfaceDesign;
+import org.vclipse.vcml.vcml.Option;
 
 import com.sap.conn.jco.JCoException;
 import com.sap.conn.jco.JCoFunction;
+import com.sap.conn.jco.JCoParameterList;
 
 public class InterfaceDesignDeleteActionHandler extends BAPIUtils implements IVcmlOutlineActionHandler<InterfaceDesign> {
 
@@ -27,9 +30,13 @@ public class InterfaceDesignDeleteActionHandler extends BAPIUtils implements IVc
 		return isConnected();
 	}
 
-	public void run(InterfaceDesign object, Resource resource, IProgressMonitor monitor, Set<String> seenObjects) throws JCoException {
+	public void run(InterfaceDesign object, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, List<Option> options) throws JCoException {
 		JCoFunction function = getJCoFunction("BAPI_UI_DELETE", monitor);	
-		function.getImportParameterList().setValue("DESIGNNAME", object.getName());
+		JCoParameterList ipl = function.getImportParameterList();
+		ipl.setValue("DESIGNNAME", object.getName());
+		
+		handleOptions(options, ipl, null, null);
+		
 		execute(function, monitor, object.getName());
 		if (processReturnStructure(function)) {
 			commit(monitor);

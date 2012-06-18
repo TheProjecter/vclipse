@@ -53,9 +53,11 @@ import org.vclipse.console.CMConsolePlugin.Kind;
 import org.vclipse.vcml.ui.IUiConstants;
 import org.vclipse.vcml.vcml.Import;
 import org.vclipse.vcml.vcml.Model;
+import org.vclipse.vcml.vcml.Option;
 import org.vclipse.vcml.vcml.VCObject;
 import org.vclipse.vcml.vcml.VcmlFactory;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
@@ -94,66 +96,77 @@ public class VcmlOutlineAction extends Action implements ISelectionChangedListen
 		Resource resultResource = null;
 		Resource sourceResource = null;
 		
+		
 		final boolean outputToFile = preferenceStore.getBoolean(IUiConstants.OUTPUT_TO_FILE);
 		
 		final Set<String> seenObjects = Sets.newHashSet();
-		if(outputToFile) {
-			List<EObject> selected = getSelectedObjects();
-			if(selected.size() > 0) {
-				sourceResource = selected.get(0).eResource();
-			}
 		
-			URI sourceUri = sourceResource.getURI();
-			URI resultsUri = sourceUri.trimFileExtension().appendFileExtension(EXTRACTED_EXTENSION + sourceUri.fileExtension());
-			
-			resultResource = resourceSet.createResource(resultsUri, "UTF-8");
-			resultResource.getContents().add(VCML.createModel());
-			collectImportedObjects(seenObjects, sourceResource, resultResource);
-			createResultFile(sourceResource);
-		} else {
-			resultResource = resourceSet.createResource(URI.createURI("results"));
-			resourceSet.getResources().add(resultResource);
+		List<EObject> selected = getSelectedObjects();
+		if(selected.size() > 0) {
+			sourceResource = selected.get(0).eResource();
 		}
-		if(resultResource != null) {
-			final Resource finalSourceResource = resultResource;
-			createOutputVcmlResource(outputToFile, finalSourceResource, VCML.createModel(), new NullProgressMonitor());
-			final Model vcmlModel = (Model)finalSourceResource.getContents().get(0);
-			Job job = new Job(getDescription()) {
-				protected IStatus run(IProgressMonitor monitor) {
-					String taskName = "Executing rfc call on SAP system";
-					monitor.beginTask(taskName, IProgressMonitor.UNKNOWN);
-					for(EObject obj : getSelectedObjects()) {
-						if(monitor.isCanceled()) {
-							break;
-						}
-						IVcmlOutlineActionHandler<?> actionHandler = actionHandlers.get(getInstanceTypeName(obj));
-						String simpleName = actionHandler.getClass().getSimpleName();
-						taskName = "Executing " + simpleName + " for " + SimpleAttributeResolver.NAME_RESOLVER.apply(obj);
-						monitor.setTaskName(taskName);
-						if (actionHandler != null) {
-							try {
-								Method method = actionHandler.getClass().getMethod("run", new Class[]{getInstanceType(obj), Resource.class, IProgressMonitor.class, Set.class});
-								method.invoke(actionHandler, new Object[]{obj, finalSourceResource, monitor, seenObjects});
-							} catch (InvocationTargetException e) {
-								if(e.getTargetException() instanceof OutlineActionCanceledException) {
-									err.println("// canceled");
-									break;
-								} else {
-									e.printStackTrace();
-									e.getTargetException().printStackTrace(err); // display original cause in VClipse console
+		EList<EObject> contents = sourceResource.getContents();
+		if(!contents.isEmpty()) {
+			Model model = (Model) contents.get(0);
+			final List<Option> options = model.getOptions(); // TODO options aus sourceResource extrahieren
+		
+			if(outputToFile) {
+				
+				URI sourceUri = sourceResource.getURI();
+				URI resultsUri = sourceUri.trimFileExtension().appendFileExtension(EXTRACTED_EXTENSION + sourceUri.fileExtension());
+				
+				resultResource = resourceSet.createResource(resultsUri, "UTF-8");
+				resultResource.getContents().add(VCML.createModel());
+				collectImportedObjects(seenObjects, sourceResource, resultResource);
+				createResultFile(sourceResource);
+			} else {
+				resultResource = resourceSet.createResource(URI.createURI("results"));
+				resourceSet.getResources().add(resultResource);
+			}
+			if(resultResource != null) {
+				final Resource finalSourceResource = resultResource;
+				createOutputVcmlResource(outputToFile, finalSourceResource, VCML.createModel(), new NullProgressMonitor());
+				final Model vcmlModel = (Model)finalSourceResource.getContents().get(0);
+				Job job = new Job(getDescription()) {
+					protected IStatus run(IProgressMonitor monitor) {
+						String taskName = "Executing rfc call on SAP system";
+						monitor.beginTask(taskName, IProgressMonitor.UNKNOWN);
+						for(EObject obj : getSelectedObjects()) {
+							if(monitor.isCanceled()) {
+								break;
+							}
+							IVcmlOutlineActionHandler<?> actionHandler = actionHandlers.get(getInstanceTypeName(obj));
+							String simpleName = actionHandler.getClass().getSimpleName();
+							taskName = "Executing " + simpleName + " for " + SimpleAttributeResolver.NAME_RESOLVER.apply(obj);
+							monitor.setTaskName(taskName);
+							if (actionHandler != null) {
+								try {
+									Method method = actionHandler.getClass().getMethod("run", new Class[]{getInstanceType(obj), Resource.class, IProgressMonitor.class, Set.class, List.class});
+									method.invoke(actionHandler, new Object[]{obj, finalSourceResource, monitor, seenObjects, options});
+								} catch (InvocationTargetException e) {
+									if(e.getTargetException() instanceof OutlineActionCanceledException) {
+										err.println("// canceled");
+										break;
+									} else {
+										e.printStackTrace();
+										e.getTargetException().printStackTrace(err); // display original cause in VClipse console
+									}
+								} catch(Exception exception) {
+									exception.printStackTrace(err); // this can be a JCoException or an AbapExeption
 								}
-							} catch(Exception exception) {
-								exception.printStackTrace(err); // this can be a JCoException or an AbapExeption
 							}
 						}
+						createOutputVcmlResource(outputToFile, finalSourceResource, vcmlModel, monitor);
+						result.println("Task finished: " + taskName);
+						return Status.OK_STATUS;
 					}
-					createOutputVcmlResource(outputToFile, finalSourceResource, vcmlModel, monitor);
-					result.println("Task finished: " + taskName);
-					return Status.OK_STATUS;
-				}
-			};
-			job.setPriority(Job.LONG);
-			job.schedule();
+				};
+				job.setPriority(Job.LONG);
+				job.schedule();
+			}
+		}
+		else {
+			err.println("EObject list is empty!");
 		}
 	}
 	

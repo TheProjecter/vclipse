@@ -27,6 +27,7 @@ import org.vclipse.vcml.vcml.Language;
 import org.vclipse.vcml.vcml.Model;
 import org.vclipse.vcml.vcml.MultiLanguageDescription;
 import org.vclipse.vcml.vcml.MultiLanguageDescriptions;
+import org.vclipse.vcml.vcml.Option;
 
 import com.google.inject.Inject;
 import com.sap.conn.jco.JCoException;
@@ -39,7 +40,7 @@ public class InterfaceDesignReader extends BAPIUtils {
 	@Inject
 	private CharacteristicReader csticReader;
 	
-	public InterfaceDesign read(String interfaceDesignName, Model model, IProgressMonitor monitor, Set<String> seenObjects, boolean recurse) throws JCoException {
+	public InterfaceDesign read(String interfaceDesignName, Model model, IProgressMonitor monitor, Set<String> seenObjects, List<Option> options, boolean recurse) throws JCoException {
 		if (interfaceDesignName == null || !seenObjects.add("InterfaceDesign/" + interfaceDesignName.toUpperCase()) || monitor.isCanceled()) {
 			return null;
 		}
@@ -161,6 +162,9 @@ FRAME_TEXT
 	 */
 			JCoFunction function = getJCoFunction("BAPI_UI_GETDETAIL", monitor);	
 			JCoParameterList ipl = function.getImportParameterList();
+			
+			handleOptions(options, ipl, null, null);
+			
 			ipl.setValue("DESIGNNAME", interfaceDesignName);
 			execute(function, monitor, interfaceDesignName);
 			if (processReturnStructure(function)) {
@@ -210,7 +214,7 @@ FRAME_TEXT
 								if(monitor.isCanceled()) {
 									return null;
 								}
-								cstic = csticReader.read(csticName, model, monitor, seenObjects, recurse);
+								cstic = csticReader.read(csticName, model, monitor, seenObjects, options, recurse);
 							}
 							if (cstic==null) {
 								cstic = VCMLProxyFactory.createCharacteristicProxy(model.eResource(), csticName);

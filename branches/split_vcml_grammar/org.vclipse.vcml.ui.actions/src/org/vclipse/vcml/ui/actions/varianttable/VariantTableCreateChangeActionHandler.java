@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.vclipse.vcml.ui.actions.varianttable;
 
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -17,6 +18,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.vclipse.vcml.ui.actions.BAPIUtils;
 import org.vclipse.vcml.ui.outline.actions.IVcmlOutlineActionHandler;
 import org.vclipse.vcml.vcml.Language;
+import org.vclipse.vcml.vcml.Option;
 import org.vclipse.vcml.vcml.VariantTable;
 import org.vclipse.vcml.vcml.VariantTableArgument;
 import org.vclipse.vcml.utils.DescriptionHandler;
@@ -36,10 +38,11 @@ public class VariantTableCreateChangeActionHandler extends BAPIUtils implements 
 	}
 
 	@Override
-	public void run(VariantTable object, Resource resource, IProgressMonitor monitor, Set<String> seenObjects) throws JCoException {
+	public void run(VariantTable object, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, List<Option> options) throws JCoException {
 		final String name = object.getName();
 		beginTransaction();
 		JCoFunction function = getJCoFunction("CAMA_TABLE_MAINTAIN_STRUCTURE", monitor);
+		// TODO insert ipl
 		JCoParameterList tpl = function.getTableParameterList();
 		JCoTable varTabBasicData = tpl.getTable("VAR_TAB_BASIC_DATA");
 		varTabBasicData.appendRow();

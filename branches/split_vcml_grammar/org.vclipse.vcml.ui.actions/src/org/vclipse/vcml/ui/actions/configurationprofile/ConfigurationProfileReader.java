@@ -13,6 +13,7 @@ package org.vclipse.vcml.ui.actions.configurationprofile;
 import static org.vclipse.vcml.utils.VcmlObjectUtils.sortEntries;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -26,6 +27,7 @@ import org.vclipse.vcml.vcml.DependencyNet;
 import org.vclipse.vcml.vcml.InterfaceDesign;
 import org.vclipse.vcml.vcml.Material;
 import org.vclipse.vcml.vcml.Model;
+import org.vclipse.vcml.vcml.Option;
 import org.vclipse.vcml.vcml.Procedure;
 import org.vclipse.vcml.ui.actions.BAPIUtils;
 import org.vclipse.vcml.ui.actions.dependencynet.DependencyNetReader;
@@ -52,17 +54,21 @@ public class ConfigurationProfileReader extends BAPIUtils {
 	@Inject
 	private InterfaceDesignReader interfaceDesignReader;
 
-	public void readAll(Material containerMaterial, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, boolean recurse) throws JCoException {
-		read(containerMaterial, null, resource, monitor, seenObjects, recurse);
+	public void readAll(Material containerMaterial, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, List<Option> options, boolean recurse) throws JCoException {
+		read(containerMaterial, null, resource, monitor, seenObjects, options, recurse);
 	}
 	
-	public void read(Material containerMaterial, String profileName, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, boolean recurse) throws JCoException {
+	public void read(Material containerMaterial, String profileName, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, List<Option> options, boolean recurse) throws JCoException {
 		String materialName = containerMaterial.getName();
 		if(materialName == null || !seenObjects.add("ConfigurationProfile/" + materialName.toUpperCase())) {
 			return;
 		}
 		JCoFunction function = getJCoFunction("CARD_CON_PROFILE_READ", monitor);
-		function.getImportParameterList().setValue("OBJECT_TYPE", "MARA");
+		JCoParameterList ipl = function.getImportParameterList();
+		ipl.setValue("OBJECT_TYPE", "MARA");
+		
+		handleOptions(options, ipl, "CHANGE_NO", "DATE");
+		
 		JCoParameterList tpl = function.getTableParameterList();
 		JCoTable conObjectKey = tpl.getTable("CON_OBJECT_KEY");
 		conObjectKey.appendRow();
@@ -94,7 +100,7 @@ public class ConfigurationProfileReader extends BAPIUtils {
 						if(monitor.isCanceled()) {
 							return;
 						}
-						interfaceDesign = interfaceDesignReader.read(design, (Model)resource.getContents().get(0), monitor, seenObjects, recurse);
+						interfaceDesign = interfaceDesignReader.read(design, (Model)resource.getContents().get(0), monitor, seenObjects, options, recurse);
 					}
 					if (interfaceDesign==null) {
 						interfaceDesign = VCMLProxyFactory.createInterfaceDesignProxy(resource, design);
@@ -127,7 +133,7 @@ public class ConfigurationProfileReader extends BAPIUtils {
 						if(monitor.isCanceled()) {
 							return;
 						}
-						procedure = procedureReader.read(depName, resource, monitor, seenObjects, recurse);
+						procedure = procedureReader.read(depName, resource, monitor, seenObjects, options, recurse);
 					}
 					if (procedure==null) {
 						procedure = VCMLProxyFactory.createProcedureProxy(resource, depName);
@@ -140,7 +146,7 @@ public class ConfigurationProfileReader extends BAPIUtils {
 						if(monitor.isCanceled()) {
 							return;
 						}
-						dependencyNet = dependencyNetReader.read(depName, (Model)resource.getContents().get(0), monitor, seenObjects, recurse);
+						dependencyNet = dependencyNetReader.read(depName, (Model)resource.getContents().get(0), monitor, seenObjects, options, recurse);
 					}
 					if (dependencyNet==null) {
 						dependencyNet = VCMLProxyFactory.createDependencyNetProxy(resource, depName);

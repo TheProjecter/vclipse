@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.vclipse.vcml.ui.actions.billofmaterial;
 
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -19,6 +20,7 @@ import org.vclipse.vcml.ui.outline.actions.IVcmlOutlineActionHandler;
 import org.vclipse.vcml.vcml.BOMItem;
 import org.vclipse.vcml.vcml.BillOfMaterial;
 import org.vclipse.vcml.vcml.Material;
+import org.vclipse.vcml.vcml.Option;
 
 import com.sap.conn.jco.AbapException;
 import com.sap.conn.jco.JCoException;
@@ -32,12 +34,15 @@ public class BillOfMaterialCreateActionHandler extends BAPIUtils implements IVcm
 		return isConnected();
 	}
 
-	public void run(BillOfMaterial billOfMaterial, Resource resource, IProgressMonitor monitor, Set<String> seenObjects) throws JCoException {
+	public void run(BillOfMaterial billOfMaterial, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, List<Option> options) throws JCoException {
 		JCoFunction function = getJCoFunction("CSAP_MAT_BOM_CREATE", monitor);
 		JCoParameterList ipl = function.getImportParameterList();
 		String materialNumber = ((Material)billOfMaterial.eContainer()).getName();
 		String plant = getPlant();
 		String bomUsage = getBomUsage();
+		
+		handleOptions(options, ipl, "CHANGE_NO", "VALID_FROM");
+		
 		ipl.setValue("MATERIAL", materialNumber);
 		ipl.setValue("PLANT", plant);
 		ipl.setValue("BOM_USAGE", bomUsage);

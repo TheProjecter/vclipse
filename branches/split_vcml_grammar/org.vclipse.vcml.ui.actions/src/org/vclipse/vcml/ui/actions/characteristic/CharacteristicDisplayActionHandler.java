@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.vclipse.vcml.ui.actions.characteristic;
 
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -17,6 +18,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.vclipse.vcml.ui.outline.actions.IVcmlOutlineActionHandler;
 import org.vclipse.vcml.vcml.Characteristic;
 import org.vclipse.vcml.vcml.Model;
+import org.vclipse.vcml.vcml.Option;
 
 import com.sap.conn.jco.JCoException;
 
@@ -26,8 +28,8 @@ public class CharacteristicDisplayActionHandler extends CharacteristicReader imp
 		return isConnected();
 	}
 
-	public void run(Characteristic cstic, Resource resource, IProgressMonitor monitor, Set<String> seenObjects) throws JCoException {
-		read(cstic.getName(), (Model)resource.getContents().get(0), monitor, seenObjects, false);
+	public void run(Characteristic cstic, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, List<Option> options) throws JCoException {
+		read(cstic.getName(), (Model)resource.getContents().get(0), monitor, seenObjects, options, false);
 	}
 
 }

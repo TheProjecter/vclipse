@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.vclipse.vcml.ui.actions.configurationprofile;
 
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -21,6 +22,7 @@ import org.vclipse.vcml.vcml.ConfigurationProfileEntry;
 import org.vclipse.vcml.vcml.DependencyNet;
 import org.vclipse.vcml.vcml.InterfaceDesign;
 import org.vclipse.vcml.vcml.Material;
+import org.vclipse.vcml.vcml.Option;
 import org.vclipse.vcml.utils.VcmlUtils;
 
 import com.sap.conn.jco.AbapException;
@@ -37,11 +39,14 @@ public class ConfigurationProfileCreateChangeActionHandler extends BAPIUtils imp
 	}
 
 	@Override
-	public void run(ConfigurationProfile object, Resource resource,	IProgressMonitor monitor, Set<String> seenObjects) throws JCoException {
+	public void run(ConfigurationProfile object, Resource resource,	IProgressMonitor monitor, Set<String> seenObjects, List<Option> options) throws JCoException {
 		String materialNumber = ((Material)object.eContainer()).getName();
 		JCoFunction function = getJCoFunction("CAMA_CON_PROFILE_MAINTAIN", monitor);
 		JCoParameterList ipl = function.getImportParameterList();
 		ipl.setValue("OBJECT_TYPE", "MARA");
+		
+		handleOptions(options, ipl, null, null);
+		
 		JCoParameterList tpl = function.getTableParameterList();
 		JCoTable conObjectKey = tpl.getTable("CON_OBJECT_KEY");
 		conObjectKey.appendRow();

@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.vclipse.vcml.ui.actions.varianttable;
 
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -20,6 +21,7 @@ import org.vclipse.vcml.utils.VCMLProxyFactory;
 import org.vclipse.vcml.utils.VcmlUtils;
 import org.vclipse.vcml.vcml.Characteristic;
 import org.vclipse.vcml.vcml.Model;
+import org.vclipse.vcml.vcml.Option;
 import org.vclipse.vcml.vcml.VariantTable;
 import org.vclipse.vcml.vcml.VariantTableArgument;
 
@@ -36,7 +38,7 @@ public class VariantTableReader extends BAPIUtils {
 	@Inject
 	private CharacteristicReader csicReader;
 	
-	public VariantTable read(String variantTableName, Model vcmlModel, IProgressMonitor monitor, Set<String> seenObjects, boolean recurse) throws JCoException {
+	public VariantTable read(String variantTableName, Model vcmlModel, IProgressMonitor monitor, Set<String> seenObjects, List<Option> options, boolean recurse) throws JCoException {
 		if(variantTableName == null || !seenObjects.add("VariantTable/" + variantTableName.toUpperCase()) || monitor.isCanceled()) {
 			return null;
 		}
@@ -45,6 +47,9 @@ public class VariantTableReader extends BAPIUtils {
 		vcmlModel.getObjects().add(object);
 		JCoFunction function = getJCoFunction("CARD_TABLE_READ_STRUCTURE", monitor);
 		JCoParameterList ipl = function.getImportParameterList();
+		
+		handleOptions(options, ipl, "CHANGE_NO", "DATE");
+		
 		ipl.setValue("VAR_TAB", variantTableName);
 		try {
 			execute(function, monitor, variantTableName);
@@ -66,7 +71,7 @@ public class VariantTableReader extends BAPIUtils {
 					if(monitor.isCanceled()) {
 						return null;
 					}
-					cstic = csicReader.read(csticName, vcmlModel, monitor, seenObjects, recurse);
+					cstic = csicReader.read(csticName, vcmlModel, monitor, seenObjects, options, recurse);
 				}
 				if (cstic==null) {
 					cstic = VCMLProxyFactory.createCharacteristicProxy(vcmlModel.eResource(), csticName);

@@ -10,12 +10,14 @@
  ******************************************************************************/
 package org.vclipse.vcml.ui.actions.material;
 
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.vclipse.vcml.ui.outline.actions.IVcmlOutlineActionHandler;
 import org.vclipse.vcml.vcml.Material;
+import org.vclipse.vcml.vcml.Option;
 
 import com.sap.conn.jco.JCoException;
 
@@ -25,8 +27,8 @@ public class MaterialExtractActionHandler extends MaterialReader implements IVcm
 		return isConnected();
 	}
 
-	public void run(Material material, Resource resource, IProgressMonitor monitor, Set<String> seenObjects) throws JCoException {
-		read(material.getName(), resource, monitor, seenObjects, true);
+	public void run(Material material, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, List<Option> options) throws JCoException {
+		read(material.getName(), resource, monitor, seenObjects, options, true);
 	}
 
 }

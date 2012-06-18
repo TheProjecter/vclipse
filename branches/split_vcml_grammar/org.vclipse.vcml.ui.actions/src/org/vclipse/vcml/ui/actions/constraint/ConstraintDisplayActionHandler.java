@@ -10,12 +10,14 @@
  ******************************************************************************/
 package org.vclipse.vcml.ui.actions.constraint;
 
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.vclipse.vcml.ui.outline.actions.IVcmlOutlineActionHandler;
 import org.vclipse.vcml.vcml.Constraint;
+import org.vclipse.vcml.vcml.Option;
 
 import com.sap.conn.jco.JCoException;
 
@@ -25,8 +27,8 @@ public class ConstraintDisplayActionHandler extends ConstraintReader implements 
 		return isConnected();
 	}
 
-	public void run(Constraint constraint, Resource resource, IProgressMonitor monitor, Set<String> seenObjects) throws JCoException {
-		read(constraint.getName(), resource, monitor, seenObjects, false);
+	public void run(Constraint constraint, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, List<Option> options) throws JCoException {
+		read(constraint.getName(), resource, monitor, seenObjects, options, false);
 	}
 
 }

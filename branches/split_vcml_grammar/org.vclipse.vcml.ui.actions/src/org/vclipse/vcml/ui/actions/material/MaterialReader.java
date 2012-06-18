@@ -20,6 +20,7 @@ import org.vclipse.vcml.vcml.Class;
 import org.vclipse.vcml.vcml.Classification;
 import org.vclipse.vcml.vcml.Material;
 import org.vclipse.vcml.vcml.Model;
+import org.vclipse.vcml.vcml.Option;
 import org.vclipse.vcml.vcml.SimpleDescription;
 import org.vclipse.vcml.ui.actions.BAPIUtils;
 import org.vclipse.vcml.ui.actions.billofmaterial.BillOfMaterialReader;
@@ -45,7 +46,7 @@ public class MaterialReader extends BAPIUtils {
 	@Inject
 	private BillOfMaterialReader bomReader;
 	
-	public Material read(String materialName, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, boolean recurse) throws JCoException {
+	public Material read(String materialName, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, List<Option> options, boolean recurse) throws JCoException {
 		if(materialName == null || !seenObjects.add("Material/" + materialName.toUpperCase()) || monitor.isCanceled() ) {
 			return null;
 		}
@@ -55,6 +56,9 @@ public class MaterialReader extends BAPIUtils {
 		model.getObjects().add(object);
 		JCoFunction function = getJCoFunction("BAPI_MATERIAL_GET_DETAIL", monitor);
 		JCoParameterList ipl = function.getImportParameterList();
+		
+		handleOptions(options, ipl, null, null);
+		
 		ipl.setValue("MATERIAL", materialName);
 		ipl.setValue("PLANT", getPlant());
 		execute(function, monitor, materialName);
@@ -72,13 +76,13 @@ public class MaterialReader extends BAPIUtils {
 		if(monitor.isCanceled()) {
 			return null;
 		}
-		configurationProfileReader.readAll(object, resource, monitor, seenObjects, recurse);
+		configurationProfileReader.readAll(object, resource, monitor, seenObjects, options, recurse);
 
 		if(monitor.isCanceled()) {
 			return null;
 		}
 		// BAPI_MAT_BOM_EXISTENCE_CHECK
-		bomReader.read(object, resource, monitor, seenObjects, recurse);
+		bomReader.read(object, resource, monitor, seenObjects, options, recurse);
 
 		JCoFunction functionGetClasses = getJCoFunction("BAPI_OBJCL_GETCLASSES", monitor); // BAPI_OBJCL_GET_KEY_OF_OBJECT
 		JCoParameterList iplGetClasses = functionGetClasses.getImportParameterList();
@@ -98,7 +102,7 @@ public class MaterialReader extends BAPIUtils {
 						if(monitor.isCanceled()) {
 							return null;
 						}
-						cls = classReader.read(className, model, monitor, seenObjects, recurse);
+						cls = classReader.read(className, model, monitor, seenObjects, options, recurse);
 					}
 					if (cls==null) {
 						cls = VCMLProxyFactory.createClassProxy(resource, className);

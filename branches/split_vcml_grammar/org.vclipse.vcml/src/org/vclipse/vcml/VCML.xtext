@@ -21,6 +21,7 @@ Option
 enum OptionType
 	: ECM // engineering change master
 	| UPS // set to ID of header material, if UPS IDocs and segments should be generated
+	| KeyDate
 	;
 
 // this enforces that all VCObjects have a name attribute

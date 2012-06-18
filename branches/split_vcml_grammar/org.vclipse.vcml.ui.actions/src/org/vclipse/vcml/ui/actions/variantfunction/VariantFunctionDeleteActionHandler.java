@@ -10,12 +10,14 @@
  ******************************************************************************/
 package org.vclipse.vcml.ui.actions.variantfunction;
 
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.vclipse.vcml.ui.actions.BAPIUtils;
 import org.vclipse.vcml.ui.outline.actions.IVcmlOutlineActionHandler;
+import org.vclipse.vcml.vcml.Option;
 import org.vclipse.vcml.vcml.VariantFunction;
 
 import com.sap.conn.jco.AbapException;
@@ -31,10 +33,11 @@ public class VariantFunctionDeleteActionHandler extends BAPIUtils implements IVc
 	}
 
 	@Override
-	public void run(VariantFunction object, Resource resource, IProgressMonitor monitor, Set<String> seenObjects) throws JCoException {
+	public void run(VariantFunction object, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, List<Option> options) throws JCoException {
 		String name = object.getName();
 		beginTransaction();
 		JCoFunction function = getJCoFunction("CAMA_FUNCTION_MAINTAIN", monitor);
+		// TODO insert ipl
 		JCoTable varFunctionBasicData = function.getTableParameterList().getTable("VAR_FUNCTION_BASIC_DATA");
 		varFunctionBasicData.appendRow();
 		varFunctionBasicData.setValue("VFUNC_NAME", name);

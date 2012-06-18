@@ -22,6 +22,7 @@ import org.eclipse.xtext.util.Strings;
 import org.vclipse.vcml.vcml.BOMItem;
 import org.vclipse.vcml.vcml.BillOfMaterial;
 import org.vclipse.vcml.vcml.Material;
+import org.vclipse.vcml.vcml.Option;
 import org.vclipse.vcml.vcml.Procedure;
 import org.vclipse.vcml.vcml.SelectionCondition;
 import org.vclipse.vcml.ui.actions.BAPIUtils;
@@ -52,7 +53,7 @@ public class BillOfMaterialReader extends BAPIUtils {
 	@Inject
 	private SelectionConditionReader selectionConditionReader;
 	
-	public void read(Material containerMaterial, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, boolean recurse) throws JCoException {
+	public void read(Material containerMaterial, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, List<Option> options, boolean recurse) throws JCoException {
 		String materialNumber = containerMaterial.getName();
 		if(materialNumber == null || !seenObjects.add("BillOfMaterial/" + materialNumber.toUpperCase()) || monitor.isCanceled()) {
 			return;
@@ -61,6 +62,9 @@ public class BillOfMaterialReader extends BAPIUtils {
 		JCoParameterList ipl = function.getImportParameterList();
 		String plant = getPlant();
 		String bomUsage = getBomUsage();
+		
+		handleOptions(options, ipl, "CHANGE_NO", "VALID_FROM");
+		
 		ipl.setValue("MATERIAL", materialNumber);
 		ipl.setValue("PLANT", plant); // TODO move plant and usage to VCML language? Perhaps features in the language could also overwrite preferences settings.
 		ipl.setValue("BOM_USAGE", bomUsage);
@@ -99,7 +103,7 @@ public class BillOfMaterialReader extends BAPIUtils {
 						if(monitor.isCanceled()) {
 							return;
 						}
-						bomMaterial = materialReader.read(component, resource, monitor, seenObjects, recurse);
+						bomMaterial = materialReader.read(component, resource, monitor, seenObjects, options, recurse);
 					}
 					if (bomMaterial==null) {
 						bomMaterial = VCMLProxyFactory.createMaterialProxy(resource, component);
@@ -118,7 +122,7 @@ public class BillOfMaterialReader extends BAPIUtils {
 									if(monitor.isCanceled()) {
 										return;
 									}
-									proc = procedureReader.read(depName, resource, monitor, seenObjects, recurse);
+									proc = procedureReader.read(depName, resource, monitor, seenObjects, options, recurse);
 								}
 								if (proc==null) {
 									proc = VCMLProxyFactory.createProcedureProxy(resource, depName);
@@ -131,7 +135,7 @@ public class BillOfMaterialReader extends BAPIUtils {
 									if(monitor.isCanceled()) {
 										return;
 									}
-									cond = selectionConditionReader.read(depName, resource, monitor, seenObjects, recurse);
+									cond = selectionConditionReader.read(depName, resource, monitor, seenObjects, options, recurse);
 								}
 								if (cond==null) {
 									cond = VCMLProxyFactory.createSelectionConditionProxy(resource, depName);

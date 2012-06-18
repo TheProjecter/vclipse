@@ -19,6 +19,7 @@ import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -42,6 +43,8 @@ import org.vclipse.vcml.vcml.MultiLanguageDescription;
 import org.vclipse.vcml.vcml.MultiLanguageDescriptions;
 import org.vclipse.vcml.vcml.MultipleLanguageDocumentation;
 import org.vclipse.vcml.vcml.MultipleLanguageDocumentation_LanguageBlock;
+import org.vclipse.vcml.vcml.Option;
+import org.vclipse.vcml.vcml.OptionType;
 import org.vclipse.vcml.vcml.SimpleDescription;
 import org.vclipse.vcml.vcml.VcmlFactory;
 
@@ -53,6 +56,7 @@ import com.sap.conn.jco.AbapException;
 import com.sap.conn.jco.JCoContext;
 import com.sap.conn.jco.JCoException;
 import com.sap.conn.jco.JCoFunction;
+import com.sap.conn.jco.JCoParameterList;
 import com.sap.conn.jco.JCoStructure;
 import com.sap.conn.jco.JCoTable;
 
@@ -514,6 +518,37 @@ public class BAPIUtils {
 			documentationTable.setValue("LANGUAGE_ISO", language.toString());
 		}
 
+	}
+	
+	protected void handleOptions(List<Option> options, JCoParameterList ipl, String ecmName, String keyDateName) {
+		String ecm = getECM(options);
+		if (ecmName!=null && ecm!=null) {
+			ipl.setValue(ecmName, ecm);
+		} else {
+			String keyDate = getKeyDate(options);
+			if (keyDateName!=null && keyDate != null) {
+				ipl.setValue(keyDateName, keyDate);
+			}
+		}
+	}
+
+
+	private String getECM(List<Option> options) {
+		for(Option o : options) {
+			if(o.getName() == OptionType.ECM) {
+				return o.getValue();
+			}
+		}
+		return null;
+	}
+	
+	private String getKeyDate(List<Option> options) {
+		for(Option o : options) {
+			if(o.getName() == OptionType.KEY_DATE) {
+				return o.getValue();
+			}
+		}
+		return null;
 	}
 	
 }

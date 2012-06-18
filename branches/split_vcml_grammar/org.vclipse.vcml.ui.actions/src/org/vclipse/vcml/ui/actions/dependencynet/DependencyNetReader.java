@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.vclipse.vcml.ui.actions.dependencynet;
 
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -20,6 +21,7 @@ import org.vclipse.vcml.utils.VcmlUtils;
 import org.vclipse.vcml.vcml.Constraint;
 import org.vclipse.vcml.vcml.DependencyNet;
 import org.vclipse.vcml.vcml.Model;
+import org.vclipse.vcml.vcml.Option;
 
 import com.google.inject.Inject;
 import com.sap.conn.jco.AbapException;
@@ -34,14 +36,18 @@ public class DependencyNetReader extends BAPIUtils {
 	@Inject
 	private ConstraintReader constraintReader;
 
-	public DependencyNet read(String depNetName, Model vcmlModel, IProgressMonitor monitor, Set<String> seenObjects, boolean recurse) throws JCoException {
+	public DependencyNet read(String depNetName, Model vcmlModel, IProgressMonitor monitor, Set<String> seenObjects, List<Option> options, boolean recurse) throws JCoException {
 		if(depNetName == null || !seenObjects.add("DependencyNet/" + depNetName.toUpperCase())) {
 			return null;
 		}
 		DependencyNet object = VCML.createDependencyNet();
 		object.setName(depNetName);
 		JCoFunction function = getJCoFunction("CARD_CONSTRAINT_NET_READ", monitor);
-		function.getImportParameterList().setValue("CONSTRAINT_NET", depNetName);
+		JCoParameterList ipl = function.getImportParameterList();
+		ipl.setValue("CONSTRAINT_NET", depNetName);
+		
+		handleOptions(options, ipl, "CHANGE_NO", "DATE");
+		
 		try {
 			execute(function, monitor, depNetName);
 			JCoParameterList epl = function.getExportParameterList();
@@ -64,7 +70,7 @@ public class DependencyNetReader extends BAPIUtils {
 						if(monitor.isCanceled()) {
 							return null;
 						}
-						constraint = constraintReader.read(constraintName, vcmlModel.eResource(), monitor, seenObjects, recurse);
+						constraint = constraintReader.read(constraintName, vcmlModel.eResource(), monitor, seenObjects, options, recurse);
 					}
 					if (constraint==null) {
 						constraint = VCMLProxyFactory.createConstraintProxy(vcmlModel.eResource(), constraintName);

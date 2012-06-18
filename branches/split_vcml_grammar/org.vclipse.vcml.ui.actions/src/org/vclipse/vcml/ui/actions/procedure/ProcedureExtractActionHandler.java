@@ -10,11 +10,13 @@
  ******************************************************************************/
 package org.vclipse.vcml.ui.actions.procedure;
 
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.vclipse.vcml.ui.outline.actions.IVcmlOutlineActionHandler;
+import org.vclipse.vcml.vcml.Option;
 import org.vclipse.vcml.vcml.Procedure;
 
 import com.sap.conn.jco.JCoException;
@@ -25,8 +27,8 @@ public class ProcedureExtractActionHandler extends ProcedureReader implements IV
 		return isConnected();
 	}
 
-	public void run(Procedure procedure, Resource resource, IProgressMonitor monitor, Set<String> seenObjects) throws JCoException {
-		read(procedure.getName(), resource, monitor, seenObjects, true);
+	public void run(Procedure procedure, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, List<Option> options) throws JCoException {
+		read(procedure.getName(), resource, monitor, seenObjects, options, true);
 	}
 
 }

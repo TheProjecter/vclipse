@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.vclipse.vcml.ui.actions.dependencynet;
 
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -17,6 +18,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.vclipse.vcml.ui.actions.BAPIUtils;
 import org.vclipse.vcml.ui.outline.actions.IVcmlOutlineActionHandler;
 import org.vclipse.vcml.vcml.DependencyNet;
+import org.vclipse.vcml.vcml.Option;
 import org.vclipse.vcml.utils.VcmlUtils;
 
 import com.sap.conn.jco.AbapException;
@@ -31,9 +33,12 @@ public class DependencyNetCreateChangeActionHandler extends BAPIUtils implements
 		return isConnected();
 	}
 
-	public void run(DependencyNet object, Resource resource, IProgressMonitor monitor, Set<String> seenObjects) throws JCoException {
+	public void run(DependencyNet object, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, List<Option> options) throws JCoException {
 		JCoFunction function = getJCoFunction("CAMA_CONSTRAINT_NET_MAINTAIN", monitor);
 		JCoParameterList ipl = function.getImportParameterList();
+		
+		handleOptions(options, ipl, "CHANGE_NO", null);
+		
 		ipl.setValue("CONSTRAINT_NET", object.getName());
 		JCoStructure constraintNetData = ipl.getStructure("CONSTRAINT_NET_DATA");
 		constraintNetData.setValue("DEP_TYPE", "CNET");

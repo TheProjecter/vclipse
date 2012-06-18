@@ -21,6 +21,7 @@ import org.vclipse.vcml.utils.VcmlUtils;
 import org.vclipse.vcml.vcml.Characteristic;
 import org.vclipse.vcml.vcml.Class;
 import org.vclipse.vcml.vcml.Model;
+import org.vclipse.vcml.vcml.Option;
 
 import com.google.inject.Inject;
 import com.sap.conn.jco.JCoException;
@@ -34,7 +35,7 @@ public class ClassReader extends BAPIUtils {
 	@Inject
 	private CharacteristicReader csticReader;
 	
-	public Class read(String classSpec, Model model, IProgressMonitor monitor, Set<String> seenObjects, boolean recurse) throws JCoException {
+	public Class read(String classSpec, Model model, IProgressMonitor monitor, Set<String> seenObjects, List<Option> options, boolean recurse) throws JCoException {
 		int classType = VcmlUtils.getClassType(classSpec);
 		String className = VcmlUtils.getClassName(classSpec);
 		String newClassSpec = "(" + classType + ")" + className;
@@ -47,6 +48,9 @@ public class ClassReader extends BAPIUtils {
 		{
 			JCoFunction function = getJCoFunction("BAPI_CLASS_GETDETAIL", monitor);
 			JCoParameterList ipl = function.getImportParameterList();
+			
+			handleOptions(options, ipl, null, "KEYDATE");
+			
 			ipl.setValue("CLASSTYPE", classType);
 			ipl.setValue("CLASSNUM", className);
 			execute(function, monitor, newClassSpec);
@@ -69,7 +73,7 @@ public class ClassReader extends BAPIUtils {
 								if(monitor.isCanceled()) {
 									return null;
 								}
-								cstic = csticReader.read(csticName, model, monitor, seenObjects, recurse);
+								cstic = csticReader.read(csticName, model, monitor, seenObjects, options, recurse);
 							}
 							if (cstic==null) {
 								cstic = VCMLProxyFactory.createCharacteristicProxy(model.eResource(), csticName);
@@ -99,7 +103,7 @@ public class ClassReader extends BAPIUtils {
 						if(monitor.isCanceled()) {
 							return null;
 						}
-						superclass = read(superclassSpec, model, monitor, seenObjects, recurse);
+						superclass = read(superclassSpec, model, monitor, seenObjects, options, recurse);
 					}
 					if (superclass==null) {
 						superclass = VCMLProxyFactory.createClassProxy(model.eResource(), superclassSpec);

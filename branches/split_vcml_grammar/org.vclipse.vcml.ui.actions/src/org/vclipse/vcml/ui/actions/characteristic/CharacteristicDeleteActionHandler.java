@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.vclipse.vcml.ui.actions.characteristic;
 
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -17,9 +18,11 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.vclipse.vcml.ui.actions.BAPIUtils;
 import org.vclipse.vcml.ui.outline.actions.IVcmlOutlineActionHandler;
 import org.vclipse.vcml.vcml.Characteristic;
+import org.vclipse.vcml.vcml.Option;
 
 import com.sap.conn.jco.JCoException;
 import com.sap.conn.jco.JCoFunction;
+import com.sap.conn.jco.JCoParameterList;
 
 public class CharacteristicDeleteActionHandler extends BAPIUtils implements IVcmlOutlineActionHandler<Characteristic> {
 	
@@ -27,10 +30,14 @@ public class CharacteristicDeleteActionHandler extends BAPIUtils implements IVcm
 		return isConnected();
 	}
 
-	public void run(Characteristic object, Resource resource, IProgressMonitor monitor, Set<String> seenObjects) throws JCoException {
+	public void run(Characteristic object, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, List<Option> options) throws JCoException {
 		beginTransaction();
 		JCoFunction function = getJCoFunction("BAPI_CHARACT_DELETE", monitor);
-		function.getImportParameterList().setValue("CHARACTNAME", object.getName());
+		JCoParameterList ipl = function.getImportParameterList();
+		ipl.setValue("CHARACTNAME", object.getName());
+		
+		handleOptions(options, ipl, "CHANGENUMBER", "KEYDATE");
+		
 		execute(function, monitor, object.getName());
 		if (processReturnTable(function)) {
 			commit(monitor);

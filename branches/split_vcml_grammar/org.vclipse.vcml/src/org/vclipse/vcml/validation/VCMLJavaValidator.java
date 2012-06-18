@@ -11,7 +11,10 @@
 package org.vclipse.vcml.validation;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -39,6 +42,8 @@ import org.vclipse.vcml.vcml.NumberListEntry;
 import org.vclipse.vcml.vcml.NumericCharacteristicValue;
 import org.vclipse.vcml.vcml.NumericLiteral;
 import org.vclipse.vcml.vcml.NumericType;
+import org.vclipse.vcml.vcml.Option;
+import org.vclipse.vcml.vcml.OptionType;
 import org.vclipse.vcml.vcml.Precondition;
 import org.vclipse.vcml.vcml.Procedure;
 import org.vclipse.vcml.vcml.Row;
@@ -53,6 +58,7 @@ import org.vclipse.vcml.vcml.VariantTableArgument;
 import org.vclipse.vcml.vcml.VariantTableContent;
 import org.vclipse.vcml.vcml.VcmlPackage;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
@@ -341,4 +347,32 @@ public class VCMLJavaValidator extends AbstractVCMLJavaValidator {
 							new String[]{name, dependency.eClass().getName(), fileName});
 		}
 	}
+	
+	@Check
+	public void checkDateType(Option option) {
+		if(option.getName() == OptionType.KEY_DATE) {
+			if(!isValidDate(option.getValue())) {
+				error(option.getValue() + " is not a valid date value (use format DD.MM.YYYY)", VcmlPackage.Literals.OPTION__VALUE);
+			}
+		}
+	}
+	
+	private boolean isValidDate(String date) {
+		if(date == null) {
+			return false;
+		}
+		
+		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+		
+		try {
+			if(format.parse(date) != null) {
+				return true;
+			}
+		}
+		catch (ParseException e) {
+			
+		}
+		return false;
+	}
+
 }

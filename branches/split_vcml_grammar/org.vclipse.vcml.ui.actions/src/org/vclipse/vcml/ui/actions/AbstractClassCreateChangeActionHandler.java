@@ -19,6 +19,7 @@ import org.vclipse.vcml.ui.outline.actions.IVcmlOutlineActionHandler;
 import org.vclipse.vcml.vcml.Characteristic;
 import org.vclipse.vcml.vcml.Class;
 import org.vclipse.vcml.vcml.Language;
+import org.vclipse.vcml.vcml.Option;
 import org.vclipse.vcml.utils.DescriptionHandler;
 import org.vclipse.vcml.utils.VcmlUtils;
 
@@ -42,13 +43,16 @@ public abstract class AbstractClassCreateChangeActionHandler extends BAPIUtils i
 		return isConnected();
 	}
 
-	public void run(Class object, Resource resource, IProgressMonitor monitor, Set<String> seenObjects) throws JCoException {
+	public void run(Class object, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, List<Option> options) throws JCoException {
 		beginTransaction();
 		JCoFunction function = getJCoFunction(getBAPI(), monitor);	
 		JCoParameterList ipl = function.getImportParameterList();
 		String classSpec = object.getName();
 		String className = VcmlUtils.getClassName(classSpec);
 		int classType = VcmlUtils.getClassType(classSpec);
+		
+		// handleOptions(options, ipl, "???", "???");
+		
 		ipl.setValue(getCLASSNUM(), className);
 		ipl.setValue(getCLASSTYPE(), classType);
 		JCoStructure classBasicDataNew = ipl.getStructure(getCLASSBASICDATA());

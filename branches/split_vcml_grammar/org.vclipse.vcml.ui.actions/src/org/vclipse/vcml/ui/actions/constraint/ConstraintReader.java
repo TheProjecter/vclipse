@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.vclipse.vcml.ui.actions.constraint;
 
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -19,6 +20,7 @@ import org.vclipse.vcml.utils.VcmlUtils;
 import org.vclipse.vcml.vcml.Constraint;
 import org.vclipse.vcml.vcml.ConstraintSource;
 import org.vclipse.vcml.vcml.Model;
+import org.vclipse.vcml.vcml.Option;
 
 import com.sap.conn.jco.AbapException;
 import com.sap.conn.jco.JCoException;
@@ -28,7 +30,7 @@ import com.sap.conn.jco.JCoStructure;
 
 public class ConstraintReader extends BAPIUtils {
 
-	public Constraint read(String constraintName, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, boolean recurse) throws JCoException {
+	public Constraint read(String constraintName, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, List<Option> options, boolean recurse) throws JCoException {
 		if(constraintName == null || !seenObjects.add("Constraint/" + constraintName.toUpperCase()) || monitor.isCanceled()) {
 			return null;
 		}
@@ -37,7 +39,11 @@ public class ConstraintReader extends BAPIUtils {
 		Model model = (Model)resource.getContents().get(0);
 		model.getObjects().add(object);
 		JCoFunction function = getJCoFunction("CARD_CNET_CONSTRAINT_READ", monitor);
-		function.getImportParameterList().setValue("CONSTRAINT", constraintName);
+		JCoParameterList ipl = function.getImportParameterList();
+		ipl.setValue("CONSTRAINT", constraintName);
+		
+		handleOptions(options, ipl, "CHANGE_NO", "DATE");
+		
 		try {
 			execute(function, monitor, constraintName);
 			JCoParameterList epl = function.getExportParameterList();

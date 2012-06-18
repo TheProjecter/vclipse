@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.vclipse.vcml.ui.actions.material;
 
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -18,6 +19,7 @@ import org.vclipse.vcml.ui.actions.BAPIUtils;
 import org.vclipse.vcml.ui.outline.actions.IVcmlOutlineActionHandler;
 import org.vclipse.vcml.vcml.Language;
 import org.vclipse.vcml.vcml.Material;
+import org.vclipse.vcml.vcml.Option;
 import org.vclipse.vcml.utils.DescriptionHandler;
 
 import com.sap.conn.jco.JCoException;
@@ -28,10 +30,13 @@ import com.sap.conn.jco.JCoTable;
 
 public class MaterialCreateChangeActionHandler extends BAPIUtils implements IVcmlOutlineActionHandler<Material> {
 	
-	public void run(Material object, Resource resource, IProgressMonitor monitor, Set<String> seenObjects) throws JCoException {
+	public void run(Material object, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, List<Option> options) throws JCoException {
 		beginTransaction();
 		JCoFunction function = getJCoFunction("BAPI_MATERIAL_SAVEDATA", monitor);
 		JCoParameterList ipl = function.getImportParameterList();
+		
+		handleOptions(options, ipl, null, null);
+		
 		JCoStructure headData = ipl.getStructure("HEADDATA");
 		headData.setValue("MATERIAL", object.getName());
 		headData.setValue("IND_SECTOR", getIndustrySector());

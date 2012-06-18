@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.vclipse.vcml.ui.actions.procedure;
 
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -17,6 +18,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.vclipse.vcml.ui.actions.BAPIUtils;
 import org.vclipse.vcml.utils.VcmlUtils;
 import org.vclipse.vcml.vcml.Model;
+import org.vclipse.vcml.vcml.Option;
 import org.vclipse.vcml.vcml.Procedure;
 import org.vclipse.vcml.vcml.ProcedureSource;
 
@@ -28,7 +30,7 @@ import com.sap.conn.jco.JCoStructure;
 
 public class ProcedureReader extends BAPIUtils {
 
-	public Procedure read(String procedureName, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, boolean recurse) throws JCoException {
+	public Procedure read(String procedureName, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, List<Option> options, boolean recurse) throws JCoException {
 		if(procedureName == null || !seenObjects.add("Procedure/" + procedureName.toUpperCase()) || monitor.isCanceled()) {
 			return null;
 		}
@@ -39,6 +41,9 @@ public class ProcedureReader extends BAPIUtils {
 		JCoFunction function = getJCoFunction("CARD_DEPENDENCY_READ", monitor);
 		JCoParameterList ipl = function.getImportParameterList();
 		ipl.setValue("DEPENDENCY", procedureName);
+		
+		handleOptions(options, ipl, "CHANGE_NO", "DATE");
+		
 		// if the following flags are not checked, then the function performs just an existence check
 		ipl.setValue("FL_WITH_BASIC_DATA", "X");
 		ipl.setValue("FL_WITH_DESCRIPTION", "X");

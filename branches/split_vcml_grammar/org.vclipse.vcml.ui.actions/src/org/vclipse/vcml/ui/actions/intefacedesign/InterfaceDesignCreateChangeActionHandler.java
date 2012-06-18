@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.vclipse.vcml.ui.actions.intefacedesign;
 
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -20,6 +21,7 @@ import org.vclipse.vcml.vcml.Characteristic;
 import org.vclipse.vcml.vcml.CharacteristicGroup;
 import org.vclipse.vcml.vcml.InterfaceDesign;
 import org.vclipse.vcml.vcml.Language;
+import org.vclipse.vcml.vcml.Option;
 import org.vclipse.vcml.utils.DescriptionHandler;
 import org.vclipse.vcml.utils.VcmlUtils;
 
@@ -34,9 +36,13 @@ public class InterfaceDesignCreateChangeActionHandler extends BAPIUtils implemen
 		return isConnected();
 	}
 
-	public void run(InterfaceDesign object, Resource resource, IProgressMonitor monitor, Set<String> seenObjects) throws JCoException {
+	public void run(InterfaceDesign object, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, List<Option> options) throws JCoException {
 		JCoFunction function = getJCoFunction("BAPI_UI_SAVEM", monitor);
-		function.getImportParameterList().setValue("DESIGNNAME", object.getName());
+		JCoParameterList ipl = function.getImportParameterList();
+		ipl.setValue("DESIGNNAME", object.getName());
+		
+		handleOptions(options, ipl, null, null);
+		
 		JCoParameterList tpl = function.getTableParameterList();
 		JCoTable charGroups = tpl.getTable("CHARGROUPS");
 		final JCoTable charGroupsLang = tpl.getTable("CHARGROUPSLANG");

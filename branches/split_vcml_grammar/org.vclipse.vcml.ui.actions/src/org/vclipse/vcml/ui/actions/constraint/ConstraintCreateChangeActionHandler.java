@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.vclipse.vcml.ui.actions.constraint;
 
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -20,6 +21,7 @@ import org.vclipse.vcml.ui.outline.actions.IVcmlOutlineActionHandler;
 import org.vclipse.vcml.vcml.Constraint;
 import org.vclipse.vcml.vcml.DependencyNet;
 import org.vclipse.vcml.vcml.Model;
+import org.vclipse.vcml.vcml.Option;
 import org.vclipse.vcml.vcml.VcmlPackage;
 import org.vclipse.vcml.utils.VcmlUtils;
 
@@ -35,7 +37,7 @@ public class ConstraintCreateChangeActionHandler extends BAPIUtils implements IV
 		return isConnected();
 	}
 
-	public void run(Constraint object, Resource resource, IProgressMonitor monitor, Set<String> seenObjects) throws JCoException {
+	public void run(Constraint object, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, List<Option> options) throws JCoException {
 		
 		// determine name of containing dependencyNet
 		// TODO implement finding containing dependency net with ECoreUtils
@@ -52,6 +54,9 @@ public class ConstraintCreateChangeActionHandler extends BAPIUtils implements IV
 		beginTransaction();
 		JCoFunction function = getJCoFunction("CAMA_CNET_CONSTRAINT_MAINTAIN", monitor);
 		JCoParameterList ipl = function.getImportParameterList();
+		
+		handleOptions(options, ipl, "CHANGE_NO", null);
+		
 		ipl.setValue("CONSTRAINT", object.getName());
 		if (dependencyNet!=null) {
 			ipl.setValue("CONSTRAINT_NET", dependencyNet.getName());

@@ -10,8 +10,11 @@
  ******************************************************************************/
 package org.vclipse.vcml.ui.actions;
 
+import java.util.List;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.vclipse.vcml.vcml.Option;
 import org.vclipse.vcml.vcml.VCObject;
 
 import com.sap.conn.jco.AbapException;
@@ -21,10 +24,13 @@ import com.sap.conn.jco.JCoParameterList;
 
 public abstract class AbstractDependencyDeleteActionHandler extends BAPIUtils {
 
-	public void run(VCObject object, Resource resource, IProgressMonitor monitor) throws JCoException {
+	public void run(VCObject object, Resource resource, IProgressMonitor monitor, List<Option> options) throws JCoException {
 		beginTransaction();
 		JCoFunction function = getJCoFunction("CAMA_DEPENDENCY_MAINTAIN", monitor);
 		JCoParameterList ipl = function.getImportParameterList();
+		
+		handleOptions(options, ipl, "CHANGE_NO", null);
+		
 		ipl.setValue("DEPENDENCY", object.getName());
 		ipl.setValue("FL_DELETE", "X");
 		try {

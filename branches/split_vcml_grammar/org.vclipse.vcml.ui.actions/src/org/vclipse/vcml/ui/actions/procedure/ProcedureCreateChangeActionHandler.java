@@ -10,12 +10,14 @@
  ******************************************************************************/
 package org.vclipse.vcml.ui.actions.procedure;
 
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.vclipse.vcml.ui.actions.BAPIUtils;
 import org.vclipse.vcml.ui.outline.actions.IVcmlOutlineActionHandler;
+import org.vclipse.vcml.vcml.Option;
 import org.vclipse.vcml.vcml.Procedure;
 import org.vclipse.vcml.utils.VcmlUtils;
 
@@ -31,10 +33,13 @@ public class ProcedureCreateChangeActionHandler extends BAPIUtils implements IVc
 		return isConnected();
 	}
 
-	public void run(Procedure object, Resource resource, IProgressMonitor monitor, Set<String> seenObjects) throws JCoException {
+	public void run(Procedure object, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, List<Option> options) throws JCoException {
 		beginTransaction();
 		JCoFunction function = getJCoFunction("CAMA_DEPENDENCY_MAINTAIN", monitor);
 		JCoParameterList ipl = function.getImportParameterList();
+		
+		handleOptions(options, ipl, "CHANGE_NO", null);
+		
 		ipl.setValue("DEPENDENCY", object.getName());
 		JCoStructure dependencyData = ipl.getStructure("DEPENDENCY_DATA");
 		dependencyData.setValue("DEP_TYPE", "PROC");

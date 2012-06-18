@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.vclipse.vcml.ui.actions.configurationprofile;
 
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -17,6 +18,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.vclipse.vcml.ui.outline.actions.IVcmlOutlineActionHandler;
 import org.vclipse.vcml.vcml.ConfigurationProfile;
 import org.vclipse.vcml.vcml.Material;
+import org.vclipse.vcml.vcml.Option;
 
 import com.sap.conn.jco.JCoException;
 
@@ -26,8 +28,8 @@ public class ConfigurationProfileDisplayActionHandler extends ConfigurationProfi
 		return isConnected();
 	}
 
-	public void run(ConfigurationProfile configurationProfile, Resource resource, IProgressMonitor monitor, Set<String> seenObjects) throws JCoException {
-		read((Material)configurationProfile.eContainer(), configurationProfile.getName(), resource, monitor, seenObjects, false);
+	public void run(ConfigurationProfile configurationProfile, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, List<Option> options) throws JCoException {
+		read((Material)configurationProfile.eContainer(), configurationProfile.getName(), resource, monitor, seenObjects, options, false);
 	}
 
 }

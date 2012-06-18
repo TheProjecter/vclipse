@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.vclipse.vcml.ui.actions.precondition;
 
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -18,6 +19,7 @@ import org.vclipse.vcml.ui.actions.BAPIUtils;
 import org.vclipse.vcml.utils.VcmlUtils;
 import org.vclipse.vcml.vcml.ConditionSource;
 import org.vclipse.vcml.vcml.Model;
+import org.vclipse.vcml.vcml.Option;
 import org.vclipse.vcml.vcml.Precondition;
 
 import com.sap.conn.jco.AbapException;
@@ -28,7 +30,7 @@ import com.sap.conn.jco.JCoStructure;
 
 public class PreconditionReader extends BAPIUtils {
 	
-	public Precondition read(String preconditionName, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, boolean recurse) throws JCoException {
+	public Precondition read(String preconditionName, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, List<Option> options, boolean recurse) throws JCoException {
 		if(preconditionName == null || !seenObjects.add("Precondition/" + preconditionName.toUpperCase()) || monitor.isCanceled()) {
 			return null;
 		}
@@ -38,6 +40,9 @@ public class PreconditionReader extends BAPIUtils {
 		model.getObjects().add(object);
 		JCoFunction function = getJCoFunction("CARD_DEPENDENCY_READ", monitor);
 		JCoParameterList ipl = function.getImportParameterList();
+		
+		handleOptions(options, ipl, "CHANGE_NO", "DATE");
+		
 		ipl.setValue("DEPENDENCY", preconditionName);
 		// if the following flags are not checked, then the function performs just an existence check
 		ipl.setValue("FL_WITH_BASIC_DATA", "X");
