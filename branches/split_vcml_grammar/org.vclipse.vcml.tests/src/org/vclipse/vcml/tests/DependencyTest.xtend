@@ -2,7 +2,6 @@ package org.vclipse.vcml.tests
 
 import org.eclipselabs.xtext.utils.unittesting.XtextTest
 import org.junit.Test
-import org.junit.Ignore
 
 class DependencyTest extends XtextTest {
 

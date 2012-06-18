@@ -4,9 +4,8 @@ import org.junit.Test
 import org.eclipse.xtext.junit4.InjectWith
 import org.junit.runner.RunWith
 import org.eclipselabs.xtext.utils.unittesting.XtextRunner2
-import org.vclipse.vcml.ConstraintInjectorProvider
+import org.vclipse.constraint.ConstraintInjectorProvider
 import org.junit.Ignore
-
 
 
 @InjectWith(typeof(ConstraintInjectorProvider))
