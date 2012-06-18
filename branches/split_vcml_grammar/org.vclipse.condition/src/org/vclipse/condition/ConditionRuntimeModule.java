@@ -3,9 +3,17 @@
  */
 package org.vclipse.condition;
 
+import org.eclipse.xtext.conversion.IValueConverterService;
+import org.vclipse.vcml.conversion.VCMLValueConverter;
+
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
  */
 public class ConditionRuntimeModule extends org.vclipse.condition.AbstractConditionRuntimeModule {
+
+	@Override
+	public Class<? extends IValueConverterService> bindIValueConverterService() {
+		return VCMLValueConverter.class;
+	}
 
 }

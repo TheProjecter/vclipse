@@ -3,9 +3,17 @@
  */
 package org.vclipse.dependency;
 
+import org.eclipse.xtext.conversion.IValueConverterService;
+import org.vclipse.vcml.conversion.VCMLValueConverter;
+
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
  */
 public class DependencyRuntimeModule extends org.vclipse.dependency.AbstractDependencyRuntimeModule {
+
+	@Override
+	public Class<? extends IValueConverterService> bindIValueConverterService() {
+		return VCMLValueConverter.class;
+	}
 
 }
