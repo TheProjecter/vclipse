@@ -9,7 +9,7 @@
             class="org.vclipse.procedure.ui.ProcedureExecutableExtensionFactory:org.eclipse.xtext.ui.editor.XtextEditor"
             contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
             default="true"
-            extensions="proc,sapprocedure"
+            extensions="proc"
             id="org.vclipse.procedure.Procedure"
             name="Procedure Editor">
         </editor>
@@ -150,20 +150,6 @@
         </resourceServiceProvider>
     </extension>
 
-	<extension
-		point="org.eclipse.emf.ecore.extension_parser">
-		<parser
-			class="org.vclipse.procedure.ui.ProcedureExecutableExtensionFactory:org.eclipse.xtext.resource.IResourceFactory"
-			type="sapprocedure">
-		</parser>
-	</extension>
-	<extension point="org.eclipse.xtext.extension_resourceServiceProvider">
-        <resourceServiceProvider
-            class="org.vclipse.procedure.ui.ProcedureExecutableExtensionFactory:org.eclipse.xtext.ui.resource.IResourceUIServiceProvider"
-            uriExtension="sapprocedure">
-        </resourceServiceProvider>
-    </extension>
-
 
 
 	<!-- Quick Outline -->
@@ -244,19 +230,19 @@
   <extension point="org.eclipse.compare.contentViewers">
     <viewer id="org.vclipse.procedure.Procedure.compare.contentViewers"
             class="org.vclipse.procedure.ui.ProcedureExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
-            extensions="proc,sapprocedure">
+            extensions="proc">
     </viewer>
   </extension>
   <extension point="org.eclipse.compare.contentMergeViewers">
     <viewer id="org.vclipse.procedure.Procedure.compare.contentMergeViewers"
             class="org.vclipse.procedure.ui.ProcedureExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
-            extensions="proc,sapprocedure" label="Procedure Compare">
+            extensions="proc" label="Procedure Compare">
      </viewer>
   </extension>
   <extension point="org.eclipse.ui.editors.documentProviders">
     <provider id="org.vclipse.procedure.Procedure.editors.documentProviders"
             class="org.vclipse.procedure.ui.ProcedureExecutableExtensionFactory:org.eclipse.xtext.ui.editor.model.XtextDocumentProvider"
-            extensions="proc,sapprocedure">
+            extensions="proc">
     </provider>
   </extension>
 
