@@ -53,5 +53,13 @@
             priority="highest">
       </matchengine>
    </extension>
+   <extension
+         point="org.eclipse.emf.compare.diff.engine">
+      <diffengine
+            engineClass="org.vclipse.vcml.diff.injection.ExtensionFactory:org.vclipse.vcml.diff.compare.VcmlDiffEngine"
+            label="Vcml Diff Engine for Source Files"
+            priority="low">
+      </diffengine>
+   </extension>
 
 </plugin>

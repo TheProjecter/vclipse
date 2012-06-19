@@ -3,6 +3,7 @@ package org.vclipse.vcml.diff.compare;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -11,27 +12,33 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.compare.diff.metamodel.DiffModel;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.compare.diff.service.DiffService;
 import org.eclipse.emf.compare.match.MatchOptions;
 import org.eclipse.emf.compare.match.metamodel.MatchModel;
 import org.eclipse.emf.compare.match.service.MatchService;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.xtext.EcoreUtil2;
+import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.parser.IParseResult;
 import org.eclipse.xtext.resource.SaveOptions;
 import org.eclipse.xtext.resource.XtextResourceSet;
 import org.vclipse.base.UriUtil;
 import org.vclipse.base.ui.util.VClipseResourceUtil;
 import org.vclipse.vcml.parser.antlr.VCMLParser;
+import org.vclipse.vcml.utils.DependencySourceUtils;
 import org.vclipse.vcml.validation.VCMLJavaValidatorIssues;
+import org.vclipse.vcml.vcml.Dependency;
 import org.vclipse.vcml.vcml.Import;
 import org.vclipse.vcml.vcml.Model;
 import org.vclipse.vcml.vcml.Option;
 import org.vclipse.vcml.vcml.OptionType;
 import org.vclipse.vcml.vcml.VcmlFactory;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
 
 public class VcmlCompare {
@@ -45,6 +52,10 @@ public class VcmlCompare {
 	private @Inject VClipseResourceUtil resourceUtils;
 	
 	private @Inject VCMLJavaValidatorIssues issuesValidator;
+	
+	private @Inject DependencySourceUtils sourceUtils;
+	
+	private @Inject IQualifiedNameProvider nameProvider;
 	
 	public void compare(IFile oldFile, IFile newFile, IFile resultFile, IProgressMonitor monitor) throws CoreException, InterruptedException, IOException {
 		monitor.subTask("Initialising models for comparison...");
@@ -92,7 +103,6 @@ public class VcmlCompare {
 		options.put(MatchOptions.OPTION_IGNORE_XMI_ID, false);
 		MatchModel matchModel = MatchService.doResourceMatch(newResource, oldResource, options);
 		
-		DiffModel diffModel = DiffService.doDiff(matchModel);
 		monitor.worked(10);
 		
 		Model resultModel = VCML_FACTORY.createModel();	
@@ -117,12 +127,34 @@ public class VcmlCompare {
 			}
 		}
 	
-		diffModelSwitch.extractDifferences(diffModel, resultModel, changedModel, monitor);
+		diffModelSwitch.extractDifferences(DiffService.doDiff(matchModel), resultModel, changedModel, monitor);
 		
 		// compute the import uri -> the old file should be imported by the result file
 		Import importStatement = VCML_FACTORY.createImport();
 		importStatement.setImportURI(new UriUtil().computeImportUri(oldResource, resultResource));
 		resultModel.getImports().add(importStatement);
+		
+		List<Dependency> changedDependencies = ((VcmlDiffEngine)DiffService.getBestDiffEngine(matchModel)).getChangedDependencies();
+		Iterator<Dependency> iterator = Iterables.filter(resultModel.getObjects(), Dependency.class).iterator();
+		ResourceSet resourceSet = resultResource.getResourceSet();
+		while(iterator.hasNext()) {
+			Dependency dependency = iterator.next();
+			URI sourceURI = sourceUtils.getSourceURI(dependency);
+			final String name = nameProvider.getFullyQualifiedName(dependency).getLastSegment();
+			Iterator<Dependency> changedDependencyIterator = Iterables.filter(changedDependencies, new Predicate<Dependency>() {
+				@Override
+				public boolean apply(Dependency changedDependency) {
+					return nameProvider.getFullyQualifiedName(changedDependency).getLastSegment().equals(name);
+				}
+			}).iterator();
+			while(changedDependencyIterator.hasNext()) {
+				Dependency changedDependency = changedDependencyIterator.next();
+				EObject source = sourceUtils.getSource(changedDependency);
+				Resource newSourceResource = resourceSet.createResource(sourceURI);
+				newSourceResource.getContents().add(source);
+				newSourceResource.save(SaveOptions.defaultOptions().toOptionsMap());
+			}
+		}
 	}
 	
 	public boolean reportedProblems() {
