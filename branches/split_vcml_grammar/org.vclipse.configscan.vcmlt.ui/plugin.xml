@@ -50,9 +50,10 @@
     <extension
             point="org.eclipse.ui.preferencePages">
         <page
-            class="org.vclipse.configscan.vcmlt.ui.VcmlTExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
-            id="org.vclipse.configscan.vcmlt.VcmlT"
-            name="VcmlT">
+              category="org.vclipse.preferences.page"
+              class="org.vclipse.configscan.vcmlt.ui.VcmlTExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
+              id="org.vclipse.configscan.vcmlt.VcmlT"
+              name="VcmlT">
             <keywordReference id="org.vclipse.configscan.vcmlt.ui.keyword_VcmlT"/>
         </page>
         <page
