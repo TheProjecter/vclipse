@@ -50,9 +50,10 @@
     <extension
             point="org.eclipse.ui.preferencePages">
         <page
-            class="org.vclipse.dependency.ui.DependencyExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
-            id="org.vclipse.dependency.Dependency"
-            name="Dependency">
+              category="org.vclipse.preferences.page"
+              class="org.vclipse.dependency.ui.DependencyExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
+              id="org.vclipse.dependency.Dependency"
+              name="Dependency">
             <keywordReference id="org.vclipse.dependency.ui.keyword_Dependency"/>
         </page>
         <page

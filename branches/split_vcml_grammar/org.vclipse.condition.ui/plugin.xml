@@ -50,9 +50,10 @@
     <extension
             point="org.eclipse.ui.preferencePages">
         <page
-            class="org.vclipse.condition.ui.ConditionExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
-            id="org.vclipse.condition.Condition"
-            name="Condition">
+              category="org.vclipse.preferences.page"
+              class="org.vclipse.condition.ui.ConditionExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
+              id="org.vclipse.condition.Condition"
+              name="Condition">
             <keywordReference id="org.vclipse.condition.ui.keyword_Condition"/>
         </page>
         <page

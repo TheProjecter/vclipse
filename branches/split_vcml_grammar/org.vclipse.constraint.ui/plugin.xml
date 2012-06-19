@@ -50,9 +50,10 @@
     <extension
             point="org.eclipse.ui.preferencePages">
         <page
-            class="org.vclipse.constraint.ui.ConstraintExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
-            id="org.vclipse.constraint.Constraint"
-            name="Constraint">
+              category="org.vclipse.preferences.page"
+              class="org.vclipse.constraint.ui.ConstraintExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
+              id="org.vclipse.constraint.Constraint"
+              name="Constraint">
             <keywordReference id="org.vclipse.constraint.ui.keyword_Constraint"/>
         </page>
         <page
