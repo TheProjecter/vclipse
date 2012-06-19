@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -43,6 +44,8 @@ import com.google.inject.Inject;
 
 public class VcmlCompare {
 
+	private Logger logger = Logger.getLogger(VcmlCompare.class);
+	
 	private static final VcmlFactory VCML_FACTORY = VcmlFactory.eINSTANCE;
 	
 	private @Inject DiffModelSwitch diffModelSwitch;
@@ -150,6 +153,10 @@ public class VcmlCompare {
 			while(changedDependencyIterator.hasNext()) {
 				Dependency changedDependency = changedDependencyIterator.next();
 				EObject source = sourceUtils.getSource(changedDependency);
+				if(source == null) {
+					logger.error("The source element for " + nameProvider.getFullyQualifiedName(changedDependency).getLastSegment() + " was null.");
+					continue;
+				}
 				Resource newSourceResource = resourceSet.createResource(sourceURI);
 				newSourceResource.getContents().add(source);
 				newSourceResource.save(SaveOptions.defaultOptions().toOptionsMap());
