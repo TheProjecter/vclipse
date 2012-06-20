@@ -9,4 +9,4 @@
        webXcerpt Software GmbH - initial creator
  -->
 
-<templates></templates>
+<templates><template id="1" name="Constraint source template"	description="Template for a constraint source" context="org.vclipse.constraint.Constraint.ConstraintSource" 	autoinsert="true" deleted="false" enabled="true">objects :&#13;	${shortVar} is_a ${class:CrossReference(ConstraintClass.class)}.&#13;restrictions :&#13;	${sourceCode}.&#13;</template></templates>
