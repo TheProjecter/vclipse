@@ -17,9 +17,12 @@ import org.vclipse.base.naming.IClassNameProvider;
 import org.vclipse.vcml.documentation.VCMLAdditionalInformationProvider;
 import org.vclipse.vcml.documentation.VCMLDescriptionProvider;
 import org.vclipse.vcml.documentation.VCMLDocumentationProvider;
+import org.vclipse.vcml.formatting.VCMLSerializer;
+import org.vclipse.vcml.utils.DependencySourceUtils;
 import org.vclipse.vcml.vcml.Characteristic;
 import org.vclipse.vcml.vcml.CharacteristicType;
 import org.vclipse.vcml.vcml.CharacteristicValue;
+import org.vclipse.vcml.vcml.Dependency;
 import org.vclipse.vcml.vcml.SymbolicType;
 
 import com.google.inject.Inject;
@@ -40,7 +43,13 @@ public class VCMLHoverProvider extends DefaultEObjectHoverProvider {
 
 	@Inject
 	private VCMLDocumentationProvider documentationProvider;
-
+	
+	@Inject
+	private DependencySourceUtils sourceUtils;
+	
+	@Inject
+	private VCMLSerializer serializer;
+	
 	@Override
 	protected String getFirstLine(EObject o) {
 		return getClassName(o) + " <b>" + nameProvider.getFullyQualifiedName(o) + "</b>";
@@ -96,6 +105,18 @@ public class VCMLHoverProvider extends DefaultEObjectHoverProvider {
 				}
 			}
 		}
+		
+		if(object instanceof Dependency) {
+			EObject source = sourceUtils.getSource((Dependency)object);
+			if(source != null) {
+				buffer.append("<p>");
+				String prettyPrint = serializer.serialize(source);
+				prettyPrint = prettyPrint.replace("\n", "<br/>");
+				buffer.append(prettyPrint);
+				buffer.append("</p>");				
+			}
+		}
+		
 		return buffer.toString();
 	}
 	
