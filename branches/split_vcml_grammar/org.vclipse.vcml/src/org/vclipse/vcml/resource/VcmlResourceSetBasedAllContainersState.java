@@ -13,7 +13,7 @@ import com.google.inject.Inject;
 public class VcmlResourceSetBasedAllContainersState  implements IAllContainersState {
 	
 	@Inject
-	DependencySourceUtils sourceUtils;
+	private DependencySourceUtils sourceUtils;
 	
 	public List<String> getVisibleContainerHandles(String handle) {
 		return Collections.singletonList(handle);
@@ -28,6 +28,10 @@ public class VcmlResourceSetBasedAllContainersState  implements IAllContainersSt
 	}
 
 	public String getContainerHandle(URI uri) {
-		return sourceUtils.getVcmlResourceURI(uri).toString();
+		String string = sourceUtils.getVcmlResourceURI(uri).toString();
+		if(string.contains("_diff.vcml")) {
+			string = string.replace("_diff.vcml", ".vcml");
+		}
+		return string;
 	}
 }
