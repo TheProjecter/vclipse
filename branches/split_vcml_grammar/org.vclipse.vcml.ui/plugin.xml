@@ -26,6 +26,23 @@
         </editor>
     </extension>
     <extension
+         point="org.eclipse.ui.commands">
+      <category
+            description="VClipse Commands"
+            id="org.vclipse.ui.commands"
+            name="VClipse">
+      </category>
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="org.vclipse.ui.commands.cleanUpDepedencyCode"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="Ctrl+Shift+D">
+      </key>
+   </extension>
+   <extension
         point="org.eclipse.ui.handlers">
         <handler
             class="org.vclipse.vcml.ui.VCMLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.hyperlinking.OpenDeclarationHandler"
@@ -45,6 +62,47 @@
             </reference>
          </activeWhen>
       </handler>
+        <handler
+              class="org.vclipse.vcml.ui.VCMLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.findrefs.FindReferencesHandler"
+              commandId="org.eclipse.xtext.ui.editor.FindReferences">
+           <activeWhen>
+              <reference
+                    definitionId="org.vclipse.vcml.VCML.Editor.opened">
+              </reference>
+           </activeWhen>
+        </handler>
+        <handler
+              class="org.vclipse.vcml.ui.VCMLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.outline.quickoutline.ShowQuickOutlineActionHandler"
+              commandId="org.eclipse.xtext.ui.editor.outline.QuickOutline">
+           <activeWhen>
+              <reference
+                    definitionId="org.vclipse.vcml.VCML.Editor.opened">
+              </reference>
+           </activeWhen>
+        </handler>
+        <handler
+              class="org.vclipse.vcml.ui.VCMLExecutableExtensionFactory:org.eclipse.xtext.ui.refactoring.ui.IRenameElementHandler"
+              commandId="org.eclipse.xtext.ui.refactoring.RenameElement">
+           <activeWhen>
+              <reference
+                    definitionId="org.vclipse.vcml.VCML.Editor.opened">
+              </reference>
+           </activeWhen>
+        </handler>
+        <handler
+              class="org.vclipse.vcml.ui.VCMLExecutableExtensionFactory:org.vclipse.vcml.ui.editor.CleanUpDependenciesHandler"
+              commandId="org.vclipse.ui.commands.cleanUpDepedencyCode">
+           <activeWhen>
+              <or>
+                 <reference
+                       definitionId="org.vclipse.vcml.VCML.Editor.opened">
+                 </reference>
+                 <instanceof
+                       value="org.eclipse.core.resources.IResource">
+                 </instanceof>
+              </or>
+           </activeWhen>
+        </handler>
     </extension>
     <extension point="org.eclipse.core.expressions.definitions">
         <definition id="org.vclipse.vcml.VCML.Editor.opened">
@@ -104,6 +162,15 @@
               id="org.vclipse.preferences.page.sap.defaultSettings"
               name="Default Settings">
         </page>
+        <page
+              category="org.vclipse.preferences.page.vcmlTextEditor"
+              class="org.vclipse.vcml.ui.VCMLExecutableExtensionFactory:org.eclipse.xtext.ui.refactoring.ui.RefactoringPreferencePage"
+              id="org.vclipse.vcml.VCML.refactoring"
+              name="Refactoring">
+           <keywordReference
+                 id="org.vclipse.vcml.ui.keyword_VCML">
+           </keywordReference>
+        </page>
     </extension>
     <extension
         point="org.eclipse.ui.keywords">
@@ -117,6 +184,18 @@
             description="Trigger expensive validation"
             id="org.vclipse.vcml.VCML.validate"
             name="Validate">
+      </command>
+      <command
+            description="Open the quick outline."
+            id="org.eclipse.xtext.ui.editor.outline.QuickOutline"
+            name="Quick Outline">
+      </command>
+      <command
+            categoryId="org.vclipse.ui.commands"
+            defaultHandler="org.vclipse.vcml.ui.VCMLExecutableExtensionFactory:org.vclipse.vcml.ui.editor.CleanUpDependenciesHandler"
+            description="Delete not required dependency code for a vcml source file"
+            id="org.vclipse.ui.commands.cleanUpDepedencyCode"
+            name="Clean Up Dependency Code">
       </command>
     </extension>
     <extension point="org.eclipse.ui.menus">
@@ -133,28 +212,60 @@
             </visibleWhen>
          </command>  
          </menuContribution>
+        <menuContribution
+              locationURI="popup:#TextEditorContext?endof=group.find">
+           <command
+                 commandId="org.eclipse.xtext.ui.editor.FindReferences">
+              <visibleWhen
+                    checkEnabled="false">
+                 <reference
+                       definitionId="org.vclipse.vcml.VCML.Editor.opened">
+                 </reference>
+              </visibleWhen>
+           </command>
+        </menuContribution>
+        <menuContribution
+              locationURI="popup:#TextEditorContext?after=group.edit">
+           <command
+                 commandId="org.eclipse.xtext.ui.refactoring.RenameElement"
+                 style="push">
+              <visibleWhen
+                    checkEnabled="false">
+                 <reference
+                       definitionId="org.vclipse.vcml.VCML.Editor.opened">
+                 </reference>
+              </visibleWhen>
+           </command>
+        </menuContribution>
+        <menuContribution
+              locationURI="popup:#TextEditorContext?after=group.open">
+           <command
+                 commandId="org.eclipse.xtext.ui.editor.outline.QuickOutline"
+                 style="push"
+                 tooltip="Open Quick Outline">
+              <visibleWhen
+                    checkEnabled="false">
+                 <reference
+                       definitionId="org.vclipse.vcml.VCML.Editor.opened">
+                 </reference>
+              </visibleWhen>
+           </command>
+        </menuContribution>
+        <menuContribution
+              locationURI="popup:#TextEditorContext?after=group.edit">
+           <command
+                 commandId="org.vclipse.ui.commands.cleanUpDepedencyCode"
+                 label="Clean Up Dependency Code"
+                 style="push">
+              <visibleWhen
+                    checkEnabled="false">
+                 <reference
+                       definitionId="org.vclipse.vcml.VCML.Editor.opened">
+                 </reference>
+              </visibleWhen>
+           </command>
+        </menuContribution>
     </extension>
-    <extension point="org.eclipse.ui.menus">
-		<menuContribution locationURI="popup:#TextEditorContext?endof=group.find">
-			<command commandId="org.eclipse.xtext.ui.editor.FindReferences">
-				<visibleWhen checkEnabled="false">
-                	<reference definitionId="org.vclipse.vcml.VCML.Editor.opened">
-                	</reference>
-            	</visibleWhen>
-			</command>
-		</menuContribution>
-	</extension>
-	<extension point="org.eclipse.ui.handlers">
-	    <handler
-            class="org.vclipse.vcml.ui.VCMLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.findrefs.FindReferencesHandler"
-            commandId="org.eclipse.xtext.ui.editor.FindReferences">
-            <activeWhen>
-                <reference
-                    definitionId="org.vclipse.vcml.VCML.Editor.opened">
-                </reference>
-            </activeWhen>
-        </handler>
-    </extension>   
 
 <!-- adding resource factories -->
 
@@ -189,38 +300,6 @@
 
 
 	<!-- Quick Outline -->
-	<extension
-		point="org.eclipse.ui.handlers">
-		<handler 
-			class="org.vclipse.vcml.ui.VCMLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.outline.quickoutline.ShowQuickOutlineActionHandler"
-			commandId="org.eclipse.xtext.ui.editor.outline.QuickOutline">
-			<activeWhen>
-				<reference
-					definitionId="org.vclipse.vcml.VCML.Editor.opened">
-				</reference>
-			</activeWhen>
-		</handler>
-	</extension>
-	<extension
-		point="org.eclipse.ui.commands">
-		<command
-			description="Open the quick outline."
-			id="org.eclipse.xtext.ui.editor.outline.QuickOutline"
-			name="Quick Outline">
-		</command>
-	</extension>
-	<extension point="org.eclipse.ui.menus">
-		<menuContribution
-			locationURI="popup:#TextEditorContext?after=group.open">
-			<command commandId="org.eclipse.xtext.ui.editor.outline.QuickOutline"
-				style="push"
-				tooltip="Open Quick Outline">
-				<visibleWhen checkEnabled="false">
-					<reference definitionId="org.vclipse.vcml.VCML.Editor.opened"/>
-				</visibleWhen>
-			</command>
-		</menuContribution>
-	</extension>
    <!-- quickfix marker resolution generator -->
    <extension
          point="org.eclipse.ui.ide.markerResolution">
@@ -229,39 +308,6 @@
       </markerResolutionGenerator>
    </extension>
    	<!-- Rename Refactoring -->
-	<extension point="org.eclipse.ui.handlers">
-		<handler 
-			class="org.vclipse.vcml.ui.VCMLExecutableExtensionFactory:org.eclipse.xtext.ui.refactoring.ui.IRenameElementHandler"
-			commandId="org.eclipse.xtext.ui.refactoring.RenameElement">
-			<activeWhen>
-				<reference
-					definitionId="org.vclipse.vcml.VCML.Editor.opened">
-				</reference>
-			</activeWhen>
-		</handler>
-	</extension>
-    <extension point="org.eclipse.ui.menus">
-         <menuContribution
-            locationURI="popup:#TextEditorContext?after=group.edit">
-         <command commandId="org.eclipse.xtext.ui.refactoring.RenameElement"
-               style="push">
-            <visibleWhen checkEnabled="false">
-               <reference
-                     definitionId="org.vclipse.vcml.VCML.Editor.opened">
-               </reference>
-            </visibleWhen>
-         </command>
-      </menuContribution>
-   </extension>
-   <extension point="org.eclipse.ui.preferencePages">
-	    <page
-	        category="org.vclipse.preferences.page.vcmlTextEditor"
-	        class="org.vclipse.vcml.ui.VCMLExecutableExtensionFactory:org.eclipse.xtext.ui.refactoring.ui.RefactoringPreferencePage"
-	        id="org.vclipse.vcml.VCML.refactoring"
-	        name="Refactoring">
-	        <keywordReference id="org.vclipse.vcml.ui.keyword_VCML"/>
-	    </page>
-	</extension>
 
   <extension point="org.eclipse.compare.contentViewers">
     <viewer id="org.vclipse.vcml.VCML.compare.contentViewers"
@@ -328,48 +374,16 @@
  </extension>
 
 	<!-- Quick Outline -->
-	<extension
-		point="org.eclipse.ui.commands">
-		<command
-			description="Open the quick outline."
-			id="org.eclipse.xtext.ui.editor.outline.QuickOutline"
-			name="Quick Outline">
-		</command>
-	</extension>
    
     
 	<!-- Quick Outline -->
 
-	<extension
-		point="org.eclipse.ui.commands">
-		<command
-			description="Open the quick outline."
-			id="org.eclipse.xtext.ui.editor.outline.QuickOutline"
-			name="Quick Outline">
-		</command>
-	</extension>
 
 
 	<!-- Quick Outline -->
 	
-	<extension
-		point="org.eclipse.ui.commands">
-		<command
-			description="Open the quick outline."
-			id="org.eclipse.xtext.ui.editor.outline.QuickOutline"
-			name="Quick Outline">
-		</command>
-	</extension>
 
 	<!-- Quick Outline -->
-	<extension
-		point="org.eclipse.ui.commands">
-		<command
-			description="Open the quick outline."
-			id="org.eclipse.xtext.ui.editor.outline.QuickOutline"
-			name="Quick Outline">
-		</command>
-	</extension>
   <extension
         point="org.eclipse.ltk.core.refactoring.renameParticipants">
      <renameParticipant

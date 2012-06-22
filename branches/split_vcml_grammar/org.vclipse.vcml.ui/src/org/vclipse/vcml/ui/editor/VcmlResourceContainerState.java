@@ -4,8 +4,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.IWorkspace;
@@ -26,7 +26,7 @@ import com.google.inject.Inject;
 
 public class VcmlResourceContainerState extends AbstractAllContainersState {
 	
-	private static final String VCML_EXTENSION = ".vcml";
+	public static final String VCML_EXTENSION = "." + DependencySourceUtils.EXTENSION_VCML;
 	
 	@Inject
 	private DependencySourceUtils sourceUtils;
@@ -39,15 +39,14 @@ public class VcmlResourceContainerState extends AbstractAllContainersState {
 	
 	public List<String> getVisibleContainerHandles(String handle) {
 		List<String> visibleContainerHandles = Lists.newArrayList(handle);
-		if(handle.endsWith(".vcml")) {
-			URI createURI = URI.createURI(handle);
-			Resource resource = new ResourceSetImpl().getResource(createURI, true);
+		if(handle.endsWith(VCML_EXTENSION)) {
+			Resource resource = new ResourceSetImpl().getResource(URI.createURI(handle), true);
 			if(resource != null) {
 				EList<EObject> contents = resource.getContents();
 				if(!contents.isEmpty()) {
-					EObject eObject = contents.get(0);
-					if(eObject instanceof Model) {
-						for(Import immport : ((Model)eObject).getImports()) {
+					EObject topObject = contents.get(0);
+					if(topObject instanceof Model) {
+						for(Import immport : ((Model)topObject).getImports()) {
 							String[] parts = immport.getImportURI().split("/");
 							URI importedUri = URI.createURI(handle).trimSegments(parts.length - 1);
 							for(int i=1; i<parts.length; i++) {
@@ -63,7 +62,9 @@ public class VcmlResourceContainerState extends AbstractAllContainersState {
 	}
 
 	public Collection<URI> getContainedURIs(String containerHandle) {
-		return Collections.singletonList(URI.createURI(containerHandle));
+		return containerHandle.endsWith(VCML_EXTENSION) ? 
+				Collections.singletonList(URI.createURI(containerHandle)) :
+					super.getContainedURIs(containerHandle);
 	}
 
 	public boolean isEmpty(String containerHandle) {
@@ -85,15 +86,14 @@ public class VcmlResourceContainerState extends AbstractAllContainersState {
 			containerHandle = containerHandle.replace(VCML_EXTENSION, DependencySourceUtils.SUFFIX_SOURCEFOLDER);
 		}
 		final List<URI> containedUris = Lists.newArrayList();
-		String scheme = URI.createURI(containerHandle).toPlatformString(true);
-		IResource findMember = workspace.getRoot().findMember(scheme);
-		if(findMember instanceof IFolder) {
+		String stringHandle = URI.createURI(containerHandle).toPlatformString(true);
+		IResource findMember = workspace.getRoot().findMember(stringHandle);
+		if(findMember instanceof IContainer) {
 			try {
-				((IFolder)findMember).accept(new IResourceVisitor() {
+				((IContainer)findMember).accept(new IResourceVisitor() {
 					public boolean visit(IResource resource) throws CoreException {
 						if(resource instanceof IFile) {
-							Resource resource2 = resourceUtil.getResource(((IFile)resource));
-							containedUris.add(resource2.getURI());
+							containedUris.add(resourceUtil.getResource(((IFile)resource)).getURI());
 						}
 						return true;
 					}

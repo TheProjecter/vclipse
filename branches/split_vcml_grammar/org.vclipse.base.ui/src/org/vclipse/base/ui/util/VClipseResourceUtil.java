@@ -12,6 +12,9 @@ public class VClipseResourceUtil extends ResourceUtil {
 	private XtextResourceSet defaultResourceSet;
 	
 	public ResourceSet getResourceSet() {
+		if(defaultResourceSet == null) {
+			defaultResourceSet = new XtextResourceSet();
+		}
 		return defaultResourceSet;
 	}
 	
