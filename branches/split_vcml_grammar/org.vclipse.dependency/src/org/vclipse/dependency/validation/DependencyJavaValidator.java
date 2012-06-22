@@ -7,8 +7,6 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.validation.Check;
-import org.vclipse.base.BasePlugin;
-import org.vclipse.dependency.validation.AbstractDependencyJavaValidator;
 import org.vclipse.vcml.utils.DependencySourceUtils;
 import org.vclipse.vcml.vcml.BinaryExpression;
 import org.vclipse.vcml.vcml.CharacteristicReference_C;
@@ -28,7 +26,6 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
  
-
 public class DependencyJavaValidator extends AbstractDependencyJavaValidator {
 
 	@Inject
@@ -61,7 +58,12 @@ public class DependencyJavaValidator extends AbstractDependencyJavaValidator {
 				}
 			} catch(Exception exception) {
 				// resource does not exist
-				BasePlugin.log(exception.getMessage(), exception);
+				String sourceName = source.eClass().getName();
+				String objectName = sourceName.replace("Source", "");
+				warning(objectName + " object does not exist for the " + sourceName,
+						source, null, "Not_Existent_Source_Object", 
+							new String[]{source.eClass().getName().replace("Source", ""), 
+								fileName, vcmlUri.toString()});
 			}
 		}
 	}
