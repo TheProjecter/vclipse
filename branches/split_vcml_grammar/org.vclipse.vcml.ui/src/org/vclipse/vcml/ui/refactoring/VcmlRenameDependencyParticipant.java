@@ -6,6 +6,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
@@ -48,7 +49,14 @@ public class VcmlRenameDependencyParticipant extends RenameParticipant {
 
 	@Override
 	public RefactoringStatus checkConditions(IProgressMonitor progressMonitor, CheckConditionsContext context) throws OperationCanceledException {
-		return null;
+		// TODO ? need any code here
+//		ResourceChangeChecker resourceChecker = (ResourceChangeChecker)context.getChecker(ResourceChangeChecker.class);
+//		if(resourceChecker != null) {
+//			IResourceChangeDescriptionFactory deltaFactory = resourceChecker.getDeltaFactory();
+//			IResource resource = deltaFactory.getDelta().getResource();
+//			deltaFactory.delete(resource);
+//		}
+		return RefactoringStatus.create(Status.OK_STATUS);
 	}
 
 	@Override
@@ -67,6 +75,6 @@ public class VcmlRenameDependencyParticipant extends RenameParticipant {
 		}
 		// no change is required
 		// the default implementation for resource rename operation do it for us
-		return null;
+		return super.createPreChange(progressMonitor);
 	}
 }
