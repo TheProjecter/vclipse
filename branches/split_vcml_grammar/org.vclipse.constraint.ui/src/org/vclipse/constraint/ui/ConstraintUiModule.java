@@ -5,7 +5,7 @@ package org.vclipse.constraint.ui;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.resource.containers.IAllContainersState;
-import org.vclipse.vcml.resource.VcmlResourceContainerState;
+import org.vclipse.vcml.ui.editor.VcmlResourceContainerState;
 
 import com.google.inject.Provider;
 
@@ -17,6 +17,13 @@ public class ConstraintUiModule extends org.vclipse.constraint.ui.AbstractConstr
 	public ConstraintUiModule(AbstractUIPlugin plugin) {
 		super(plugin);
 	}
+	
+//	@Override
+//	public void configure(Binder binder) {
+//		Injector injector = VCMLActivator.getInstance().getInjector(VCMLActivator.ORG_VCLIPSE_VCML_VCML);
+//		binder.bind(VcmlResourceContainerState.class).toInstance(injector.getInstance(VcmlResourceContainerState.class));
+//		super.configure(binder);
+//	}
 	
 	public Provider<IAllContainersState> provideIAllContainersState() {
 		return org.eclipse.xtext.ui.shared.Access.<IAllContainersState>provider(VcmlResourceContainerState.class);
