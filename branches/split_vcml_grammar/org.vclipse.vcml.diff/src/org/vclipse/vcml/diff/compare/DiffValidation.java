@@ -104,13 +104,16 @@ public class DiffValidation {
 		EObject oldStateContainer = oldStateObject.eContainer();
 		EObject newStateContainer = rightTarget.getLeftParent();
 		EReference feature = oldStateObject.eContainmentFeature();
-		EObject newStateObject = (EObject)newStateContainer.eGet(feature);
-		if(newStateContainer instanceof Characteristic && oldStateContainer instanceof Characteristic) {
-			if(newStateObject instanceof CharacteristicType && oldStateObject instanceof CharacteristicType) {
-				Multimap<String, IssueImpl> map = HashMultimap.create();
-				map.put(((Characteristic)newStateContainer).getName(), 
-						createCharacteristicTypeIssue(newStateContainer, oldStateContainer, (EObject)newStateContainer.eGet(feature), oldStateObject, feature));
-				return map;
+		Object featureValue = newStateContainer.eGet(feature);
+		if(featureValue instanceof EObject) {
+			EObject newStateObject = (EObject)featureValue;
+			if(newStateContainer instanceof Characteristic && oldStateContainer instanceof Characteristic) {
+				if(newStateObject instanceof CharacteristicType && oldStateObject instanceof CharacteristicType) {
+					Multimap<String, IssueImpl> map = HashMultimap.create();
+					map.put(((Characteristic)newStateContainer).getName(), 
+							createCharacteristicTypeIssue(newStateContainer, oldStateContainer, (EObject)newStateContainer.eGet(feature), oldStateObject, feature));
+					return map;
+				}
 			}
 		}
 		return HashMultimap.create();
@@ -121,13 +124,16 @@ public class DiffValidation {
 		EObject newStateContainer = newStateObject.eContainer();
 		EReference feature = newStateObject.eContainmentFeature();
 		EObject oldStateContainer = leftTarget.getRightParent();
-		EObject oldStateObject = (EObject)oldStateContainer.eGet(feature);
-		if(newStateContainer instanceof Characteristic && oldStateContainer instanceof Characteristic) {
-			if(newStateObject instanceof CharacteristicType && oldStateObject instanceof CharacteristicType) {
-				Multimap<String, IssueImpl> map = HashMultimap.create();
-				map.put(((Characteristic)newStateContainer).getName(), 
-						createCharacteristicTypeIssue(newStateContainer, oldStateContainer, (EObject)newStateContainer.eGet(feature), oldStateObject, feature));
-				return map;
+		Object featureValue = oldStateContainer.eGet(feature);
+		if(featureValue instanceof EObject) {
+			EObject oldStateObject = (EObject)featureValue;
+			if(newStateContainer instanceof Characteristic && oldStateContainer instanceof Characteristic) {
+				if(newStateObject instanceof CharacteristicType && oldStateObject instanceof CharacteristicType) {
+					Multimap<String, IssueImpl> map = HashMultimap.create();
+					map.put(((Characteristic)newStateContainer).getName(), 
+							createCharacteristicTypeIssue(newStateContainer, oldStateContainer, (EObject)newStateContainer.eGet(feature), oldStateObject, feature));
+					return map;
+				}
 			}
 		}
 		return HashMultimap.create();
