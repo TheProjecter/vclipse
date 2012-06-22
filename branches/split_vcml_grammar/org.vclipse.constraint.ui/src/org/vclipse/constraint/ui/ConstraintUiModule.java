@@ -18,13 +18,7 @@ public class ConstraintUiModule extends org.vclipse.constraint.ui.AbstractConstr
 		super(plugin);
 	}
 	
-//	@Override
-//	public void configure(Binder binder) {
-//		Injector injector = VCMLActivator.getInstance().getInjector(VCMLActivator.ORG_VCLIPSE_VCML_VCML);
-//		binder.bind(VcmlResourceContainerState.class).toInstance(injector.getInstance(VcmlResourceContainerState.class));
-//		super.configure(binder);
-//	}
-	
+	@Override
 	public Provider<IAllContainersState> provideIAllContainersState() {
 		return org.eclipse.xtext.ui.shared.Access.<IAllContainersState>provider(VcmlResourceContainerState.class);
 	}

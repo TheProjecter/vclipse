@@ -38,9 +38,10 @@ public class VcmlResourceContainerState extends AbstractAllContainersState {
 	private VClipseResourceUtil resourceUtil;
 	
 	public List<String> getVisibleContainerHandles(String handle) {
-		List<String> visibleContainerHandles = Lists.newArrayList(handle);
-		if(handle.contains(".vcml")) {
-			Resource resource = new ResourceSetImpl().getResource(URI.createURI(handle), true);
+		List<String> visibleContainerHandles = Lists.newArrayList();
+		if(handle.endsWith(".vcml")) {
+			URI createURI = URI.createURI(handle);
+			Resource resource = new ResourceSetImpl().getResource(createURI, true);
 			if(resource != null) {
 				EList<EObject> contents = resource.getContents();
 				if(!contents.isEmpty()) {
