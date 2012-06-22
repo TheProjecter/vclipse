@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -22,6 +23,7 @@ import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.resource.SaveOptions;
 import org.eclipse.xtext.ui.editor.XtextEditor;
 import org.eclipse.xtext.ui.editor.utils.EditorUtils;
+import org.vclipse.base.ui.BaseUiPlugin;
 import org.vclipse.base.ui.util.VClipseResourceUtil;
 import org.vclipse.vcml.utils.DependencySourceUtils;
 import org.vclipse.vcml.vcml.Dependency;
@@ -33,6 +35,8 @@ import com.google.inject.Inject;
 
 public class CleanUpDependenciesHandler extends AbstractHandler {
 
+	private Logger logger = Logger.getLogger(CleanUpDependenciesHandler.class);
+	
 	@Inject
 	private VClipseResourceUtil resourceUtil;
 	
@@ -41,6 +45,9 @@ public class CleanUpDependenciesHandler extends AbstractHandler {
 	
 	@Inject
 	private IQualifiedNameProvider nameProvider;
+	
+	@Inject
+	private DependencySourceUtils sourceUtils;
 	
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		Object appContext = event.getApplicationContext();
@@ -55,7 +62,7 @@ public class CleanUpDependenciesHandler extends AbstractHandler {
 						URI folderUri = URI.createPlatformResourceURI(folderPath, true);
 						Collection<URI> containedURIs = containerState.getContainedURIs(folderUri.toString());
 						for(URI uri : containedURIs) {
-							handleVcmlResource(uri);
+							executeOn(uri);
 						}
 					}
 				}
@@ -68,7 +75,7 @@ public class CleanUpDependenciesHandler extends AbstractHandler {
 						if(resource instanceof IFile) {
 							IFile file = (IFile)resource;
 							URI uri = URI.createPlatformResourceURI(file.getFullPath().toString(), true);
-							handleVcmlResource(uri);
+							executeOn(uri);
 						}
 					}
 				}
@@ -77,9 +84,9 @@ public class CleanUpDependenciesHandler extends AbstractHandler {
 		return null;
 	}
 
-	// URI should have the extension vcml
-	private void handleVcmlResource(URI uri) {
-		if(DependencySourceUtils.EXTENSION_VCML.equals(uri.fileExtension())) {
+	private void executeOn(URI uri) {
+		String fileExtension = uri.fileExtension();
+		if(DependencySourceUtils.EXTENSION_VCML.equals(fileExtension)) {
 			Resource resource = resourceUtil.getResourceSet().getResource(uri, true);
 			String uriStringNoExtension = uri.trimFileExtension().toString();
 			String sourceFolderUri = uriStringNoExtension.concat(DependencySourceUtils.SUFFIX_SOURCEFOLDER);
@@ -102,10 +109,25 @@ public class CleanUpDependenciesHandler extends AbstractHandler {
 							try {
 								resourceToDelete.delete(SaveOptions.defaultOptions().toOptionsMap());
 							} catch(IOException exception) {
-								exception.printStackTrace();
+								logger.error(exception.getMessage());
+								BaseUiPlugin.log(exception.getMessage(), exception);
 							}
 						}
 					}
+				}
+			}
+		} else if(DependencySourceUtils.EXTENSION_CONSTRAINT.equals(fileExtension) ||
+					DependencySourceUtils.EXTENSION_PRECONDITION.equals(fileExtension) ||
+						DependencySourceUtils.EXTENSION_PROCEDURE.equals(fileExtension) ||
+							DependencySourceUtils.EXTENSION_SELECTIONCONDITION.equals(fileExtension)) {
+			VCObject dependency = sourceUtils.getDependency(uri);
+			if(dependency == null) {
+				Resource resource = resourceUtil.getResourceSet().getResource(uri, true);
+				try {
+					resource.delete(SaveOptions.defaultOptions().toOptionsMap());
+				} catch(IOException exception) {
+					logger.error(exception.getMessage());
+					BaseUiPlugin.log(exception.getMessage(), exception);
 				}
 			}
 		}
