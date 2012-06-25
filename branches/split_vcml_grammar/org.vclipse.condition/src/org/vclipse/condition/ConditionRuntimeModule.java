@@ -4,7 +4,9 @@
 package org.vclipse.condition;
 
 import org.eclipse.xtext.conversion.IValueConverterService;
+import org.eclipse.xtext.linking.ILinkingDiagnosticMessageProvider;
 import org.vclipse.vcml.conversion.VCMLValueConverter;
+import org.vclipse.vcml.validation.VCMLLinkingDiagnosticMessageProvider;
 
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
@@ -14,6 +16,10 @@ public class ConditionRuntimeModule extends org.vclipse.condition.AbstractCondit
 	@Override
 	public Class<? extends IValueConverterService> bindIValueConverterService() {
 		return VCMLValueConverter.class;
+	}
+	
+	public Class<? extends ILinkingDiagnosticMessageProvider.Extended> bindILinkingDiagnosticMessageProvider() {
+		return VCMLLinkingDiagnosticMessageProvider.class;
 	}
 
 }

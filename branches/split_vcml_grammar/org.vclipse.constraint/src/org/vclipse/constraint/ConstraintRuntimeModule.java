@@ -4,7 +4,9 @@
 package org.vclipse.constraint;
 
 import org.eclipse.xtext.conversion.IValueConverterService;
+import org.eclipse.xtext.linking.ILinkingDiagnosticMessageProvider;
 import org.vclipse.vcml.conversion.VCMLValueConverter;
+import org.vclipse.vcml.validation.VCMLLinkingDiagnosticMessageProvider;
 
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
@@ -16,4 +18,7 @@ public class ConstraintRuntimeModule extends org.vclipse.constraint.AbstractCons
 		return VCMLValueConverter.class;
 	}
 
+	public Class<? extends ILinkingDiagnosticMessageProvider.Extended> bindILinkingDiagnosticMessageProvider() {
+		return VCMLLinkingDiagnosticMessageProvider.class;
+	}
 }

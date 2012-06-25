@@ -1,7 +1,8 @@
 
 package org.vclipse.dependency.ui.quickfix;
 
-import java.lang.reflect.Method;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
@@ -15,11 +16,17 @@ import org.eclipse.xtext.ui.editor.quickfix.DefaultQuickfixProvider;
 import org.eclipse.xtext.ui.editor.quickfix.Fix;
 import org.eclipse.xtext.ui.editor.quickfix.IssueResolutionAcceptor;
 import org.eclipse.xtext.validation.Issue;
+import org.vclipse.vcml.utils.DependencySourceUtils;
 import org.vclipse.vcml.vcml.Model;
 import org.vclipse.vcml.vcml.VCObject;
 import org.vclipse.vcml.vcml.VcmlFactory;
 
+import com.google.inject.Inject;
+
 public class DependencyQuickfixProvider extends DefaultQuickfixProvider {
+
+	@Inject
+	private DependencySourceUtils sourceUtils;
 
 	@Fix("Not_Existent_Source_Object")
 	public void fixNotExistentSourceObject(Issue issue, IssueResolutionAcceptor acceptor) {
@@ -33,23 +40,61 @@ public class DependencyQuickfixProvider extends DefaultQuickfixProvider {
 		acceptor.accept(issue, label, description, null, new ISemanticModification() {
 			public void apply(EObject element, IModificationContext context) throws Exception {
 				ResourceSet resourceSet = element.eResource().getResourceSet();
-				Resource resource = resourceSet.getResource(URI.createURI(fileUri), true);
-				EList<EObject> contents = resource.getContents();
-				if(!contents.isEmpty()) {
-					Model model = (Model)contents.get(0);
-					VcmlFactory factory = VcmlFactory.eINSTANCE;
-					Method method = factory.getClass().getMethod("create" + type);
-					if(method != null) {
-						Object invoke = method.invoke(factory);
-						if(invoke instanceof VCObject) {
-							VCObject vcobject = (VCObject)invoke;
-							vcobject.setName(name);
-							model.getObjects().add(vcobject);
-							resource.save(SaveOptions.defaultOptions().toOptionsMap());
-						}
-					}
+				URI uri = URI.createURI(fileUri);
+				Resource vcmlResource = resourceSet.getResource(uri, true);
+				createVCObject(name, type, vcmlResource);
+			}
+		});
+	}
+	
+	@Fix("Unresolved_Class")
+	public void fixUnresolved_Class(Issue issue, IssueResolutionAcceptor acceptor) {
+		fixUnresolvedEObject(issue, acceptor);
+	}
+	
+	@Fix("Unresolved_Characteristic")
+	public void fixUnresolved_Characteristic(Issue issue, IssueResolutionAcceptor acceptor) {
+		fixUnresolvedEObject(issue, acceptor);
+	}
+	
+	@Fix("Unresolved_VariantTable")
+	public void fixUnresolved_VariantTable(Issue issue, IssueResolutionAcceptor acceptor) {
+		fixUnresolvedEObject(issue, acceptor);
+	}
+	
+	protected void fixUnresolvedEObject(Issue issue, IssueResolutionAcceptor acceptor) {
+		final String linkText = issue.getData()[0];
+		final String referenceType = issue.getData()[1];
+		
+		String label = "Create vcobject with name " + linkText;
+		String description = "Creates a new vcobject with name " + linkText;
+		acceptor.accept(issue, label, description, null, new ISemanticModification() {
+			@Override
+			public void apply(EObject element, IModificationContext context) throws Exception {
+				Resource eResource = element.eResource();
+				URI vcmlUri = sourceUtils.getVcmlResourceURI(eResource.getURI());
+				Resource vcmlResource = eResource.getResourceSet().getResource(vcmlUri, true);
+				if(vcmlUri != null) {
+					createVCObject(linkText, referenceType, vcmlResource);
 				}
 			}
 		});
+	}
+	
+	protected void createVCObject(final String linkText, final String referenceType, Resource resource) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, IOException  {
+		EList<EObject> contents = resource.getContents();
+		if(!contents.isEmpty()) {
+			EObject topObject = contents.get(0);
+			if(topObject instanceof Model) {
+				VcmlFactory vcml = VcmlFactory.eINSTANCE;
+				Object result = vcml.getClass().getMethod("create" + referenceType).invoke(vcml);
+				if(result instanceof VCObject) {
+					VCObject vcobject = (VCObject)result;
+					vcobject.setName(linkText);
+					((Model)topObject).getObjects().add(vcobject);
+					resource.save(SaveOptions.defaultOptions().toOptionsMap());
+				}
+			}
+		}
 	}
 }
