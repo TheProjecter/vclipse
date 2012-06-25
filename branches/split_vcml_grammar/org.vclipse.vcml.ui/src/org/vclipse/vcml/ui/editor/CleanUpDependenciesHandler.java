@@ -54,15 +54,13 @@ public class CleanUpDependenciesHandler extends AbstractHandler {
 		if(appContext instanceof EvaluationContext) {
 			Object defVariable = ((EvaluationContext)appContext).getDefaultVariable();
 			if(defVariable instanceof List<?>) {
-				List<?> entries = (List<?>)defVariable;
-				for(Object entry : entries) {
+				for(Object entry : (List<?>)defVariable) {
 					if(entry instanceof IContainer) {
 						handleContainer(entry);
 					}
 				}
 			} else if(defVariable instanceof Set<?>) {
-				Set<?> entries = ((Set<?>)defVariable);
-				for(Object entry : entries) {
+				for(Object entry : ((Set<?>)defVariable)) {
 					if(entry instanceof ITextSelection) {
 						XtextEditor xtextEditor = EditorUtils.getActiveXtextEditor(event);
 						IResource resource = xtextEditor.getResource();
