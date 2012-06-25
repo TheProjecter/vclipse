@@ -127,8 +127,8 @@ public class CleanUpDependenciesHandler extends AbstractHandler {
 							DependencySourceUtils.EXTENSION_SELECTIONCONDITION.equals(fileExtension)) {
 			VCObject dependency = sourceUtils.getDependency(uri);
 			if(dependency == null) {
-				Resource resource = resourceUtil.getResourceSet().getResource(uri, true);
 				try {
+					Resource resource = resourceUtil.getResourceSet().getResource(uri, true);
 					resource.delete(SaveOptions.defaultOptions().toOptionsMap());
 				} catch(IOException exception) {
 					logger.error(exception.getMessage());
