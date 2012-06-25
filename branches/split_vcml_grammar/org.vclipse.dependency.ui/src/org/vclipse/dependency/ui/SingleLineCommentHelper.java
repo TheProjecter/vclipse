@@ -7,9 +7,6 @@ public class SingleLineCommentHelper extends DefaultSingleLineCommentHelper {
 
 	@Override
 	public String[] getDefaultPrefixes(ISourceViewer sourceViewer, String contentType) {
-		return super.getDefaultPrefixes(sourceViewer, contentType);
-		
-		
-		//return new String[]{"*"};
+		return new String[]{"*"};
 	}
 }
