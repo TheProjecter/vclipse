@@ -202,7 +202,7 @@ terminal ID	// Xtext standard without ^
 	;
 
 terminal SL_COMMENT
-	:	(' '|'\t')* ('\r'? '\n*') !('\n'|'\r')*
+	:	'*' !(('\n'|'\r'))* ('\r'? '\n')?
 	;
 
 terminal SYMBOL // enclosed in single quotes, no escapes, no line breaks, no tabs

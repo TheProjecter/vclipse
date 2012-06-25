@@ -5,8 +5,6 @@ package org.vclipse.procedure.ui;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.resource.containers.IAllContainersState;
-import org.eclipse.xtext.ui.editor.toggleComments.ISingleLineCommentHelper;
-import org.vclipse.dependency.ui.SingleLineCommentHelper;
 import org.vclipse.vcml.ui.editor.VcmlResourceContainerState;
 
 import com.google.inject.Provider;
@@ -22,9 +20,5 @@ public class ProcedureUiModule extends org.vclipse.procedure.ui.AbstractProcedur
 	
 	public Provider<IAllContainersState> provideIAllContainersState() {
 		return org.eclipse.xtext.ui.shared.Access.<IAllContainersState>provider(VcmlResourceContainerState.class);
-	}
-	
-	public Class<? extends ISingleLineCommentHelper> bindISingleLineCommentHelper() {
-		return SingleLineCommentHelper.class;
 	}
 }
