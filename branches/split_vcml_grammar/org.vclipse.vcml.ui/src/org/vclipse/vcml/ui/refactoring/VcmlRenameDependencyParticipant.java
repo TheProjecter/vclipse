@@ -66,11 +66,13 @@ public class VcmlRenameDependencyParticipant extends RenameParticipant {
 			IFile file = (IFile)elements[0];
 			Resource dependencyResource = resourceUtil.getResource(file);
 			VCObject dependency = dependencySourceUtils.getDependency(dependencyResource.getURI());
-			dependency.eSet(VcmlPackage.eINSTANCE.getVCObject_Name(), getArguments().getNewName().replace("." + file.getFileExtension(), ""));
-			try {
-				dependency.eResource().save(SaveOptions.newBuilder().format().getOptions().toOptionsMap());
-			} catch(IOException exception) {
-				BaseUiPlugin.log(exception.getMessage(), exception);
+			if(dependency != null) {
+				dependency.eSet(VcmlPackage.eINSTANCE.getVCObject_Name(), getArguments().getNewName().replace("." + file.getFileExtension(), ""));
+				try {
+					dependency.eResource().save(SaveOptions.newBuilder().format().getOptions().toOptionsMap());
+				} catch(IOException exception) {
+					BaseUiPlugin.log(exception.getMessage(), exception);
+				}				
 			}
 		}
 		// no change is required

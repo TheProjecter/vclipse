@@ -153,17 +153,21 @@ public class DependencySourceUtils {
 		VCObject foundObject = null;
 		final String searchName = sourceResourceUri.trimFileExtension().lastSegment();
 		URI vcmlResourceUri = getVcmlResourceURI(sourceResourceUri);
-		EList<EObject> contents = new ResourceSetImpl().getResource(vcmlResourceUri, true).getContents();
-		if(!contents.isEmpty()) {
-			Iterator<VCObject> iterator = Iterables.filter(((Model)contents.get(0)).getObjects(), new Predicate<VCObject>() {
-				public boolean apply(VCObject object) {
-					return object.getName().equals(searchName);
+		try {
+			EList<EObject> contents = new ResourceSetImpl().getResource(vcmlResourceUri, true).getContents();
+			if(!contents.isEmpty()) {
+				Iterator<VCObject> iterator = Iterables.filter(((Model)contents.get(0)).getObjects(), new Predicate<VCObject>() {
+					public boolean apply(VCObject object) {
+						return object.getName().equals(searchName);
+					}
+				}).iterator();
+				while(iterator.hasNext()) {
+					foundObject = iterator.next();
+					break;
 				}
-			}).iterator();
-			while(iterator.hasNext()) {
-				foundObject = iterator.next();
-				break;
 			}
+		} catch(Exception exception) {
+			// ignore -> resource does not exist
 		}
 		return foundObject;
 	}
