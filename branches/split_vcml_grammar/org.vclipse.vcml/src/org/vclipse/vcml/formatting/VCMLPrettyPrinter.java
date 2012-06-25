@@ -187,6 +187,10 @@ public class VCMLPrettyPrinter extends VcmlSwitch<DataLayouter<NoExceptions>> {
 				if(object.isDisplayAllowedValues()) {
 					buffer.append("displayAllowedValues ");
 				}
+				if(object.getTable()!=null || object.getField()!=null) {
+					buffer.append("table ").append(asSymbol(object.getTable())).append(" ");
+					buffer.append("field ").append(asSymbol(object.getField())).append(" ");
+				}
 				buffer.append("]");
 				if(buffer.length() > 2) {
 					layouter.brk().print(buffer.toString().trim());

@@ -406,7 +406,7 @@ public class VCML2IDocSwitch extends VcmlSwitch<List<IDoc>> {
 		setValue(segmentE1CABNM, "ATWRD", object.isDisplayAllowedValues() ? "X" : null);
 
 		setValue(segmentE1CABNM, "DATUV", "00000000");
-
+		
 		// TODO use DescriptionHandler for this purpose?
 		// Master Characteristic Language-Dependent Name
 		new VcmlSwitch<Object>() {
@@ -438,6 +438,13 @@ public class VCML2IDocSwitch extends VcmlSwitch<List<IDoc>> {
 
 		// Long Text Lines
 		addSegmentsForDocumentation(segmentE1CABNM, "E1TEXTL", object.getDocumentation());
+
+		if (object.getTable()!=null || object.getField()!=null) {
+			final Segment segmentE1CABZM = addChildSegment(segmentE1CABNM, "E1CABZM");
+			setValue(segmentE1CABZM, "MSGFN", "004");
+			setValue(segmentE1CABZM, "REF_TABLE", object.getTable());
+			setValue(segmentE1CABZM, "REF_FIELD", object.getField());
+		}
 
 		addSegmentE1DATEM(segmentE1CABNM);
 		addSegmentE1UPSLINK(iDoc, toUpperCase(object.getName()), VcmlUtils.DEFAULT_VALIDITY_START);

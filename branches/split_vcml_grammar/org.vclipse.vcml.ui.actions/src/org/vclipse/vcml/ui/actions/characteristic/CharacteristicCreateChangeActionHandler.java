@@ -187,7 +187,12 @@ public class CharacteristicCreateChangeActionHandler extends BAPIUtils implement
 		if (object.isDisplayAllowedValues()) {
 			charactDetail.setValue("DISPLAY_VALUES", "X");
 		}
-
+		if (object.getTable()!=null || object.getField()!=null) {
+			JCoTable charactReferences = tpl.getTable("CHARACTREFERENCESNEW");
+			charactReferences.appendRow();
+			charactReferences.setValue("REFERENCE_TABLE", object.getTable());
+			charactReferences.setValue("REFERENCE_FIELD", object.getField());
+		}
 		final JCoTable charactDescr = tpl.getTable("CHARACTDESCRNEW");
 		new DescriptionHandler() {
 			@Override

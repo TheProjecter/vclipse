@@ -211,6 +211,17 @@ public class CharacteristicReader extends BAPIUtils {
 				if (!languageBlocks.isEmpty())
 					object.setDocumentation(multipleLanguageDocumentation);
 			}
+			JCoTable charactReferences= tpl.getTable("CHARACTREFERENCES");
+			switch (charactReferences.getNumRows()) {
+			case 0: break;
+			case 1: 
+				charactReferences.setRow(0);
+				object.setTable(charactReferences.getString("REFERENCE_TABLE"));
+				object.setField(charactReferences.getString("REFERENCE_FIELD"));
+				break;
+			default: 
+				throw new IllegalArgumentException("table CHARACTREFERENCES has more than 1 row: " + charactReferences);
+			}
 		} else {
 			object.setName(csticName);
 		}
