@@ -240,7 +240,7 @@ public class CharacteristicCreateChangeActionHandler extends BAPIUtils implement
 
 
 	public boolean isEnabled(Characteristic object) {
-		return isConnected(); 
+		return isConnected() && hasBody(object); 
 	}
 
 	private class DocumentationHandler extends VcmlSwitch<Object> {

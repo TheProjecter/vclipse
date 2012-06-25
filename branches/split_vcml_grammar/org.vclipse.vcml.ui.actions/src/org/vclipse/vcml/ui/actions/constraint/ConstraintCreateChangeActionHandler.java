@@ -34,7 +34,7 @@ import com.sap.conn.jco.JCoStructure;
 public class ConstraintCreateChangeActionHandler extends BAPIUtils implements IVcmlOutlineActionHandler<Constraint> {
 
 	public boolean isEnabled(Constraint object) {
-		return isConnected();
+		return isConnected() && hasBody(object);
 	}
 
 	public void run(Constraint object, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, List<Option> options) throws JCoException {

@@ -30,7 +30,7 @@ import com.sap.conn.jco.JCoStructure;
 public class SelectionConditionCreateChangeActionHandler extends BAPIUtils implements IVcmlOutlineActionHandler<SelectionCondition> {
 
 	public boolean isEnabled(SelectionCondition object) {
-		return isConnected();
+		return isConnected() && hasBody(object);
 	}
 
 	public void run(SelectionCondition object, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, List<Option> options) throws JCoException {

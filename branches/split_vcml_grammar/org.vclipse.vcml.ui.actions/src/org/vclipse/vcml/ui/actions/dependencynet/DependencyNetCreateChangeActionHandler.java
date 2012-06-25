@@ -30,7 +30,7 @@ import com.sap.conn.jco.JCoStructure;
 public class DependencyNetCreateChangeActionHandler extends BAPIUtils implements IVcmlOutlineActionHandler<DependencyNet> {
 
 	public boolean isEnabled(DependencyNet object) {
-		return isConnected();
+		return isConnected() && hasBody(object);
 	}
 
 	public void run(DependencyNet object, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, List<Option> options) throws JCoException {

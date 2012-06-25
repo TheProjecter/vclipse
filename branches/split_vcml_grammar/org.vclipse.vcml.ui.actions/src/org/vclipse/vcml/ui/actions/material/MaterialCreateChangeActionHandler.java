@@ -30,6 +30,10 @@ import com.sap.conn.jco.JCoTable;
 
 public class MaterialCreateChangeActionHandler extends BAPIUtils implements IVcmlOutlineActionHandler<Material> {
 	
+	public boolean isEnabled(Material object) {
+		return isConnected() && hasBody(object);
+	}
+	
 	public void run(Material object, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, List<Option> options) throws JCoException {
 		beginTransaction();
 		JCoFunction function = getJCoFunction("BAPI_MATERIAL_SAVEDATA", monitor);
@@ -66,9 +70,4 @@ public class MaterialCreateChangeActionHandler extends BAPIUtils implements IVcm
 			commit(monitor);
 		endTransaction();
 	}
-
-	public boolean isEnabled(Material object) {
-		return isConnected();
-	}
-
 }

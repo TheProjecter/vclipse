@@ -33,7 +33,7 @@ import com.sap.conn.jco.JCoTable;
 public class InterfaceDesignCreateChangeActionHandler extends BAPIUtils implements IVcmlOutlineActionHandler<InterfaceDesign> {
 
 	public boolean isEnabled(InterfaceDesign object) {
-		return isConnected();
+		return isConnected() && hasBody(object);
 	}
 
 	public void run(InterfaceDesign object, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, List<Option> options) throws JCoException {

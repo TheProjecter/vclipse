@@ -47,7 +47,9 @@ import org.vclipse.vcml.vcml.MultipleLanguageDocumentation_LanguageBlock;
 import org.vclipse.vcml.vcml.Option;
 import org.vclipse.vcml.vcml.OptionType;
 import org.vclipse.vcml.vcml.SimpleDescription;
+import org.vclipse.vcml.vcml.VCObject;
 import org.vclipse.vcml.vcml.VcmlFactory;
+import org.vclipse.vcml.vcml.VcmlPackage;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
@@ -578,6 +580,10 @@ public class BAPIUtils {
 			}
 		}
 		return null;
+	}
+	
+	protected boolean hasBody(VCObject vcobject) {
+		return vcobject.eGet(VcmlPackage.eINSTANCE.getMaterial_Description()) != null;
 	}
 	
 }

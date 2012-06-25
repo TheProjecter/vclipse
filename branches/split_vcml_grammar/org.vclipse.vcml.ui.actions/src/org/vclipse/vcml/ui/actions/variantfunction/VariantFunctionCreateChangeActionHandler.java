@@ -34,7 +34,7 @@ public class VariantFunctionCreateChangeActionHandler extends BAPIUtils implemen
 
 	@Override
 	public boolean isEnabled(VariantFunction object) {
-		return isConnected();
+		return isConnected() && hasBody(object);
 	}
 
 	@Override

@@ -30,7 +30,7 @@ import com.sap.conn.jco.JCoStructure;
 public class ProcedureCreateChangeActionHandler extends BAPIUtils implements IVcmlOutlineActionHandler<Procedure> {
 
 	public boolean isEnabled(Procedure object) {
-		return isConnected();
+		return isConnected() && hasBody(object);
 	}
 
 	public void run(Procedure object, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, List<Option> options) throws JCoException {

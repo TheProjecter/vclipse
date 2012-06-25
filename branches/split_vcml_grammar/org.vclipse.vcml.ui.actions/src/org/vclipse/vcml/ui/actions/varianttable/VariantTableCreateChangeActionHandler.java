@@ -34,7 +34,7 @@ public class VariantTableCreateChangeActionHandler extends BAPIUtils implements 
 
 	@Override
 	public boolean isEnabled(VariantTable object) {
-		return isConnected();
+		return isConnected() && hasBody(object);
 	}
 
 	@Override

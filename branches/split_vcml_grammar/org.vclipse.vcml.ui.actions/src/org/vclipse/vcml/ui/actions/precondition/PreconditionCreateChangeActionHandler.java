@@ -30,7 +30,7 @@ import com.sap.conn.jco.JCoStructure;
 public class PreconditionCreateChangeActionHandler extends BAPIUtils implements IVcmlOutlineActionHandler<Precondition> {
 
 	public boolean isEnabled(Precondition object) {
-		return isConnected();
+		return isConnected() && hasBody(object);
 	}
 
 	public void run(Precondition object, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, List<Option> options) throws JCoException {
