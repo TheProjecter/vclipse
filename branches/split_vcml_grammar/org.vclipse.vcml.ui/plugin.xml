@@ -25,14 +25,6 @@
               name="VCML Editor">
         </editor>
     </extension>
-    <extension
-         point="org.eclipse.ui.commands">
-      <category
-            description="VClipse Commands"
-            id="org.vclipse.ui.commands"
-            name="VClipse">
-      </category>
-   </extension>
    <extension
          point="org.eclipse.ui.bindings">
       <key
@@ -180,6 +172,11 @@
     </extension>
     <extension
          point="org.eclipse.ui.commands">
+       <category
+             description="VClipse Commands"
+             id="org.vclipse.ui.commands"
+             name="VClipse">
+       </category>
       <command
             description="Trigger expensive validation"
             id="org.vclipse.vcml.VCML.validate"
@@ -363,6 +360,30 @@
                 name="additions">
           </separator>
        </menu>
+       <action
+             class="org.vclipse.vcml.ui.VCMLExecutableExtensionFactory:org.vclipse.vcml.ui.editor.CleanUpDepencyCodeAction"
+             definitionId="org.vclipse.ui.commands.cleanUpDepedencyCode"
+             icon="icons/actions/delete.png"
+             id="org.vclipse.ui.actions.CleanUpDependencyCode"
+             label="Clean Up Dependency Code"
+             menubarPath="org.vclipse.vcml.ui.popupMenu.resource/additions">
+          <enablement>
+             <or>
+                <objectClass
+                      name="org.eclipse.core.resources.IContainer">
+                </objectClass>
+                <and>
+                   <objectClass
+                         name="org.eclipse.core.resources.IFile">
+                   </objectClass>
+                   <objectState
+                         name="extension"
+                         value="vcml">
+                   </objectState>
+                </and>
+             </or>
+          </enablement>
+       </action>
     </objectContribution>
  </extension>
  <extension
@@ -373,17 +394,6 @@
     </category>
  </extension>
 
-	<!-- Quick Outline -->
-   
-    
-	<!-- Quick Outline -->
-
-
-
-	<!-- Quick Outline -->
-	
-
-	<!-- Quick Outline -->
   <extension
         point="org.eclipse.ltk.core.refactoring.renameParticipants">
      <renameParticipant

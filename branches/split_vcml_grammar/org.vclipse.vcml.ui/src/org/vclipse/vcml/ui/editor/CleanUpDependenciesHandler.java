@@ -52,18 +52,12 @@ public class CleanUpDependenciesHandler extends AbstractHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		Object appContext = event.getApplicationContext();
 		if(appContext instanceof EvaluationContext) {
-			EvaluationContext evaluationContext = (EvaluationContext)appContext;
-			Object defVariable = evaluationContext.getDefaultVariable();
+			Object defVariable = ((EvaluationContext)appContext).getDefaultVariable();
 			if(defVariable instanceof List<?>) {
 				List<?> entries = (List<?>)defVariable;
 				for(Object entry : entries) {
 					if(entry instanceof IContainer) {
-						String folderPath = ((IContainer)entry).getFullPath().toString();
-						URI folderUri = URI.createPlatformResourceURI(folderPath, true);
-						Collection<URI> containedURIs = containerState.getContainedURIs(folderUri.toString());
-						for(URI uri : containedURIs) {
-							executeOn(uri);
-						}
+						handleContainer(entry);
 					}
 				}
 			} else if(defVariable instanceof Set<?>) {
@@ -73,9 +67,7 @@ public class CleanUpDependenciesHandler extends AbstractHandler {
 						XtextEditor xtextEditor = EditorUtils.getActiveXtextEditor(event);
 						IResource resource = xtextEditor.getResource();
 						if(resource instanceof IFile) {
-							IFile file = (IFile)resource;
-							URI uri = URI.createPlatformResourceURI(file.getFullPath().toString(), true);
-							executeOn(uri);
+							handleFile(resource);
 						}
 					}
 				}
@@ -84,7 +76,22 @@ public class CleanUpDependenciesHandler extends AbstractHandler {
 		return null;
 	}
 
-	private void executeOn(URI uri) {
+	protected void handleFile(IResource resource) {
+		IFile file = (IFile)resource;
+		URI uri = URI.createPlatformResourceURI(file.getFullPath().toString(), true);
+		executeOn(uri);
+	}
+
+	protected void handleContainer(Object entry) {
+		String folderPath = ((IContainer)entry).getFullPath().toString();
+		URI folderUri = URI.createPlatformResourceURI(folderPath, true);
+		Collection<URI> containedURIs = containerState.getContainedURIs(folderUri.toString());
+		for(URI uri : containedURIs) {
+			executeOn(uri);
+		}
+	}
+
+	protected void executeOn(URI uri) {
 		String fileExtension = uri.fileExtension();
 		if(DependencySourceUtils.EXTENSION_VCML.equals(fileExtension)) {
 			Resource resource = resourceUtil.getResourceSet().getResource(uri, true);
