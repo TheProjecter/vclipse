@@ -583,7 +583,8 @@ public class BAPIUtils {
 	}
 	
 	protected boolean hasBody(VCObject vcobject) {
-		return vcobject.eGet(VcmlPackage.eINSTANCE.getMaterial_Description()) != null;
+		Object value = vcobject.eGet(VcmlPackage.eINSTANCE.getMaterial_Description());
+		return value instanceof List<?> ? !((List<?>)value).isEmpty() : value != null;
 	}
 	
 }
