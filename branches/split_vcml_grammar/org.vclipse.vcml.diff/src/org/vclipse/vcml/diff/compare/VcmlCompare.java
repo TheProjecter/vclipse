@@ -21,6 +21,7 @@ import org.eclipse.emf.compare.match.service.MatchService;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.parser.IParseResult;
@@ -78,8 +79,7 @@ public class VcmlCompare {
 		
 		// compare the file contents
 		compare(oldResource, newResource, resultResource, monitor);
-		resultResource.save(SaveOptions.defaultOptions().toOptionsMap());
-
+		
 		createMarkers(resultFile, resultResource);
 		// refresh the result file
 		resultFile.refreshLocal(IResource.DEPTH_ONE, monitor);
@@ -131,6 +131,7 @@ public class VcmlCompare {
 		}
 	
 		diffModelSwitch.extractDifferences(DiffService.doDiff(matchModel), resultModel, changedModel, monitor);
+		resultResource.save(SaveOptions.defaultOptions().toOptionsMap());
 		
 		// compute the import uri -> the old file should be imported by the result file
 		Import importStatement = VCML_FACTORY.createImport();
@@ -150,6 +151,7 @@ public class VcmlCompare {
 					return nameProvider.getFullyQualifiedName(changedDependency).getLastSegment().equals(name);
 				}
 			}).iterator();
+			
 			while(changedDependencyIterator.hasNext()) {
 				Dependency changedDependency = changedDependencyIterator.next();
 				EObject source = sourceUtils.getSource(changedDependency);
@@ -158,7 +160,7 @@ public class VcmlCompare {
 					continue;
 				}
 				Resource newSourceResource = resourceSet.createResource(sourceURI);
-				newSourceResource.getContents().add(source);
+				newSourceResource.getContents().add(EcoreUtil.copy(source));
 				newSourceResource.save(SaveOptions.defaultOptions().toOptionsMap());
 			}
 		}
