@@ -60,6 +60,7 @@ import com.sap.conn.jco.JCoContext;
 import com.sap.conn.jco.JCoException;
 import com.sap.conn.jco.JCoFunction;
 import com.sap.conn.jco.JCoParameterList;
+import com.sap.conn.jco.JCoRecord;
 import com.sap.conn.jco.JCoStructure;
 import com.sap.conn.jco.JCoTable;
 
@@ -165,6 +166,15 @@ public class BAPIUtils {
 	 */
 	protected boolean processReturnStructure(JCoFunction function) {
 		JCoStructure returnStructure = function.getExportParameterList().getStructure("RETURN");
+		return internalProcessReturnStructure(returnStructure);
+	}
+
+	protected boolean processReturnStructureTable(JCoFunction function) {
+		JCoRecord returnStructure = function.getTableParameterList().getTable("RETURN");
+		return internalProcessReturnStructure(returnStructure);
+	}
+
+	private boolean internalProcessReturnStructure(JCoRecord returnStructure) {
 		String type = returnStructure.getString("TYPE");
 		if (!Strings.isEmpty(type)) {
 			switch (type.charAt(0)) {

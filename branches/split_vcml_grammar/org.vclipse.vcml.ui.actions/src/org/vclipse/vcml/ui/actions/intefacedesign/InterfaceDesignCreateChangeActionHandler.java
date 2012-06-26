@@ -38,12 +38,12 @@ public class InterfaceDesignCreateChangeActionHandler extends BAPIUtils implemen
 
 	public void run(InterfaceDesign object, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, List<Option> options) throws JCoException {
 		JCoFunction function = getJCoFunction("BAPI_UI_SAVEM", monitor);
-		JCoParameterList ipl = function.getImportParameterList();
-		ipl.setValue("DESIGNNAME", object.getName());
-		
-		handleOptions(options, ipl, null, null);
-		
 		JCoParameterList tpl = function.getTableParameterList();
+
+		JCoTable designname = tpl.getTable("DESIGNNAME");
+		designname.appendRow();
+		designname.setValue("DESIGNNAME", object.getName());
+		
 		JCoTable charGroups = tpl.getTable("CHARGROUPS");
 		final JCoTable charGroupsLang = tpl.getTable("CHARGROUPSLANG");
 		JCoTable chars = tpl.getTable("CHARS");
@@ -73,7 +73,7 @@ public class InterfaceDesignCreateChangeActionHandler extends BAPIUtils implemen
 		}
 			
 		execute(function, monitor, object.getName());
-		if (processReturnStructure(function)) {
+		if (processReturnStructureTable(function)) {
 			commit(monitor);
 
 		}
