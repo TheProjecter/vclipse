@@ -4,7 +4,11 @@
 package org.vclipse.dependency;
 
 import org.eclipse.xtext.conversion.IValueConverterService;
+import org.eclipse.xtext.parsetree.reconstr.ITokenSerializer;
+import org.eclipse.xtext.serializer.ISerializer;
 import org.vclipse.vcml.conversion.VCMLValueConverter;
+import org.vclipse.vcml.formatting.VCMLCrossReferenceSerializer;
+import org.vclipse.vcml.formatting.VCMLSerializer;
 
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
@@ -14,6 +18,15 @@ public class DependencyRuntimeModule extends org.vclipse.dependency.AbstractDepe
 	@Override
 	public Class<? extends IValueConverterService> bindIValueConverterService() {
 		return VCMLValueConverter.class;
+	}
+	
+	public Class<? extends ITokenSerializer.ICrossReferenceSerializer> bindICrossReferenceSerializer() {
+		return VCMLCrossReferenceSerializer.class;
+	}
+	
+	@Override
+	public Class<? extends ISerializer> bindISerializer() {
+		return VCMLSerializer.class;
 	}
 
 }
