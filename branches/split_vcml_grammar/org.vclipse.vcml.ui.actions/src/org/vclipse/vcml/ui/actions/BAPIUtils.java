@@ -593,10 +593,8 @@ public class BAPIUtils {
 	}
 	
 	protected boolean hasBody(VCObject vcobject) {
-		Object value = vcobject.eGet(VcmlPackage.eINSTANCE.getMaterial_Description());
-		return value instanceof List<?> ? !((List<?>)value).isEmpty() : value != null;
+		return vcobject == null ? false : vcobject.getDescription() != null;
 	}
-	
 }
 
 // http://help.sap.com/saphelp_45b/helpdata/de/92/58b469417011d189ec0000e81ddfac/frameset.htm (APIs der Logistik)
