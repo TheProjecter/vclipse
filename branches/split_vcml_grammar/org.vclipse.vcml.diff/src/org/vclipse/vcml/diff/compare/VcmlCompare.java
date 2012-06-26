@@ -131,12 +131,12 @@ public class VcmlCompare {
 		}
 	
 		diffModelSwitch.extractDifferences(DiffService.doDiff(matchModel), resultModel, changedModel, monitor);
-		resultResource.save(SaveOptions.defaultOptions().toOptionsMap());
 		
 		// compute the import uri -> the old file should be imported by the result file
 		Import importStatement = VCML_FACTORY.createImport();
 		importStatement.setImportURI(new UriUtil().computeImportUri(oldResource, resultResource));
 		resultModel.getImports().add(importStatement);
+		resultResource.save(SaveOptions.defaultOptions().toOptionsMap());
 		
 		List<Dependency> changedDependencies = ((VcmlDiffEngine)DiffService.getBestDiffEngine(matchModel)).getChangedDependencies();
 		Iterator<Dependency> iterator = Iterables.filter(resultModel.getObjects(), Dependency.class).iterator();
