@@ -10,7 +10,11 @@
  ******************************************************************************/
 package org.vclipse.vcml.scoping;
 
+import org.eclipse.emf.ecore.EReference;
+import org.eclipse.xtext.scoping.IScope;
+import org.eclipse.xtext.scoping.Scopes;
 import org.eclipse.xtext.scoping.impl.AbstractDeclarativeScopeProvider;
+import org.vclipse.vcml.vcml.Classification;
 
 /**
  * This class contains custom scoping description.
@@ -20,5 +24,9 @@ import org.eclipse.xtext.scoping.impl.AbstractDeclarativeScopeProvider;
  *
  */
 public class VCMLScopeProvider extends AbstractDeclarativeScopeProvider {
+	
+	IScope scope_ValueAssignment_characteristic(Classification context, EReference ref) {
+		return Scopes.scopeFor(context.getCls().getCharacteristics());
+	}
 	
 }

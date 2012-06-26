@@ -3,7 +3,16 @@
  */
 package org.vclipse.constraint.scoping;
 
+import org.eclipse.emf.ecore.EReference;
+import org.eclipse.xtext.scoping.IScope;
+import org.eclipse.xtext.scoping.Scopes;
 import org.vclipse.dependency.scoping.DependencyScopeProvider;
+import org.vclipse.vcml.vcml.ConstraintObject;
+import org.vclipse.vcml.vcml.ConstraintSource;
+import org.vclipse.vcml.vcml.ShortVarDefinition;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 
 /**
  * This class contains custom scoping description.
@@ -14,4 +23,22 @@ import org.vclipse.dependency.scoping.DependencyScopeProvider;
  */
 public class ConstraintScopeProvider extends DependencyScopeProvider {
 
+	// TODO write with declarative calls
+	
+	IScope scope_ConstraintObject(ConstraintSource context, EReference ref) {
+		return Scopes.scopeFor(context.getObjects());
+	}
+	
+	IScope scope_ShortVarDefinition_ref(ConstraintSource context, EReference ref) {
+		return Scopes.scopeFor(Iterables.concat(
+				Iterables.transform(
+						context.getObjects(), 
+						new Function<ConstraintObject, Iterable<ShortVarDefinition>>() {
+							public Iterable<ShortVarDefinition> apply(ConstraintObject constraintObject) {
+								return constraintObject.getShortVars();
+							}
+						}
+				)));
+	}
+	
 }
