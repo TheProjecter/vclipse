@@ -115,21 +115,21 @@ public class VCMLHoverProvider extends DefaultEObjectHoverProvider {
 			try {
 				InputStream is = sourceUtils.getInputStream((Dependency)object);
 				if (is!=null) {
-					buffer.append("<p><tt>");
+					buffer.append("<p><pre>");
 					BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
 					String line;
 					while ((line = br.readLine()) != null) {
 						boolean isCommentLine = line.startsWith("*");
 						if (isCommentLine) {
-							buffer.append("<em><b>");
+							buffer.append("<span style='color: #008000'>");
 						}
 						buffer.append(line);
 						if (isCommentLine) {
-							buffer.append("</b></em>");
+							buffer.append("</span>");
 						}
 						buffer.append("<br/>");
 					}
-					buffer.append("</tt></p>");
+					buffer.append("</pre></p>");
 				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

@@ -56,14 +56,15 @@ public class VCMLUiModule extends org.vclipse.vcml.ui.AbstractVCMLUiModule {
 	public VCMLUiModule(AbstractUIPlugin plugin) {
 		super(plugin);
 	}
-	
-	@Override
-	public void configure(Binder binder) {
-		binder.bind(String.class).annotatedWith(
-				Names.named("org.eclipse.xtext.ui.editor.hover.XtextEditorHover.styleSheetFileName")).
-					toInstance("/HoverStyleSheet.css");
-		super.configure(binder);
-	}
+
+	// currently disabled since hovers do not look that good when stylesheet is used
+//	@Override
+//	public void configure(Binder binder) {
+//		binder.bind(String.class).annotatedWith(
+//				Names.named("org.eclipse.xtext.ui.editor.hover.XtextEditorHover.styleSheetFileName")).
+//					toInstance("/HoverStyleSheet.css");
+//		super.configure(binder);
+//	}
 	
 	@Override
 	public Class<? extends IContentOutlinePage> bindIContentOutlinePage() {
