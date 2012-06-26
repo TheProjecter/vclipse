@@ -31,7 +31,6 @@ import org.vclipse.vcml.formatting.VCMLSerializer;
 import org.vclipse.vcml.linking.VCMLLinker;
 import org.vclipse.vcml.naming.VcmlNamesAreUniqueValidationHelper;
 import org.vclipse.vcml.resource.VCMLURIEncoder;
-import org.vclipse.vcml.scoping.VCMLScopeProvider;
 import org.vclipse.vcml.validation.VCMLLinkingDiagnosticMessageProvider;
 
 import com.google.inject.Binder;
@@ -66,11 +65,6 @@ public class VCMLRuntimeModule extends org.vclipse.vcml.AbstractVCMLRuntimeModul
 		return VCMLCrossReferenceSerializer.class;
 	}
 	
-	@Override
-	public Class<? extends org.eclipse.xtext.scoping.IScopeProvider> bindIScopeProvider() {
-		return VCMLScopeProvider.class;
-	}
-
 	@Override
 	public Class<? extends ISerializer> bindISerializer() {
 		return VCMLSerializer.class;

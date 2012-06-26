@@ -24,10 +24,10 @@ Export-Package: org.vclipse.vcml,
  org.vclipse.vcml.parser.antlr.internal,
  org.vclipse.vcml.parser.antlr.lexer,
  org.vclipse.vcml.resource,
- org.vclipse.vcml.scoping,
  org.vclipse.vcml.services,
  org.vclipse.vcml.utils,
- org.vclipse.vcml.validation
+ org.vclipse.vcml.validation,
+ org.vclipse.vcml.scoping
 Bundle-Activator: org.vclipse.vcml.VCMLPlugin
 Bundle-ClassPath: .
 Import-Package: org.apache.log4j
