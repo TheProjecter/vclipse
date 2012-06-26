@@ -10,6 +10,11 @@
  ******************************************************************************/
 package org.vclipse.vcml.ui.editor.hover;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.ui.editor.hover.html.DefaultEObjectHoverProvider;
@@ -107,13 +112,28 @@ public class VCMLHoverProvider extends DefaultEObjectHoverProvider {
 		}
 		
 		if(object instanceof Dependency) {
-			EObject source = sourceUtils.getSource((Dependency)object);
-			if(source != null) {
-				buffer.append("<p>");
-				String prettyPrint = serializer.serialize(source);
-				prettyPrint = prettyPrint.replace("\n", "<br/>");
-				buffer.append(prettyPrint);
-				buffer.append("</p>");				
+			try {
+				InputStream is = sourceUtils.getInputStream((Dependency)object);
+				if (is!=null) {
+					buffer.append("<p><tt>");
+					BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+					String line;
+					while ((line = br.readLine()) != null) {
+						boolean isCommentLine = line.startsWith("*");
+						if (isCommentLine) {
+							buffer.append("<em><b>");
+						}
+						buffer.append(line);
+						if (isCommentLine) {
+							buffer.append("</b></em>");
+						}
+						buffer.append("<br/>");
+					}
+					buffer.append("</tt></p>");
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 		
