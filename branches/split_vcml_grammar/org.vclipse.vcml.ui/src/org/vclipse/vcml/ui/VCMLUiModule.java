@@ -44,7 +44,9 @@ import org.vclipse.vcml.ui.refactoring.VcmlRenameRefactoringExecutor;
 import org.vclipse.vcml.ui.syntaxcoloring.VCMLAntlrTokenToAttributeIdMapper;
 import org.vclipse.vcml.ui.templates.VcmlTemplateContextType;
 
+import com.google.inject.Binder;
 import com.google.inject.Provider;
+import com.google.inject.name.Names;
 
 /**
  * Use this class to register components to be used within the IDE.
@@ -53,6 +55,14 @@ public class VCMLUiModule extends org.vclipse.vcml.ui.AbstractVCMLUiModule {
 	
 	public VCMLUiModule(AbstractUIPlugin plugin) {
 		super(plugin);
+	}
+	
+	@Override
+	public void configure(Binder binder) {
+		binder.bind(String.class).annotatedWith(
+				Names.named("org.eclipse.xtext.ui.editor.hover.XtextEditorHover.styleSheetFileName")).
+					toInstance("/HoverStyleSheet.css");
+		super.configure(binder);
 	}
 	
 	@Override
