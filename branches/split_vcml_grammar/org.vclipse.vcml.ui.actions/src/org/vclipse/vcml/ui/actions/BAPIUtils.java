@@ -34,6 +34,7 @@ import org.vclipse.vcml.utils.DependencySourceUtils;
 import org.vclipse.vcml.utils.DescriptionHandler;
 import org.vclipse.vcml.utils.DocumentationHandler;
 import org.vclipse.vcml.utils.ISapConstants;
+import org.vclipse.vcml.utils.VcmlObjectUtils;
 import org.vclipse.vcml.utils.VcmlUtils;
 import org.vclipse.vcml.vcml.Dependency;
 import org.vclipse.vcml.vcml.Description;
@@ -46,7 +47,6 @@ import org.vclipse.vcml.vcml.MultipleLanguageDocumentation;
 import org.vclipse.vcml.vcml.MultipleLanguageDocumentation_LanguageBlock;
 import org.vclipse.vcml.vcml.Option;
 import org.vclipse.vcml.vcml.OptionType;
-import org.vclipse.vcml.vcml.SimpleDescription;
 import org.vclipse.vcml.vcml.VCObject;
 import org.vclipse.vcml.vcml.VcmlFactory;
 
@@ -290,12 +290,7 @@ public class BAPIUtils {
 	
 	protected Description readDescription(JCoTable table, String languageFieldISO, String languageField, String descriptionField) {
 		Description simplifyMultiLanguageDescriptions = simplifyMultiLanguageDescriptions(readMultiLanguageDescriptions(table, languageFieldISO, languageField, descriptionField));
-		if(simplifyMultiLanguageDescriptions == null) {
-			SimpleDescription description = VCML.createSimpleDescription();
-			description.setValue("");
-			simplifyMultiLanguageDescriptions = description;
-		}
-		return simplifyMultiLanguageDescriptions;
+		return simplifyMultiLanguageDescriptions == null ? VcmlObjectUtils.mkSimpleDescription("") : simplifyMultiLanguageDescriptions;
 	}
 
 	protected MultiLanguageDescriptions readMultiLanguageDescriptions(JCoTable table, String languageFieldISO, String languageField, String descriptionField) {
@@ -332,9 +327,7 @@ public class BAPIUtils {
 		case 1: 
 			MultiLanguageDescription multiLanguageDescription = multiLanguageDescriptions.getDescriptions().get(0);
 			if (VcmlUtils.getDefaultLanguage().equals(multiLanguageDescription.getLanguage())) {
-				SimpleDescription description = VCML.createSimpleDescription();
-				description.setValue(multiLanguageDescription.getValue());
-				return description;
+				return VcmlObjectUtils.mkSimpleDescription(multiLanguageDescription.getValue());
 			}
 		}
 		return multiLanguageDescriptions;
