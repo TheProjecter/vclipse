@@ -49,7 +49,6 @@ import org.vclipse.vcml.vcml.OptionType;
 import org.vclipse.vcml.vcml.SimpleDescription;
 import org.vclipse.vcml.vcml.VCObject;
 import org.vclipse.vcml.vcml.VcmlFactory;
-import org.vclipse.vcml.vcml.VcmlPackage;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
@@ -290,7 +289,13 @@ public class BAPIUtils {
 
 	
 	protected Description readDescription(JCoTable table, String languageFieldISO, String languageField, String descriptionField) {
-		return simplifyMultiLanguageDescriptions(readMultiLanguageDescriptions(table, languageFieldISO, languageField, descriptionField));
+		Description simplifyMultiLanguageDescriptions = simplifyMultiLanguageDescriptions(readMultiLanguageDescriptions(table, languageFieldISO, languageField, descriptionField));
+		if(simplifyMultiLanguageDescriptions == null) {
+			SimpleDescription description = VCML.createSimpleDescription();
+			description.setValue("");
+			simplifyMultiLanguageDescriptions = description;
+		}
+		return simplifyMultiLanguageDescriptions;
 	}
 
 	protected MultiLanguageDescriptions readMultiLanguageDescriptions(JCoTable table, String languageFieldISO, String languageField, String descriptionField) {
