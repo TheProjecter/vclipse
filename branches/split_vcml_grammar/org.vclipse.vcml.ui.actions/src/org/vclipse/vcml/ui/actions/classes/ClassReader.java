@@ -20,8 +20,11 @@ import org.vclipse.vcml.utils.VCMLProxyFactory;
 import org.vclipse.vcml.utils.VcmlUtils;
 import org.vclipse.vcml.vcml.Characteristic;
 import org.vclipse.vcml.vcml.Class;
+import org.vclipse.vcml.vcml.Description;
 import org.vclipse.vcml.vcml.Model;
 import org.vclipse.vcml.vcml.Option;
+import org.vclipse.vcml.vcml.SimpleDescription;
+import org.vclipse.vcml.vcml.VcmlFactory;
 
 import com.google.inject.Inject;
 import com.sap.conn.jco.JCoException;
@@ -82,7 +85,13 @@ public class ClassReader extends BAPIUtils {
 						}
 					}
 				}
-				object.setDescription(readDescription(function.getTableParameterList().getTable("CLASSDESCRIPTIONS"), "LANGU_ISO", "LANGU", "CATCHWORD"));
+				Description readDescription = readDescription(function.getTableParameterList().getTable("CLASSDESCRIPTIONS"), "LANGU_ISO", "LANGU", "CATCHWORD");
+				if(readDescription == null) {
+					SimpleDescription simpleDescription = VcmlFactory.eINSTANCE.createSimpleDescription();
+					simpleDescription.setValue("");
+					readDescription = simpleDescription;
+				}
+				object.setDescription(readDescription);
 			}
 		}
 		{
