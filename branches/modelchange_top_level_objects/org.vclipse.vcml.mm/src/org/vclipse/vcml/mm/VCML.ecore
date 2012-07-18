@@ -129,7 +129,8 @@
         eType="#//ConfigurationProfileEntry" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="fixing" eType="#//Fixing"
         defaultValueLiteral=""/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="material" eType="#//Material"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="material" eType="#//Material"
+        eOpposite="#//Material/configurationprofiles"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Dependency"/>
   <eClassifiers xsi:type="ecore:EClass" name="Procedure" eSuperTypes="#//VCObject #//Dependency">
@@ -198,7 +199,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="classifications" upperBound="-1"
         eType="#//Classification" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="configurationprofiles"
-        upperBound="-1" eType="#//ConfigurationProfile"/>
+        upperBound="-1" eType="#//ConfigurationProfile" eOpposite="#//ConfigurationProfile/material"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Classification">
     <eStructuralFeatures xsi:type="ecore:EReference" name="cls" eType="#//Class"/>
