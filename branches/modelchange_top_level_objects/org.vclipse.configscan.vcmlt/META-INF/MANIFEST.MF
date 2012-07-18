@@ -1,0 +1,32 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: VClipse ConfigScan Integration VCMLT Language Plug-in
+Bundle-Vendor: webXcerpt Software GmbH, Munich, Germany (www.webxcerpt.com) and other committers
+Bundle-Version: 0.4.2.qualifier
+Bundle-SymbolicName: org.vclipse.configscan.vcmlt; singleton:=true
+Bundle-ActivationPolicy: lazy
+Require-Bundle: org.eclipse.xtext.generator;resolution:=optional,
+ org.vclipse.vcml,
+ org.vclipse.configscan,
+ org.eclipse.xtext,
+ org.eclipse.xtext.util,
+ org.eclipse.emf.ecore,
+ org.eclipse.emf.common,
+ org.antlr.runtime
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Export-Package: org.vclipse.configscan.vcmlt,
+ org.vclipse.configscan.vcmlt.builder,
+ org.vclipse.configscan.vcmlt.formatting,
+ org.vclipse.configscan.vcmlt.imports,
+ org.vclipse.configscan.vcmlt.naming,
+ org.vclipse.configscan.vcmlt.parser.antlr,
+ org.vclipse.configscan.vcmlt.parser.antlr.internal,
+ org.vclipse.configscan.vcmlt.scoping,
+ org.vclipse.configscan.vcmlt.serializer,
+ org.vclipse.configscan.vcmlt.services,
+ org.vclipse.configscan.vcmlt.validation,
+ org.vclipse.configscan.vcmlt.vcmlT,
+ org.vclipse.configscan.vcmlt.vcmlT.impl,
+ org.vclipse.configscan.vcmlt.vcmlT.util
+Bundle-ClassPath: .
+Import-Package: org.apache.log4j
