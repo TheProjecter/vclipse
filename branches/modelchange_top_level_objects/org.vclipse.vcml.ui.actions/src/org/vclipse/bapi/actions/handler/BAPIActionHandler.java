@@ -95,11 +95,11 @@ public class BAPIActionHandler extends AbstractHandler {
 		final XtextResource source = getSourceResource(entries, event);
 		final VcmlModel vcmlSourceModel = (VcmlModel)source.getContents().get(0);
 		final EList<Option> options = vcmlSourceModel.getOptions();
-		final Resource result = getResultResource(source, seenObjects, fileOutput);
 		
 		Job sapActionJob = new Job("Executing SAP action") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
+				Resource result = getResultResource(source, seenObjects, fileOutput);
 				String taskName = "Executing rfc call on SAP system";
 				monitor.beginTask(taskName, IProgressMonitor.UNKNOWN);
 				VcmlModel vcmlModel = (VcmlModel)result.getContents().get(0);
