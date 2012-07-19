@@ -38,8 +38,6 @@ import org.eclipse.xtext.util.SimpleAttributeResolver;
 import org.eclipse.xtext.util.StringInputStream;
 import org.vclipse.bapi.actions.resources.BAPIException;
 import org.vclipse.vcml.ui.IUiConstants;
-import org.vclipse.vcml.vcml.BillOfMaterial;
-import org.vclipse.vcml.vcml.ConfigurationProfile;
 import org.vclipse.vcml.vcml.Import;
 import org.vclipse.vcml.vcml.Option;
 import org.vclipse.vcml.vcml.VCObject;

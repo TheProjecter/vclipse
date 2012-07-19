@@ -54,7 +54,7 @@ public class ConfigurationProfileReader extends BAPIUtils {
 	private InterfaceDesignReader interfaceDesignReader;
 
 	public void readAll(Material containerMaterial, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, List<Option> options, boolean recurse) throws JCoException {
-		read(containerMaterial, null, resource, monitor, seenObjects, options, recurse);
+		read(containerMaterial, containerMaterial.getName(), resource, monitor, seenObjects, options, recurse);
 	}
 	
 	public void read(Material containerMaterial, String profileName, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, List<Option> options, boolean recurse) throws JCoException {
@@ -163,8 +163,6 @@ public class ConfigurationProfileReader extends BAPIUtils {
 				VCMLObjectUtils.sortDependencyNets(profile.getDependencyNets());
 				VCMLObjectUtils.sortEntries(profile.getEntries());
 			}
-			
-
 		} catch (AbapException e) {
 			handleAbapException(e);
 		} 

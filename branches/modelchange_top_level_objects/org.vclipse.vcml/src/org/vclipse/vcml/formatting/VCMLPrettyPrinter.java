@@ -539,7 +539,15 @@ public class VCMLPrettyPrinter extends VcmlSwitch<DataLayouter<NoExceptions>> {
 	 */
 	@Override
 	public DataLayouter<NoExceptions> caseBillOfMaterial(BillOfMaterial object) {
-		layouter.brk().beginC().print("billofmaterial {");
+		layouter.brk().beginC().print("billofmaterial ");
+		printNullsafe(object.getName()); 
+		layouter.print(" {");
+		Material material = object.getMaterial();
+		if(material != null) {
+			layouter.brk().beginC().print("material ");
+			printName(material);
+			layouter.brk(1, -INDENTATION).end();
+		}
 		EList<BOMItem> items = object.getItems();
 		if(!items.isEmpty()) {
 			layouter.brk().beginC().print("items {");
@@ -605,9 +613,16 @@ public class VCMLPrettyPrinter extends VcmlSwitch<DataLayouter<NoExceptions>> {
 				}
 				layouter.brk().print("type ").print(type);
 				
-				for(BillOfMaterial bom : object.getBillofmaterials()) {
-					doSwitch(bom);
+				EList<BillOfMaterial> billofmaterials = object.getBillofmaterials();
+				if(!billofmaterials.isEmpty()) {
+					layouter.brk().beginC().print("billofmaterials {");
+					for(BillOfMaterial bom : billofmaterials) {
+						layouter.brk();
+						printCrossReference(object, bom, VCMLPACKAGE.getMaterial_Billofmaterials(), VCMLPACKAGE.getVCObject_Name());
+					}
+					layouter.brk(1, -INDENTATION).print("}").end();
 				}
+				
 				EList<Classification> classifications = object.getClassifications();
 				if(!classifications.isEmpty()) {
 					layouter.brk().beginC().print("classes {");
@@ -637,34 +652,48 @@ public class VCMLPrettyPrinter extends VcmlSwitch<DataLayouter<NoExceptions>> {
 					}
 					layouter.brk(1, -INDENTATION).print("}").end();
 				}
-				for(ConfigurationProfile profile : configurationprofiles) {
-					layouter.brk().beginC().print("configurationprofile '");
-					printNullsafe(profile.getName());
-					layouter.print("' {");
-					{
-						String bomapplication = profile.getBomapplication();
-						if (bomapplication != null && !bomapplication.isEmpty()) {
-							layouter.brk().print("bomapplication ").print(profile.getBomapplication());
-						}
-						if(profile.getUidesign() != null) {
-							layouter.brk().print("uidesign ");
-							printCrossReference(profile, VCMLPACKAGE.getConfigurationProfile_Uidesign(), VCMLPACKAGE.getVCObject_Name());
-						}
-						for(DependencyNet net : profile.getDependencyNets()) {
-							layouter.brk();
-							printCrossReference(profile, net, VCMLPACKAGE.getConfigurationProfile_DependencyNets(), VCMLPACKAGE.getVCObject_Name());
-						}
-						for(ConfigurationProfileEntry entry : profile.getEntries()) {
-							layouter.brk();
-							printNullsafe(entry.getSequence());
-							layouter.print(" ");
-							printCrossReference(entry, VCMLPACKAGE.getConfigurationProfileEntry_Dependency(), VCMLPACKAGE.getVCObject_Name());
-						}
+				
+				if(!configurationprofiles.isEmpty()) {
+					layouter.brk().beginC().print("configurationprofiles {");
+					for(ConfigurationProfile profile : configurationprofiles) {
+						layouter.brk();
+						printCrossReference(object, profile, VCMLPACKAGE.getMaterial_Billofmaterials(), VCMLPACKAGE.getVCObject_Name());
 					}
 					layouter.brk(1, -INDENTATION).print("}").end();
 				}
 			}
 			layouter.brk(1,-INDENTATION).print("}");
+		}
+		return layouter.end();
+	}
+
+	@Override
+	public DataLayouter<NoExceptions> caseConfigurationProfile(ConfigurationProfile profile) {
+		layouter.beginC().print("configurationprofile ");
+		printName(profile);
+		if(hasBody(profile)) {
+			layouter.print(" {");
+			{
+				String bomapplication = profile.getBomapplication();
+				if (bomapplication != null && !bomapplication.isEmpty()) {
+					layouter.brk().print("bomapplication ").print(profile.getBomapplication());
+				}
+				if(profile.getUidesign() != null) {
+					layouter.brk().print("uidesign ");
+					printCrossReference(profile, VCMLPACKAGE.getConfigurationProfile_Uidesign(), VCMLPACKAGE.getVCObject_Name());
+				}
+				for(DependencyNet net : profile.getDependencyNets()) {
+					layouter.brk();
+					printCrossReference(profile, net, VCMLPACKAGE.getConfigurationProfile_DependencyNets(), VCMLPACKAGE.getVCObject_Name());
+				}
+				for(ConfigurationProfileEntry entry : profile.getEntries()) {
+					layouter.brk();
+					printNullsafe(entry.getSequence());
+					layouter.print(" ");
+					printCrossReference(entry, VCMLPACKAGE.getConfigurationProfileEntry_Dependency(), VCMLPACKAGE.getVCObject_Name());
+				}
+			}
+			layouter.brk(1, -INDENTATION).print("}").end();
 		}
 		return layouter.end();
 	}
@@ -873,6 +902,10 @@ public class VCMLPrettyPrinter extends VcmlSwitch<DataLayouter<NoExceptions>> {
 	private boolean hasBody(Characteristic object) {
 		return object.getDescription()!=null
 		|| object.getDocumentation()!=null;
+	}
+	
+	private boolean hasBody(ConfigurationProfile profile) {
+		return profile.getDescription() != null;
 	}
 	
 	private boolean hasBody(CharacteristicValue object) {

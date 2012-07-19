@@ -260,10 +260,12 @@ CharacteristicGroup :
 
 Material : 
 	'material' name=EXTENDED_ID ('{'
-		(description=Description & ('type' type=EXTENDED_ID))
-		('billofmaterials' '{' billofmaterials+=[BillOfMaterial|EXTENDED_ID]* '}')?
-		('configurationprofiles' '{' configurationprofiles+=[ConfigurationProfile|EXTENDED_ID]* '}')?
-		('classes' '{' classifications+=Classification* '}')?
+		(description=Description 
+		& ('type' type=EXTENDED_ID)
+		& ('billofmaterials' '{' billofmaterials+=[BillOfMaterial|EXTENDED_ID]* '}')?
+		& ('configurationprofiles' '{' configurationprofiles+=[ConfigurationProfile|EXTENDED_ID]* '}')?
+		& ('classes' '{' classifications+=Classification* '}')?
+		)
 	'}')?
 	;
 
