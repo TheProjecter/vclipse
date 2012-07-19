@@ -58,6 +58,7 @@ public class ConfigurationProfileReader extends BAPIUtils {
 	}
 	
 	public void read(Material containerMaterial, String profileName, Resource resource, IProgressMonitor monitor, Set<String> seenObjects, List<Option> options, boolean recurse) throws JCoException {
+		VcmlModel model = (VcmlModel)resource.getContents().get(0);
 		String materialName = containerMaterial.getName();
 		if(materialName == null || !seenObjects.add("ConfigurationProfile/" + materialName.toUpperCase())) {
 			return;
@@ -104,7 +105,7 @@ public class ConfigurationProfileReader extends BAPIUtils {
 						if(monitor.isCanceled()) {
 							return;
 						}
-						interfaceDesign = interfaceDesignReader.read(design, (VcmlModel)resource.getContents().get(0), monitor, seenObjects, options, recurse);
+						interfaceDesign = interfaceDesignReader.read(design, model, monitor, seenObjects, options, recurse);
 					}
 					if (interfaceDesign==null) {
 						interfaceDesign = VCMLProxyFactory.createInterfaceDesignProxy(resource, design);
@@ -150,7 +151,7 @@ public class ConfigurationProfileReader extends BAPIUtils {
 						if(monitor.isCanceled()) {
 							return;
 						}
-						dependencyNet = dependencyNetReader.read(depName, (VcmlModel)resource.getContents().get(0), monitor, seenObjects, options, recurse);
+						dependencyNet = dependencyNetReader.read(depName, model, monitor, seenObjects, options, recurse);
 					}
 					if (dependencyNet==null) {
 						dependencyNet = VCMLProxyFactory.createDependencyNetProxy(resource, depName);

@@ -157,8 +157,8 @@ public class BAPIActionHandler extends AbstractHandler {
 		for(Object entry : entries) {
 			if(entry instanceof EObjectNode) {
 				Object adapter = ((EObjectNode)entry).getAdapter(VCObject.class);
-				if(adapter instanceof VCObject || adapter instanceof BillOfMaterial || adapter instanceof ConfigurationProfile) {
-					return (XtextResource)((EObject)adapter).eResource();
+				if(adapter instanceof VCObject) {
+					return (XtextResource)((VCObject)adapter).eResource();
 				}
 			} else if(entry instanceof ITextSelection) {
 				return BAPIActionUtils.getResource(HandlerUtil.getActiveEditor(event));
