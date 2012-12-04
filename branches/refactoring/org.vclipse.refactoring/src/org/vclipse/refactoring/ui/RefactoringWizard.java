@@ -51,6 +51,8 @@ public class RefactoringWizard extends org.eclipse.ltk.ui.refactoring.Refactorin
 				container.run(false, true, new IRunnableWithProgress() {
 					@Override
 					public void run(IProgressMonitor pm) throws InvocationTargetException, InterruptedException {
+						// TODO reducing the amount of entries without new resources creationg does not work -> probably re-factoring implementation problem
+						// -> see ConstraintsRefactoring ...
 						try {
 							RootChange rootChange = modelRefactoring.getChange(pm);
 							for(Change change : rootChange.getChildren()) {
