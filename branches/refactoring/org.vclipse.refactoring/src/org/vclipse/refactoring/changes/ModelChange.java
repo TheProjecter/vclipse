@@ -26,7 +26,9 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.change.ChangeDescription;
 import org.eclipse.emf.ecore.change.FeatureChange;
+import org.eclipse.emf.ecore.change.ResourceChange;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.URIConverter;
 import org.eclipse.emf.ecore.resource.impl.ExtensibleURIConverterImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -52,9 +54,10 @@ import org.vclipse.refactoring.utils.Extensions;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.inject.Injector;
 
-public class SourceCodeChanges extends CompositeChange {
-	
+public class ModelChange extends CompositeChange {
+
 	private final RefactoringRunner runner;
 	private final EntrySearch search;
 	private final Extensions extensions;
@@ -69,12 +72,9 @@ public class SourceCodeChanges extends CompositeChange {
 	private List<EObject> copyContents;
 	
 	private final ISerializer serializer;
-	
-	private boolean performed = false;
-	
 	private URIConverter uriConverter;
-	
-	static String getChangeLabel(IRefactoringUIContext context) {
+		
+	static String getResourceName(IRefactoringUIContext context) {
 		EObject element = context.getSourceElement();
 		Resource resource = element.eResource();
 		if(resource == null) {
@@ -83,12 +83,13 @@ public class SourceCodeChanges extends CompositeChange {
 		return resource.getURI().lastSegment();
 	}
 	
-	public SourceCodeChanges(IRefactoringUIContext context, RefactoringRunner runner, Extensions extensions) {
- 		super("Changes in " + getChangeLabel(context));
+	public ModelChange(IRefactoringUIContext context) {
+		super("Re-factoring changes for " + getResourceName(context));
 		this.context = context;
-		this.runner = runner;
+		Injector injector = RefactoringPlugin.getInstance().getInjector();
+		this.extensions = injector.getInstance(Extensions.class);
 		this.search = extensions.getInstance(EntrySearch.class);
-		this.extensions = extensions;
+		this.runner = injector.getInstance(RefactoringRunner.class);
 		
 		uriConverter = new ExtensibleURIConverterImpl();
 		
@@ -109,10 +110,13 @@ public class SourceCodeChanges extends CompositeChange {
 		Map<URI, URI> uriMap = uriConverter.getURIMap();
 		uriMap.put(uri, uriRefactoring);
 		uriMap.put(uriRefactoring, uri);
+		
+		
+		ResourceSet resourceSet = resource.getResourceSet();
 		try {
-			resource = resource.getResourceSet().getResource(uriRefactoring, true);
+			resource = resourceSet.getResource(uriRefactoring, true);
 		} catch(Exception exception) {
-			resource = resource.getResourceSet().getResource(uriRefactoring, true);
+			resource = resourceSet.getResource(uriRefactoring, true);
 		}
 		EList<EObject> contents = resource.getContents();
 		contents.clear();
@@ -145,29 +149,26 @@ public class SourceCodeChanges extends CompositeChange {
 	
 	@Override
  	public Change perform(IProgressMonitor pm) throws CoreException {
-		if(!performed) {
-			StringBuffer taskBuffer = new StringBuffer("Initialising re-factoring operation for ");
-			taskBuffer.append(context.getLabel());
-			final SubMonitor sm = SubMonitor.convert(pm, taskBuffer.toString(), 60);
+		StringBuffer taskBuffer = new StringBuffer("Initialising re-factoring operation for ");
+		taskBuffer.append(context.getLabel());
+		final SubMonitor sm = SubMonitor.convert(pm, taskBuffer.toString(), 60);
 
-			// creates a copy of a model and sets the source element to an equal one in the copied model
-			EObject element = context.getSourceElement();
-			EObject entry = search.findEntry(element, copyContents);
-			if(entry != null) {
-				UIRefactoringContext uicontext = (UIRefactoringContext)context;
-				final IRefactoringUIContext refactoringContext = uicontext.copy();
-				refactoringContext.setSourceElement(entry);
-				runner.refactor(refactoringContext);
-				previewNode.setRight(new MultipleEntriesTypedElement(serializer, rootRefactored));
-				sm.worked(10);
-				recordSourceCodeChanges(sm, refactoringContext);
-				sm.worked(20);
-				if(getChildren().length == 0) {
-					add(new NoChange(null));
-				}
-				performed = true;	
-				sm.worked(10);
+		// creates a copy of a model and sets the source element to an equal one in the copied model
+		EObject element = context.getSourceElement();
+		EObject entry = search.findEntry(element, copyContents);
+		if(entry != null) {
+			UIRefactoringContext uicontext = (UIRefactoringContext)context;
+			final IRefactoringUIContext refactoringContext = uicontext.copy();
+			refactoringContext.setSourceElement(entry);
+			runner.refactor(refactoringContext);
+			previewNode.setRight(new MultipleEntriesTypedElement(serializer, rootRefactored));
+			sm.worked(10);
+			recordSourceCodeChanges(sm, refactoringContext);
+			sm.worked(20);
+			if(getChildren().length == 0) {
+				add(new NoChange(null));
 			}
+			sm.worked(10);
 		}
 		return null;
 	}
@@ -179,16 +180,16 @@ public class SourceCodeChanges extends CompositeChange {
 			taskBuffer.append(context.getLabel());
 			final List<Change> changes = Lists.newArrayList(getChildren());
 			final SubMonitor sm = SubMonitor.convert(pm, taskBuffer.toString(), changes.size());
-			final Map<SourceCodeChange, CoreException> exceptions = Maps.newHashMap();
+			final Map<ModelEntryChange, CoreException> exceptions = Maps.newHashMap();
 			context.getDocument().modify(new IUnitOfWork<Object, XtextResource>() {
 				@Override
 				public Object exec(XtextResource state) throws Exception {
 					for(Change change : changes) {
 						if(change.isEnabled()) {
-							if(change instanceof SourceCodeChange) {
-								SourceCodeChange scc = (SourceCodeChange)change;
+							if(change instanceof ModelEntryChange) {
+								ModelEntryChange scc = (ModelEntryChange)change;
 								scc.isValid(pm);
-								scc.applyRefactoring(pm);
+								scc.perform(pm);
 								sm.worked(1);
 							}							
 						}
@@ -201,8 +202,8 @@ public class SourceCodeChanges extends CompositeChange {
 				taskBuffer = new StringBuffer("Collecting errors for ");
 				taskBuffer.append(context.getLabel());
 				SubMonitor sm_exceptions = SubMonitor.convert(pm, taskBuffer.toString(), exceptions.size());
-				for(Entry<SourceCodeChange, CoreException> exception : exceptions.entrySet()) {
-					final SourceCodeChange scc = exception.getKey();
+				for(Entry<ModelEntryChange, CoreException> exception : exceptions.entrySet()) {
+					final ModelEntryChange scc = exception.getKey();
 					final CoreException ce = exception.getValue();
 					refactoringStatus.addEntry(IStatus.ERROR, ce.getMessage(), new RefactoringStatusContext() {
 						@Override
@@ -220,7 +221,8 @@ public class SourceCodeChanges extends CompositeChange {
 	private void recordSourceCodeChanges(IProgressMonitor pm, IRefactoringUIContext previewContext) {
 		StringBuffer taskBuffer = new StringBuffer("Recording source code changes for re-factoring ");
 		taskBuffer.append(previewContext.getLabel());
-		EMap<EObject, EList<FeatureChange>> objectChanges = runner.getChangeRecorder().endRecording().getObjectChanges();
+		ChangeDescription changeDescription = runner.getChangeRecorder().endRecording();
+		EMap<EObject, EList<FeatureChange>> objectChanges = changeDescription.getObjectChanges();
 		SubMonitor sm = SubMonitor.convert(pm, taskBuffer.toString(), objectChanges.size());
 		for(Entry<EObject, EList<FeatureChange>> entry : objectChanges.entrySet()) {
 			EObject refactored = entry.getKey();
@@ -232,12 +234,20 @@ public class SourceCodeChanges extends CompositeChange {
 			search.refactoringConditions(true);
 			for(FeatureChange featureChange : featureChanges) {
 				EObject existingEntry = search.findEntry(refactored, rootContents);
-				SourceCodeChange scc = new SourceCodeChange(extensions);
-				scc.addChange(existingEntry, refactored, featureChange);
+				ModelEntryChange scc = new ModelEntryChange();
+				scc.register(existingEntry, refactored, featureChange);
 				scc.initializeValidationData(pm);
 				add(scc);
 			}
 			search.refactoringConditions(false);
+		}
+		for(ResourceChange change : changeDescription.getResourceChanges()) {
+			org.vclipse.refactoring.changes.ResourceChange resourceChange = new org.vclipse.refactoring.changes.ResourceChange(change.getResource());
+			Change parent = getParent();
+			if(parent instanceof CompositeChange) {
+				CompositeChange compositeParent = (CompositeChange)parent;
+				compositeParent.add(resourceChange);
+			}
 		}
 	}
 }

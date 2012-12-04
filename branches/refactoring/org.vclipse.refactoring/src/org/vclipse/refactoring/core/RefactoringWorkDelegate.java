@@ -17,7 +17,6 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.xtext.resource.SaveOptions;
 
 public class RefactoringWorkDelegate {
 
@@ -30,12 +29,12 @@ public class RefactoringWorkDelegate {
 		}
 		EList<EObject> contents = newConstraintResource.getContents();
 		contents.add(topLevelEntry);
-		if(save) {
-			newConstraintResource.save(SaveOptions.defaultOptions().toOptionsMap());			
-		}
+//		if(save) {
+//			newConstraintResource.save(SaveOptions.defaultOptions().toOptionsMap());			
+//		}
 	}
 	
 	public void saveResource(Resource resource) throws IOException {
-		resource.save(SaveOptions.defaultOptions().toOptionsMap());
+	//	resource.save(SaveOptions.defaultOptions().toOptionsMap());
 	}
 }

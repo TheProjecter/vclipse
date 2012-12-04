@@ -23,8 +23,7 @@ import org.vclipse.refactoring.core.RefactoringTask;
 import com.google.common.collect.Iterables;
 
 /**
- * {@link IRunnableWithProgress} implementation for the 
- * validation during input in the input dialog.
+ * {@link IRunnableWithProgress} implementation for the validation during input in the input dialog.
  */
 public class InputValidationRunnable implements IRunnableWithProgress {
 

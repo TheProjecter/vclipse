@@ -21,7 +21,8 @@ import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.ui.refactoring.UserInputWizardPage;
 import org.vclipse.refactoring.RefactoringPlugin;
-import org.vclipse.refactoring.changes.SourceCodeChanges;
+import org.vclipse.refactoring.changes.ModelChange;
+import org.vclipse.refactoring.changes.RootChange;
 import org.vclipse.refactoring.core.RefactoringTask;
 
 import com.google.common.collect.Lists;
@@ -52,12 +53,13 @@ public class RefactoringWizard extends org.eclipse.ltk.ui.refactoring.Refactorin
 					@Override
 					public void run(IProgressMonitor pm) throws InvocationTargetException, InterruptedException {
 						try {
-							SourceCodeChanges changes = modelRefactoring.getChange(pm);
+							RootChange changes = modelRefactoring.getChange(pm);
+							ModelChange modelChange = (ModelChange)changes.getEntries().get(0);
 							Change[] children = changes.getChildren();
 							StringBuffer labelBuffer = new StringBuffer("Executing re-factoring for ");
-							labelBuffer.append(changes.getContext().getLabel());
+							labelBuffer.append(modelChange.getContext().getLabel());
 							pm.beginTask(labelBuffer.toString(), children.length);
-							changes.refactor(pm);
+							modelChange.refactor(pm);
 							changes.dispose();
 						} catch(CoreException exception) {
 							throw new InvocationTargetException(exception);
