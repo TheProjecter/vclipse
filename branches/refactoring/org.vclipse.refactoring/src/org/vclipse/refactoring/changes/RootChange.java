@@ -37,8 +37,7 @@ public class RootChange extends CompositeChange {
  	public Change perform(IProgressMonitor pm) throws CoreException {
 		if(!performed) {
 			for(Change change : getChildren()) {
-				ModelChange modelChange = (ModelChange)change;
-				modelChange.perform(pm);
+				change.perform(pm);
 			}
 			performed = true;
 		}
@@ -48,8 +47,7 @@ public class RootChange extends CompositeChange {
 	@Override
 	public Object getModifiedElement() {
 		if(getChildren().length != 0) {
-			ModelChange modelChange = ((ModelChange)getChildren()[0]);
-			return modelChange.getModifiedElement();
+			return getChildren()[0].getModifiedElement();
 		}
 		return null;
 	}

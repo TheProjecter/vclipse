@@ -55,6 +55,6 @@ public class ResourceChange extends ModelEntryChange {
 				throw new CoreException(status);
 			}
 		}
-		return super.perform(pm);
+		return null;
 	}
 }
