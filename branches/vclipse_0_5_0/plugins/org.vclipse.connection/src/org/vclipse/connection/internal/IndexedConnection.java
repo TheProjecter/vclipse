@@ -66,7 +66,7 @@ final class IndexedConnection extends AbstractConnection {
 	}
 
 	@Override
-	public String getPassword() {
+	String getPassword() {
 		if(passwordLoaded) {
 			return password;
 		} else {
