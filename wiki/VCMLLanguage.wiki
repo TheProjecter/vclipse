@@ -392,13 +392,14 @@ An example for CharacteristicOrValueDependencies is:
 
 === Class ===
 
-The main purpose of classes is to reference characteristics and attach them to materials of the model (see also [VCMLLanguage#Material Material]). 
+The main purpose of classes is to reference characteristics and attach them to materials of the model, see also [VCMLLanguage#Material Material]. 
 
 A class is defined as follows:
+
 {{{
-Class:
-    'class' CLASSNAME ('{'
-    	Description
+Class :
+	'class' CLASSNAME ('{'
+		Description
     	Status?
     	Group?
     	'characteristics' '{' XID* '}'
@@ -413,21 +414,22 @@ The {{{CLASSNAME}}} consists of an integer number set in brackets defining the c
 The class type must be valid for usage in variant configuration, like (300).
 
 The class can be enhanced by an optional body.
- 
 If the body is added, a {{{Description}}} is a mandatory feature while {{{Status}}} and {{{Group}}} are optional.
 All {{{characteristics}}} must be referenced here with their name, textually represented as an {{{XID}}}.
 The number of characteristics in one class is restricted to 999. This total number of characteristics can be extended by adding references to superclasses, since a class inherits all characteristics of its superclasses.
-Additionally, {{{superclasses}}} can be referenced with their {{{CLASSNAME}}} which is defined as described above.
-The entries for the optional features can be made in any order.
+The {{{superclasses}}} can be referenced with their {{{CLASSNAME}}} which is defined as described above.
+The entries for the optional features in the body can be made in any order.
 
 A class definition without body can be used e.g. to include general classes in the product model which are defined somewhere else.
 
 Example for a class definition without body stating only the classname:
+
 {{{
 class (300)CAR
 }}}
 
-Example for a class definition including all optional features:
+Example for a class definition with body, including all optional features:
+
 {{{
 class (300)CAR {
 	description "this is the class for the car"
@@ -544,6 +546,7 @@ For product material, besides name and type general features can be added, like 
 Please note, that material objects have no documentation, group, and status features. 
 
 A material is defined as follows:
+
 {{{ 
 Material :
 	'material' EXTENDED_ID ('{'
@@ -565,7 +568,7 @@ A material definition starts with the keyword {{{material}}} followed by an {{{E
 
 The material definition can be enhanced by an optional body.
 
-If the body is, {{{description}}} and {{{type}}} are mandatory features. The type is defined by an identifier ({{{ID}}}), typical types are {{{KMAT}}} (configurable material) or {{{HAWA}}} (trading goods).    
+If the body is added, {{{description}}} and {{{type}}} are mandatory features. The type is defined by an identifier ({{{ID}}}), typical types are {{{KMAT}}} (configurable material) or {{{HAWA}}} (trading goods).
 Additionally, {{{billofmaterials}}}, {{{configurationprofile}}} and {{{classes}}} can be referenced. 
 These features are required when specifying the material of a complete product, see also example below.
 
@@ -574,9 +577,9 @@ For detailed information see [VCMLLanguage#Bill_of_Material Bill of Material].
 Adding configuration profiles to a material allows to define general settings and further object dependencies. For detailed information see [VCMLLanguage#Configuration_Profile Configuration Profile].
 The references to classes allow to classify the product material with a set of classes. Additionally, values can be assigned to characteristics by means of classification.
 
-The entries for the optional features can be made in any order.
+The entries for the optional features in the body can be made in any order.
 
-Example for a material declaration for a product, i.e. including a bill of material, a class, and a configuration profile:
+Example for a material definition for a product, i.e. including a bill of material, a class, and a configuration profile:
 
 {{{ 
 material CAR {
@@ -588,7 +591,8 @@ material CAR {
 }
 }}}
 
-Example for a material declaration for line items without any optional features:
+Example for a material definition for line items without any optional features:
+
 {{{
 material Engine_1500 {
 	description "Small engine"
@@ -606,63 +610,63 @@ material Engine_2400 {
 The bill of material is a list of configurable items.
 The bill of material must be defined for the complete product, which is then the master BOM for all product variants. 
 This master BOM can directly list every single item of the product, see example 1, or list other BOMs for groups of items, like BOMs for engine, gear, etc. as shown in example 2. 
-You can also mix single items and BOMs in a BOM declaration.
+You can also mix single items and BOMs in a BOM definition.
 To distinguish between mandatory material and variable, i.e. configurable material, the object/feature selection condition is used. 
-Declaration of a selection condition makes the material a variable part, i.e. it will only be added to the product if a specified condition is fullfilled. 
+Declaration of a selection condition makes the material a variable part, i.e. it will only be added to the product if a specified condition is fulfilled. 
 
-A bill of material is declared as follows:
+A bill of material is defined as follows:
+
 {{{
-BillOfMaterial:
+BillOfMaterial :
 	'billofmaterial' EXTENDED_ID ('[' Option* ']')? '{'
 		'material' '{'EXTENDED_ID'}?
 		'items' '{' BOMItem* '}'?
 	'}'
 
-BOMItem:
+BOMItem :
 	BOMItem_Material | BOMItem_Class
 
-BOMItem_Material:
+BOMItem_Material :
 	INT EXTENDED_ID
 	('dependencies' '{'
-		EXTENDED_ID?
+		EXTENDED_ID?					//selection condition??
 	 	ConfigurationProfileEntry*
 	'}')?
 
-BOMItem_Class:
+BOMItem_Class :
 	INT CLASSNAME
 	('dependencies' '{'
-		EXTENDED_ID?
+		EXTENDED_ID?					//selection condition??
 	 	ConfigurationProfileEntry*
 	'}')?
 }}}
 
-The bill of material consists of the keyword {{{billofmaterial}}} followed by the name of the bill of material, textually represented as an {{{EXTENDED_ID}}}, and the features.   
+The bill of material starts with the keyword {{{billofmaterial}}} followed by the name of the bill of material, textually represented as an {{{EXTENDED_ID}}}, and the features.
 
-There are tow optional features, {{{material}}} and {{{items}}}.
+The bill of material definition can be enhanced by an optional body with two optional features, {{{material}}} and {{{items}}}.
 The material referenced here is the material of the product, consisting of the keyword {{{material}}} followed by the name of the corresponding material.
 The feature items consists of the keyword {{{items}}} followed by a list of all BOM items, i.e. all configurable items belonging to the product.
 
-BOM items can either be materials or classes (class nodes).
+BOM items can either be materials or classes (class nodes). Their definition starts with an integer number {{{INT}}}, representing the item number. This is followed by the name of this dedicated item, textually represented as an {{{EXTENDED_ID}}} for materials or the {{{CLASSNAME}}} for classes.
 
-In turn each configurable BOM item is itself defined as a material. It consists of an integer number {{{INT}}}, representing the item number. This is followed by the name of this dedicated item, textually represented as an {{{EXTENDED_ID}}}.
+Add info on when to select which type!
 
-... something about class nodes ...
-
-Optionally dependencies can be added, giving the reference to a selection condition, see [VCMLLanguage#Selection_Condition Selection Condition], and to procedures.
+Optionally, {{{dependencies}}} can be added giving the reference to a selection condition, see [VCMLLanguage#Selection_Condition Selection Condition], and to procedures using {{{ConfigurationProfileEntry}}}, see [VCMLLanguage#Configuration_Profile Configuration Profile].
 
 Example 1 for BOM with single items:
+
 {{{
 billofmaterial 'bom_car' {
 	material 'CAR'
 	items {
 	  10	Engine_1500
-	  dependencies {  sel cond. and/or procedure	      }	       ???
+	  dependencies {  sel cond. and/or procedure	}	  ???
 	  20	Engine_1800
-	   dependencies {    ??		 }	  ???
+	   dependencies {    ??	 }	  ???
 	  30	Engine_2100
-	   dependencies {    ??		 }	  ???
+	   dependencies {    ??	 }	  ???
 	  40	Engine_2400
-	   dependencies {    ??		 }	  ???
+	   dependencies {    ??	 }	  ???
 	  50	Gear_4
 	  60	Gear_4automatic
 	  70	Gear_5
@@ -676,7 +680,7 @@ billofmaterial 'bom_car' {
 	}
   }
 }}}
-Example 2 for BOM with further BOMs and single item:
+Example 2 for BOM with further BOMs and single items:
 {{{
 billofmaterial 'bom_car' {
 	material 'CAR'
@@ -693,13 +697,13 @@ billofmaterial 'bom_car' {
 	material 'engine'
 	items {
 	  10	Engine_1500
-	  dependencies {    ??		}	 ???
+	  dependencies {    ??	}	 ???
 	  20	Engine_1800
-	   dependencies {    ??		 }	  ???
+	   dependencies {    ??	 }	  ???
 	  30	Engine_2100
-	   dependencies {    ??		 }	  ???
+	   dependencies {    ??	 }	  ???
 	  40	Engine_2400
-	   dependencies {    ??		 }	  ???
+	   dependencies {    ??	 }	  ???
 	}
   }
   billofmaterial 'bom_gear' {
@@ -750,7 +754,7 @@ ConfigurationProfileEntry :
     INT EXTENDED_ID
              
 }}}  
-The configuration profile consists of the keyword {{{'configurationprofile'}}}, followed by the name of the profile, textually represented as an {{{EXTENDED_ID}}}, and the features.  
+The configuration profile starts with the keyword {{{'configurationprofile'}}}, followed by the name of the profile, textually represented as an {{{EXTENDED_ID}}}, and the features.  
 Optionally, the material of the product and a ui design can be referenced, and a status, a BOM application and a Fixing can be defined.
 Describe bom application!
 Describe fixing!
@@ -905,9 +909,18 @@ varianttable VAR_TAB {
 
 == General Language Constructs ==
 
-=== Whitespace ===
+The VCMl language contains various general constructs providing basic definitions which are required repeatedly in a {{{.vcml}}} file.
+Some constructs, like whitespace, empty lines or backspace?? support the structuring of the file to improve readability.
+Another construct allows to make comments for additional information. These are not part of the model and will not be interpreted as code.
+There are several constructs which define different kinds of character sequences, like for example strings, symbols, identifiers or even dedicated keywords, which can be assigned to object values or objects. 
+Operators are also generally defined to support different kind of assignments between objects/features and object values.
 
-Whitespace is irrelevant.
+
+=== Whitespace and Empty Line ===
+
+Whitespace and empty lines can be inserted at any place in the {{{.vcml}}} file for better readability and structuring of the file content. 
+Except for keywords which must be preceded and followed by a whitespace to be detectable, whitespace and empty lines are irrelevant for the model and not interpreted as code.
+
 
 === Comments ===
 
