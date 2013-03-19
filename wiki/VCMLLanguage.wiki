@@ -8,7 +8,7 @@ _Please note that this documentation is still incomplete._
 _Meanwhile, you can have a look into the parser definition file [http://code.google.com/a/eclipselabs.org/p/vclipse/source/browse/org.vclipse.vcml/src/org/vclipse/vcml/VCML.xtext VCML.xtext]_
 
 Please note that this document is _not_ an introduction into SAP Variant Configuration.
-The [http://help.sap.com/printdocu/core/print46c/en/data/pdf/LOVC/LOVC.pdf official documentation by SAP on LO-VC] or the book [http://www.sap-press.com/products/Variant-Configuration-with-SAP.html Variant Configuration with SAP] by Uwe Blumöhr, Manfred Münch, and Marin Ukalovic
+The [http://help.sap.com/printdocu/core/print46c/en/data/pdf/LOVC/LOVC.pdf official documentation by SAP on LO-VC] or the book [http://www.sap-press.com/products/Variant-Configuration-with-SAP-(2nd-Edition).html Variant Configuration with SAP] by Uwe Blumöhr, Manfred Münch, and Marin Ukalovic
 as well as the SAP training courses provide introductory as well as in-depth information. 
 
 == Introduction to VCML Model Structure ==
