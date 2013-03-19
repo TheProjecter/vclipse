@@ -4,34 +4,72 @@
 
 = VCML Documentation =
 
-_Please note that this documentation is still incomplete.
-Meanwhile, you can have a look into the parser definition file [http://code.google.com/a/eclipselabs.org/p/vclipse/source/browse/org.vclipse.vcml/src/org/vclipse/vcml/VCML.xtext VCML.xtext]
-_
+_Please note that this documentation is still incomplete. Meanwhile, you can have a look into the parser definition file [http://code.google.com/a/eclipselabs.org/p/vclipse/source/browse/org.vclipse.vcml/src/org/vclipse/vcml/VCML.xtext VCML.xtext]_
 
-VCML source code is organized in files with extension {{{.vcml}}}. Each file can contain 
-several VC objects in their textual representation. They are top level objects and can 
-contain other objects, existing in the object hierarchy, or reference existing VC objects.
+== Introduction VCML Model Structure ==
+
+VCML source code is organized in files with extension {{{.vcml}}} and it is based on the Xtext language development framework provided by eclipse. 
+The textual domain specific language VCML enables the use of standard text comparison tools and version control systems in the model development process. 
+It supports data exchange with SAP R/3 system. 
+
+For background on the underlying Xtext grammar and syntax refer to [http://www.eclipse.org/Xtext/documentation.html#grammarLanguage Xtext documentation].
 
 There are few notes about how to organize your source code under [ProjectStructure#Project_Structure Project Structure] section.
 
+In the following the VCML file structure and the VCML specific language syntax is described. 
+Each {{{.vcml}}} file contains the textual representation of a VCML model. It is built of three basic features: imports, options and VC objects, as shown below:
+
+{{{VcmlModel:	
+		Import*
+	    ('options' '{' Option* '}')?
+    	VCObject*
+}}}
+
+Note, that the features must be entered in the given order / can be entered in any order. ??
+
 == General Language Constructs ==
 
-=== Whitespace ===
+The VCMl language contains various general constructs providing basic definitions which are required repeatedly in a {{{.vcml}}} file.
+Some constructs, like whitespace, empty lines or backspace?? support the structuring of the file to improve readability.
+Another construct allows to make comments for additional information. These are not part of the model and will not be interpreted as code.
+There are several constructs which define different kinds of character sequences, like for example strings, symbols, identifiers or even dedicated keywords, which can be assigned to object values or objects. 
+Operators are also generally defined to support different kind of assignments between objects/features and object values.
 
-Whitespace is irrelevant.
+=== Whitespace and Empty Line ===
+
+Whitespace and empty lines can be inserted at any place in the {{{.vcml}}} file for better readability and structuring of the file content. 
+Except for keywords which must be preceded and followed by a whitespace to be detectable, whitespace and empty lines are irrelevant for the model and not interpreted as code.
 
 === Comments ===
 
-VCML offers single-line comments and block comments.
-They are written like in Java or C:
+VCML offers single-line comments and block comments. The comment can start at any place in a line. They are written like in Java or C.
+Single-line comments do start with {{{//}}} and automatically end with the end of the line.
+Block comments start with {{{/*}}} and end with {{{*/}}}. They can but must not run over several lines. Block comments may not be nested.
+Block comments not only allow to give detailed additional information but they can also be used for other purposes.
+You can e.g. enter incomplete definitions of objects as block comments which will be completed later and only then included in the model.
+You can temporarily exclude parts of the model by enclosing it in the block comment syntax, without deleting it completely from the model.
+
+Examples for single-line comments:
+
 {{{
-// this is a single line comment
+// this is a single line comment, starting in the first column of the line
     // this is another single line comment which does not start in the first column
-/* this is a 
-block comment
+import "platform:/resource/projectname"	//This is an import with an absolute path. (=comment)
+}}}
+
+Examples for block comments:
+
+{{{
+/* this is a block comment
+running over two lines
+*/
+
+import /*with an absolute path*/ "platform:/resource/projectname"
+
+/*note, that the path has to be added later on:
+import "platform:/??"
 */
 }}}
-Block comments may not be nested.
 
 === Strings ===
 
@@ -98,9 +136,15 @@ Symbols can be empty.
 ### clarify this
 </wiki:comment>
 
-=== Identifier ===
 
-Identifier are character sequence beginning with a character (only 
+
+
+=== Identifier ===
+Three different types of identifiers are specified for VCML language. All VC objects, except Classes, Materials and InterfaceDesigns, can be named with simple identifiers. Please use the 
+class identifier to give a name to a class.
+==== Simple Identifier ====
+Simple identifiers are used for example as names for characteristics, classes??, or dependencies. 
+Simple identifier are character sequence beginning with a character (only 
 ASCII characters are allowed) or underscore and containing lower/upper characters, underscore 
 or numbers.
 Examples:
@@ -116,11 +160,12 @@ wIndOWs_7
 
 Identifiers are case insensitive.
 
-Identifiers are used for example as names for characteristics, classes, or dependencies. 
+ 
 
 
 === Extended identifier ===
 
+Extended identifiers are used for example for interface designs objects and material.
 Extended identifiers are character sequences consisting of integer numbers, characters, which
 are parts of identifiers or the following characters: / : - and dot.
 Extended identifier can not be empty. They are used for example in interface designs declarations:
@@ -163,14 +208,93 @@ Following character sequences are used as keywords in the VCML language and can 
   - procedure
 }}}
 
-=== VC Objects ===
 
-Each declaration of a VC object consists of a keyword followed by a name and an optional body. 
-Keywords specify which VC object is being declared, so there is a keyword for each VC object 
-beginning its declaration(please see [VCMLLanguage#Keywords_for_VCObject_declaration]). 
+== Imports ==
+The model can contain several import statements, e.g. to import VC objects from other {{{.vcml}}} files. 
 
-All VC objects, except Classes, Materials and InterfaceDesigns, can be named with simple identifiers. Please use the 
-class identifier to give a name to a class and extended identifier to build a name for a Material or an InterfaceDesign object.
+Applications:
+Re-usage of common data: information which is required for several or even all models can be stored in a central place and reused  wherever it is needed/applicable.
+Create variants of a model: you can create variants of an existing model by importing the complete model and just modify several dedicated definitions. The original model is preserved. 
+Note: In this case all modifications done in the original model will automatically apply to the variant, too.
+
+{{{Import :
+	'import' STRING}}}
+    
+The import statement consists of the keyword 'import', followed by a STRING. This string represents the path to the source of the file or data which is to be imported. 
+The path can be given as absolute path or as relative path with respect to the {{{.vcml}}} file.
+
+Example of an import statement with absolute path:
+
+{{{
+import "platform:/resource/projectname"		??projectname or file name or both possible??
+}}}
+
+Example of an import statement with relative path:
+{{{
+import "../../projectname" ??projectname or file name or both possible??
+}}}
+
+== Options ==
+Optionally, a VCML model can contain one or more options. These are mainly required for development issues.
+
+{{{Option :
+	'options' '{ Optiontype = STRING}' }}}
+The options statement begins with the keyword 'options'. It is followed by the option type and its assigned value, given as a STRING.
+More information will be added in a later issue of this Wiki.
+
+== VC Objects ==
+Each file can contain several top level VC objects. A set of top level VC objects (so called VC object kinds) 
+with predefined keywords is used to describe all information required for a product model definition in a textual representation. 
+
+=== Declaration of VC object kinds ===
+
+In the {{{.vcml}}} file the following keywords can be used to define/create configuration objects with the different VC object kinds:
+
+{{{VCObject : 
+		Characteristic
+	| 	Class
+	| 	Constraint 
+	| 	SelectionCondition 
+	| 	Precondition 
+	| 	Procedure 
+	| 	DependencyNet
+	| 	Material
+	| 	InterfaceDesign
+	| 	VariantFunction
+	| 	VariantTable
+	| 	VariantTableContent
+	| 	BillOfMaterial
+	| 	ConfigurationProfile
+	}}}
+	
+The following table gives a short information about the purpose of each VC object kind. For detailed information see the dedicated chapters in the [VCMLLanguage#List_of_VC_Objects].
+
+|| *VC object* || *Purpose* ||
+|| [VCMLLanguage#BillofMaterial] || The BOM must contain all items (material) which are required to cover all variants of the product and assigns them to the product model by giving the BOM the same unique identifier as used in SAP. ||
+|| [VCMLLanguage#Characteristic] || The characteristics precisely define all selectable options or features of a configurable product, together with their feature values. Characteristics can be assigned object dependencies and/or restrictions to ensure that the configurations are consistent and complete, i.e. they only contain valid combinations of features and feature values. Characteristics can be used for static information (display only) as well as for variable options. These variable options again may or may not allow user input. ||
+|| [VCMLLanguage#Class] || In the standard SAP R/3 the class type 300 is the class type for variants. In the {{{.vcml}}} file all characteristics defined for the product model are assigned to this class to enable their usage for material configuration. Additionally general ?? like GEN_DOC_INFO, GEN_PRD_ALL_01, …. (was sind das?) are assigned to class type 300 for which purpose?.||
+|| [VCMLLanguage#ConfigurationProfile??] || The ConfigurationProfile is mandatory for each configurable object. It contains general settings, like the product material??, the user interface design as well as standard networks (NPs) ?? and general procedures (PPs)?? which are to be used.Dependencies are also defined in the configuration profile.  The definitions depend on the object type. ||
+|| [VCMLLanguage#Constraint] || Constraints monitor the consistency of a configuration. They describe dependencies between characteristics and contain information on which conditions must be fulfilled if the configuration is to be consistent.According to Sap R/3 constraints must belong to a dependency net. ||
+|| [VCMLLanguage#DependencyNet] || The dependency net groups all constraints for the product model and provides like a single point of entry to the constraints of the whole configuration. ||
+|| [VCMLLanguage#InterfaceDesign] || The interface design supports grouping of characteristics to enable a structured layout. ||
+|| [VCMLLanguage#Material] || Material is used to define name and type of every single configurable item of the product. Additionally, with material general features/relations?? Like type, assigned bill of materials, classes and configuration profiles which are used for the model are defined. ||
+|| [VCMLLanguage#Precondition] || Preconditions support restricting or hiding of characteristics or characteristic values in case that they are only valid if the precondition is fulfilled. This ensures that configuration is consistent. ||
+|| [VCMLLanguage#Procedure] || Procedures allow to internally/automatically modify values in the model. They can be assigned to characteristics, characteristic values, the configuration profile, BOM items and operations, which will then trigger a specified value change.||
+|| [VCMLLanguage#SelectionCondition] || The assignment of a selection condition ensures that all objects required for a variant are selected. It can be assigned e.g. to characteristics and BOM items.  ||
+|| [VCMLLanguage#VariantFunction] ||  ||
+|| [VCMLLanguage#VariantTable] || A variant table supports restriction of characteristic values to valid combinations.  ||
+|| [VCMLLanguage#VariantTableContent] || Here the content of a variant table is defined.||
+
+The minimum requirement for a configurable product is the definition of the material (for the product itself as well as for the individual items), a characteristic with selectable values and the assignment of a class and a configuration profile. By adding additional characteristics and other kinds of VC objects any product however complex can be modeled for variant configuration.
+
+Each declaration of a VC object itself consists of the dedicated keyword as listed above, followed by the mandatory assignment of a name, and an optional body. 
+The body can contain other objects or references to other VC objects defined elsewhere in the {{{.vcml}}} file.
+There are some basic sublevel objects/features that are used in a number of VC objects while most sublevel objects/features are specific to a VC object. 
+The identifiers and sublevel objects/features themselves are separately declared later on in the vcml file. Using this hierarchical declaration structure, all identifiers and sub level objects/features are defined only once and can be used/referenced by all other objects and VC objects.
+For more information on the identifiers syntax and usage for the different VC objects see [VCMLLanguage#Identifier].
+For more information on the common basic objects see [VCMLLanguage#Basic_options/Features].
+For the declaration of the sublevel objects/features specific to VC objects, see the [VCMLLanguage#List_of_VC_Objects]. 
+
 
 ==== Descriptions ====
 
@@ -296,6 +420,11 @@ group "PRODUCTS_CAR"
 <wiki:comment>
 ### Is there a length restriction for groups?
 </wiki:comment>
+
+== List of VC objects ==
+Each VCML model contains at least one VC object which is defined by a keyword corresponding to the kind of VC object and a dedicated name. 
+A VC object can be enhanced by an optional body, which in turn can contain (sub level) objects or reference to other top level VC objects.
+VC objects without body can be used to include generic VC objects. ##Add more information##
 
 === Characteristic ===
 Characteristics are used to describe precisely of which elements a product is made of, and which values these elements can have.
@@ -426,24 +555,42 @@ An example for CharacteristicOrValueDependencies is:
 
 === Class ===
 
-A class can be declared in the following way:
+The main purpose of classes is to reference characteristics and attach them to materials of the model, see also [VCMLLanguage#Material]. 
+
+A class is defined as follows:
 
 {{{
-Class =
-  'class' ClassIdentifier ('{'
+Class :
+    'class' CLASSNAME ('{'
     Description
     Status?
     Group?
-    'characteristics' '{' ID* '}'
-    ('superclasses' '{' ClassIdentifier* '}')
+    'characteristics' '{' XID* '}'
+    ('superclasses' '{' CLASSNAME* '}')?
   '}')?
 
-ClassIdentifier = '(' INT ')' ID
+CLASSNAME = '(' INT ')' XID
 }}}
 
-Classes reference existing characteristics in their characteristics list.
+A class is described by the keyword {{{class}}} followed by a {{{CLASSNAME}}}. 
+The {{{CLASSNAME}}} consists of an integer number set in brackets defining the class type and an {{{XID}}} defining the name of the class, referring to the product. The class type must be valid for usage in variant configuration, like (300).
+The class can be enhanced by an optional body: 
+If the optional body is added, a {{{Description}}} is a mandatory feature while {{{Status}}} and {{{Group}}} are optional.
+All {{{characteristics}}} must be referenced here with their name, textually represented as an {{{XID}}}.
+The number of characteristics in one class is restricted to 999. This total number of characteristics can be extended by adding references to superclasses, since a class inherits all characteristics of its superclasses.
+Additionally, {{{superclasses}}} can be referenced with their {{{CLASSNAME}}} which is defined as described above.
+The entries for the optional features in the body can be made in any order.
 
-An example for a class declaration
+A class definition without body can be used e.g. to include general classes in the product model which are defined somewhere else.
+
+Example for a class definition without body stating only the classname:
+
+{{{
+class (300)CAR
+}}}
+
+Example for a class definition with body, including all optional features:
+
 {{{
 class (300)CAR {
   description "this is the class for the car"
@@ -456,11 +603,10 @@ class (300)CAR {
     INTERIOR
   }
   superclasses { (300)VEHICLE }
-}
+ }
 }}}
 
-
-== Constraint == 
+=== Constraint === 
 
 A constraint is defined as follows:
 {{{
@@ -491,7 +637,7 @@ constraint CS_CAR1 {
   }
 }}}
 
-== Dependency Net ==
+=== Dependency Net ===
 A dependency net is defined as follows:
 {{{
 DependencyNet =
@@ -519,7 +665,7 @@ dependencynet DEP_NET {
 }
 }}}
 
-== Interface Design == 
+=== Interface Design === 
 An interfacedesign is defined as follows:
 {{{
 InterfaceDesign =
@@ -553,99 +699,230 @@ Example for an interface design declaration:
 }}}
 
 
-== Material == 
+=== Material === 
+
+A material is used to define name and type of both a whole product which itself consists of several configurable items as well as every single configurable line item.
+For example both the car and all available parts as engines, gears, colors, etc. are declared as material. 
+For product material, besides name and type general features can be added, like the assignment of classes, classification, bill of materials, and configuration profiles which apply to the product.
+Please note, that material objects have no documentation, group, and status features. 
+
 A material is defined as follows:
-{{{
-Material = 
-  'material' ExtendedIdentifier ('{'
-     Description
-     type ID
-     BillOfMaterial*
-     ('classes' '{' ClassIdentifier* '}')?
-     ConfigurationProfile*
-  '}')?
+
+{{{ 
+Material :
+	'material' EXTENDED_ID ('{'
+		Description
+		type ID
+		'billofmaterials' '{' EXTENDED_ID* '}'?
+		'classes' '{' Classification* '}'?
+		'configurationprofiles' '{' EXTENDED_ID* '}'?
+	'}')?
+
+Classification :
+	CLASSNAME ('{' ValueAssignment* '}')?
+	
+
+ValueAssignment :
+	XID* '=' (NumericLiteral | SymbolicLiteral)+
 }}}
 
-The ID refers to the material type.
-Typical types are {{{KMAT}}} (configurable material) or {{{HAWA}}} (trading goods).
+A material definition starts with the keyword {{{material}}} followed by an {{{EXTENDED_ID}}} defining the name of the material.
 
-{{{
-BillOfMaterial =
-  'billofmaterial' '{'
-    ('itmes' '{' BOMitem* '}')?
-  '}'
-                 
-BOMitem =
-  INT ExtendedIdentifier
-  ('dependencies' '{' ID? ConfigurationProfileEntry*? '}')?   
-}}}
+The material definition can be enhanced by an optional body.
+If the body is added, {{{description}}} and {{{type}}} are mandatory features. The type is defined by an identifier ({{{ID}}}), typical types are {{{KMAT}}} (configurable material) or {{{HAWA}}} (trading goods).    
+Additionally, {{{billofmaterials}}}, {{{configurationprofiles}}} and {{{classes}}} can be referenced. 
+These features are required when specifying the material of a complete product, see also example below.
+By referencing the bill of material all configurable items available for the product are assigned to the product as BOM items. Thus the bill of material is like a master BOM. The items valid for a specific variant configuration are picked from this master BOM.
+For detailed information see [VCMLLanguage#Bill_of_Material].
+Adding configuration profiles to a material allows to define general settings and further object dependencies. For detailed information see [VCMLLanguage#Configuration_Profile].
+The references to classes allow to classify the product material with a set of classes. Additionally, values can be assigned to characteristics by means of classification.
+The entries for the optional features in the body can be made in any order.
 
-INT represents the item number of the BOM item, the ExtendedIdentifier refers to a material, 
-and the ID to the name of a selection condition.
+Example for a material definition for a product, i.e. including bill of material,  a class, and a configuration profile:
 
-There is also the opportunity to attach dependencies using a selection condition and configuration profile entries. 
-
-{{{
-ConfigurationProfile =
-  'configurationprofile' SYMBOL '{'
-    Status?
-    'bomapplication' ID
-    ('uidesign' ExtendedIdentifier)?
-    ID*
-    ConfigurationProfileEntry*
-  '}'
-         
-ConfigurationProfileEntry = INT ID
-}}}
-
-The ExtendedIdentifier names the appropriate Interfacedesign, and the optional IDs refer to the used DependencyNets.
-
-Example for a material declaration:
 {{{ 
 material CAR {
-  description "A configurable car"
-  type KMAT
-  classes {
-	(300)CAR
-  }
-  billofmaterial {
-	items {
-	  10	Engine_1500
-	  20	Engine_1800
-	  30	Engine_2100
-	  40	Engine_2400
-	  50	Gear_4
-	  60  	Gear_4automatic
-	  70	Gear_5
-	  80	Gear5automatic
-	  90	Interior_01
-	  100	Interior_02
-	  110	Interior_03
-	  120	Colour_black
-	  130	Colour_white
-	  140	Colour_red
-	}
-  }
-  configurationprofile 'profile_car' {
-    bomapplication AB12 uidesign CAR
-  }
+	description "A configurable car"
+	type KMAT
+	classes { (300)CAR }
+  billofmaterial { 'bom_car' }
+  configurationprofile {'profile_car' }
 }
+}}}
 
+Example for a material definition for configurable line items without any optional features:
+
+{{{
 material Engine_1500 {
-  description "Small engine"
-  type HAWA
+	description "Small engine"
+	type HAWA
 }
 
 material Engine_2400 {
-  description "Big engine"
-  type HAWA
+  	description "Big engine"
+	type HAWA
 }
 }}}
 
-Please note that material objects have no documentation, group, and status
-properties, but a type property that has to be defined. One can reference
-existing classes objects in the optional class list and define many bill 
-of materials and interface design objects. 
+=== Bill of Material ===
+
+The bill of material is a list of configurable items.
+The bill of material must be defined for the complete product, which is then the master BOM for all product variants. 
+This master BOM can directly list every single item of the product, see example 1, or list other BOMs for groups of items, like BOMs for engine, gear, etc. as shown in example 2. 
+You can also mix single items and BOMs in a BOM definition.
+To distinguish between mandatory material and variable, i.e. configurable material, the object/feature selection condition is used. 
+Declaration of a selection condition makes the material a variable part, i.e. it will only be added to the product if a specified condition is fullfilled. 
+
+A bill of material is defined as follows:
+
+{{{
+BillOfMaterial :
+	'billofmaterial' EXTENDED_ID ('[' options+=Option* ']')? '{'
+		'material' '{'EXTENDED_ID'}?
+		'items' '{' BOMItem* '}'?
+	'}'
+
+BOMItem : 
+	BOMItem_Material | BOMItem_Class
+
+BOMItem_Material :
+	INT EXTENDED_ID
+	('dependencies' '{'
+		'selectionCondition '{'EXTENDED_ID'}?				EXTENDED_ID?  ??
+		ConfigurationProfileEntry*
+	'}')?
+	
+BOMItem_Class :
+	INT CLASSNAME
+	('dependencies' '{'
+		'selectionCondition '{'EXTENDED_ID'}?				EXTENDED_ID?  ??
+		ConfigurationProfileEntry*
+	'}')?
+}}}
+
+The bill of material definition starts with the keyword {{{billofmaterial}}} followed by an {{{EXTENDED_ID}}} defining the name of the bill of material. and the features.   
+
+The material definition can be enhanced by an optional body with two optional features, {{{material}}} and {{{items}}}.
+The material referenced here is the material of the product, consisting of the keyword {{{material}}} followed by the name of the corresponding material.
+The feature items consists of the keyword {{{items}}} followed by a list of all BOM items, i.e. all configurable items belonging to the product.
+
+BOM items in turn can either be materials or classes (class nodes).
+Their definition starts with an integer number {{{INT}}}, representing the item number. This is followed by the name of this dedicated item, textually represented as an {{{EXTENDED_ID}}} for materials or the {{{CLASSNAME}}} for classes.
+
+Add info on when to select which type!
+
+Optionally, dependencies can be added giving the reference to a selection condition, see [VCMLLanguage#Selection_Condition], and to procedures.
+?? configuration profile entries, see [VCMLLanguage#Configuration_Profile].
+
+Example 1 for BOM with single items:
+
+{{{
+billofmaterial 'bom_car' {
+	material 'CAR'
+	items {
+		10	Engine_1500
+			dependencies {  sel cond. and/or procedure      }        ???
+		20	Engine_1800
+			dependencies {    ??     }        ???
+		30	Engine_2100
+			dependencies {    ??     }        ???
+		40	Engine_2400
+			dependencies {    ??     }        ???
+		50	Gear_4
+		60	Gear_4automatic
+		70	Gear_5
+		80	Gear5automatic
+		90	Interior_01
+		100	Interior_02
+		110	Interior_03
+		120	Colour_black
+		130	Colour_white
+		140	Colour_red
+	}
+}
+}}}
+
+Example 2 for BOM with further BOMs and single items:
+
+{{{
+billofmaterial 'bom_car' {
+	material 'CAR'
+	items {
+		10	bom_engine
+		20	bom_gear
+		30	bom_interior
+		40	bom_colour
+		50 	stereo
+		60	navigation system
+	}
+}
+billofmaterial 'bom_engine' {
+	material 'engine'
+	items {
+		10	Engine_1500
+	  	dependencies {    ??          }        ???
+		20	Engine_1800
+	 	dependencies {    ??          }        ???
+		30	Engine_2100
+		dependencies {    ??          }        ???
+		40	Engine_2400
+	 	dependencies {    ??          }        ???
+	}
+}
+billofmaterial 'bom_gear' {
+	material 'gear'
+	items {
+		10	Gear_4
+	 	20  Gear_4automatic
+	 	30	Gear_5
+		40	Gear5automatic
+	}
+}
+billofmaterial 'bom_interior' {
+	material 'interior'
+	items {
+		10	Interior_01
+		20	Interior_02
+		30	Interior_03
+	}
+}
+billofmaterial 'bom_colour' {
+	material 'colour'
+	items {
+		10	Colour_black
+	 	20	Colour_white
+		30	Colour_red
+	}
+}
+}}}
+
+=== Configuration Profile ===
+
+The configuration profile is defined as follows:
+{{{
+ConfigurationProfile 
+	:
+    'configurationprofile' EXTENDED_ID ('[' options+=Option* ']')? '{'
+	   (	('material' '{'EXTENDED_ID'})?
+	   		('status' Status)?
+	   		('bomapplication' XID)?
+	   		('uidesign' '{'EXTENDED_ID'})?
+	    	('fixing' Fixing)?
+	   )
+       ('DependencyNet' '{'EXTENDED_ID'}])*
+       (ConfigurationProfileEntry)*
+    '}'
+    
+ConfigurationProfileEntry :
+    INT EXTENDED_ID
+             
+}}}  
+The configuration profile consists of the keyword {{{'configurationprofile'}}}, followed by the name of the profile, textually represented as an {{{EXTENDED_ID}}}, and the features.  
+Optionally, the material of the product and a ui design can be referenced, and a status, a BOM application and a Fixing can be defined.
+Describe bom application!
+Describe fixing!
+Additionally, dependency nets are referenced and configuration profile entries ?? listed.
+The configuration profile entry is defined by an integer referring to the sequence of the entry and a reference to a procedure, textually represented as an {{{EXTENDED_ID}}}, 
 
 == Precondition ==
 A precondition is defined as follows:
@@ -787,3 +1064,4 @@ varianttable VAR_TAB {
   }
 }
 }}}
+
