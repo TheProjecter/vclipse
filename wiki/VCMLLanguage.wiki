@@ -64,7 +64,7 @@ import "../../FOLDERNAME/FILENAME.vcml"
 Optionally, a VCML model can contain one or more options. These options influence how objects are processed.
 
 {{{
-Option:
+Option :
 	Optiontype '=' String
 }}}
 
@@ -127,7 +127,6 @@ The identifiers and sublevel objects/features themselves are separately declared
 For more information on the identifiers syntax and usage for the different VC objects see [VCMLLanguage#Identifier].
 For more information on the common basic objects see [VCMLLanguage#Basic_options/Features].
 For the declaration of the sublevel objects/features specific to VC objects, see the [VCMLLanguage#List_of_VC_Objects]. 
-
 
 ==== Descriptions ====
 
@@ -315,7 +314,6 @@ NumericAdditionalProperties =
 
 NumericCharacteristicValue = NUMBER CharacteristicOrValueDependencies?
 }}}
-
 
 A !SymbolicType is written as follows:
 {{{	
@@ -536,7 +534,6 @@ Example for an interface design declaration:
     }
   }
 }}}
-
 
 === Material === 
 
@@ -761,11 +758,6 @@ Describe fixing!
 Additionally, dependency nets are referenced and configuration profile entries ?? listed.
 The configuration profile entry is defined by an integer referring to the sequence of the entry and a reference to a procedure, textually represented as an {{{EXTENDED_ID}}}, 
 
-
-
-
-
-
 == Precondition ==
 A precondition is defined as follows:
 {{{
@@ -915,25 +907,41 @@ Another construct allows to make comments for additional information. These are 
 There are several constructs which define different kinds of character sequences, like for example strings, symbols, identifiers or even dedicated keywords, which can be assigned to object values or objects. 
 Operators are also generally defined to support different kind of assignments between objects/features and object values.
 
-
 === Whitespace and Empty Line ===
 
 Whitespace and empty lines can be inserted at any place in the {{{.vcml}}} file for better readability and structuring of the file content. 
 Except for keywords which must be preceded and followed by a whitespace to be detectable, whitespace and empty lines are irrelevant for the model and not interpreted as code.
 
-
 === Comments ===
 
-VCML offers single-line comments and block comments.
-They are written like in Java or C:
+VCML offers single-line comments and block comments. The comment can start at any place in a line. They are written like in Java or C.
+Single-line comments do start with {{{//}}} and automatically end with the end of the line.
+Block comments start with {{{/*}}} and end with {{{*/}}}. They can but need not run over several lines. Block comments may not be nested.
+Block comments not only allow to give detailed additional information but they can also be used for other purposes:
+ * Enter incomplete definitions of objects as block comments which will be completed later and only then included in the model code.
+ * Temporarily exclude parts of the model by enclosing it in the block comment syntax, without deleting it completely from the model.
+
+Examples for single-line comments:
+
 {{{
-// this is a single line comment
+// this is a single line comment, starting in the first column of the line
     // this is another single line comment which does not start in the first column
-/* this is a 
-block comment
+import "platform:/resource/PROJECTNAME/FOLDERNAME/FILENAME.vcml"	//This is an import with an absolute path. (=comment)
+}}}
+
+Examples for block comments:
+
+{{{
+/* this is a block comment
+running over two lines
+*/
+
+import /*with an absolute path*/ "platform:/resource/PROJECTNAME/FOLDERNAME/FILENAME.vcml "
+
+/*note, that the path has to be completed later on:
+import "platform:/resource/??"
 */
 }}}
-Block comments may not be nested.
 
 === Strings ===
 
@@ -961,7 +969,6 @@ material software {
 }
 }}}
 
-
 === Symbols ===
 
 Symbols are character sequences which are enclosed in single quotes.
@@ -972,7 +979,6 @@ Symbols are case-insensitive.
 </wiki:comment>
 
 Symbols are used for example as names of characteristic values or names of configuration profiles or interface designs.
-
 
 They are used for example for naming of configuration 
 profile objects:
@@ -1000,9 +1006,6 @@ Symbols can be empty.
 ### clarify this
 </wiki:comment>
 
-
-
-
 === Identifier ===
 Three different types of identifiers are specified for VCML language. All VC objects, except Classes, Materials and InterfaceDesigns, can be named with simple identifiers. Please use the 
 class identifier to give a name to a class.
@@ -1023,9 +1026,6 @@ wIndOWs_7
 </wiki:comment>
 
 Identifiers are case insensitive.
-
- 
-
 
 === Extended identifier ===
 
