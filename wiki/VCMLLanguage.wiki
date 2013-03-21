@@ -17,7 +17,7 @@ VCML provides a textual language to represent complete product models of the SAP
 
 VCML source code is organized two different kinds of files:
  * files with extension {{{.vcml}}} contain all objects of a product model, e.g., characteristics, classes, configuration profiles, or dependency nets. 
- * files with extensions {{{.con}}}, {{{.proc}}}, {{{.sel}}}, and {{{.pre}}} contain the source code of dependencies of type _constraint_, _procedure_, _selection condition_, and _precondition_, respectively, in the respective language for dependencies as defined by SAP.
+ * files with extensions {{{.cons}}}, {{{.proc}}}, {{{.sel}}}, and {{{.pre}}} contain the source code of dependencies of type _constraint_, _procedure_, _selection condition_, and _precondition_, respectively, in the respective language for dependencies as defined by SAP.
 
 In the following the VCML file structure and the VCML-specific language syntax is described. 
 Each {{{.vcml}}} file contains the textual representation of a VCML model. It is built of three basic building blocks: imports, options, and definitions of VC objects, as shown below:
