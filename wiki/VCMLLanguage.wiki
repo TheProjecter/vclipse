@@ -15,7 +15,7 @@ as well as the SAP training courses provide introductory as well as in-depth inf
 
 VCML provides a textual language to represent complete product models of the SAP Variant Configurator (LO-VC) or SAP IPC.
 
-VCML source code is organized two different kinds of files:
+VCML source code is organized in two different kinds of files:
  * files with extension {{{.vcml}}} contain all objects of a product model, e.g., characteristics, classes, configuration profiles, or dependency nets. 
  * files with extensions {{{.cons}}}, {{{.proc}}}, {{{.sel}}}, and {{{.pre}}} contain the source code of dependencies of type _constraint_, _procedure_, _selection condition_, and _precondition_, respectively, in the respective language for dependencies as defined by SAP. These files are all located in a dedicated sub folder of the VCML folder. The name of the sub folder is {{{PROJECTNAME-dep}}}.
 
