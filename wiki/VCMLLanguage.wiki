@@ -386,7 +386,7 @@ An example for CharacteristicOrValueDependencies is:
 		SEL_COND // see [VCMLLanguage#Selection_Condition]
 	}
 }}}
-
+</wiki:comment>
 
 === Class ===
 
@@ -966,7 +966,8 @@ Sample strings are:
 
 These constructs are used to define names for objects/features. They allow to build names of different complexity with varying character sets.
 Some dedicated character sequences are reserved as keywords and thus cannot be used as identifier, symbol or classname, see [VCMLLanguage#Keywords Keywords]. 
-==== Identifier ====
+
+==== *Identifier* ====
 
 The simplest construction is the identifier, which is a character sequence beginning with a lower/upper character (only 
 ASCII characters are allowed) or underscore, which can be followed by further lower/upper characters, underscore 
@@ -986,7 +987,7 @@ Examples for *invalid* simple identifiers:
 Engine-1500		//- not allowed 
 }}}
 
-==== Symbols ====
+==== *Symbols* ====
 
 To allow special characters like {{{:}}}, {{{-}}}, {{{+}}}, etc., or numbers at the first position in character sequences for names of objects/features, the whole character sequence has to be enclosed in siongle quotes.
 This is called a symbol. Symbols are case-insensitive and can even be empty.
@@ -999,7 +1000,7 @@ Examples for valid symbols:
 'wIndOWs:7'
 }}}
 
-==== Extended identifier ====
+==== *Extended Identifier* ====
 
 The extended identifier allows to use either an identifier or a symbol as a name and can be used for most objects/features, except e.g. for classes, see .
 Extended identifier can not be empty. 
@@ -1015,7 +1016,7 @@ color
 'wIndOWs:7'
 }}}
   
-==== Classname ====
+==== *Classname* ====
 
 The classname is a special construct to define the name of the VC object kind Class. 
 It consists of an integer number surrounded by the brackets and a following extended identifier.
