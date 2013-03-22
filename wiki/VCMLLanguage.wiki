@@ -1040,13 +1040,13 @@ Following character sequences are used as keywords in the VCML language and can 
 
 ==== *Keywords for VCObject declaration* ====
 {{{
-  - billofmaterial			- material
-  - characteristic			- precondition
-  - class   				- procedure
-  - configurationprofile	- selectioncondition
-  - constraint				- variantfunction
-  - dependencynet			- varianttable 
-  - interfacedesign			- varianttablecontent
+  - billofmaterial				- material
+  - characteristic				- precondition
+  - class   					- procedure
+  - configurationprofile		- selectioncondition
+  - constraint					- variantfunction
+  - dependencynet				- varianttable 
+  - interfacedesign				- varianttablecontent
 }}}
 
 
@@ -1057,7 +1057,7 @@ Following character sequences are used as keywords in the VCML language and can 
   - group   					- classes
   - status						- billofmaterials
   - type						- arguments
-  - configurationprofileentry	-  format
+  - configurationprofileentry	- format
 }}}
 
 === Operators ===
