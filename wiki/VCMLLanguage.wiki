@@ -759,7 +759,7 @@ Describe fixing!
 Additionally, dependency nets are referenced and configuration profile entries ?? listed.
 The configuration profile entry is defined by an integer referring to the sequence of the entry and a reference to a procedure, textually represented as an {{{EXTENDED_ID}}}, 
 
-== Precondition ==
+=== Precondition ===
 A precondition is defined as follows:
 {{{
 Precondition =
@@ -786,7 +786,7 @@ precondition PRECOND {
 }
 }}}
 
-== Procedure ==
+=== Procedure ===
 A procedure is defined as follows:
 {{{
 Procedure =
@@ -812,7 +812,7 @@ procedure PROC {
 }
 }}}
 
-== Selection Condition == 
+=== Selection Condition === 
 A selection condition is defined as follows:
 {{{
 SelectionCondition =
@@ -838,7 +838,7 @@ selectioncondition SEL_COND {
 }
 }}}
 
-== Variant Function ==
+=== Variant Function ===
 Only the interface of a VariantFunction is defined here.
 ABAP respectively Java code is not defined in VCML.
 
@@ -871,7 +871,7 @@ variantfunction VAR_FUNC {
 }
 }}}
 
-== Variant Table ==
+=== Variant Table ===
 
 The structure (scheme) of a variant table is defined as follows:
 {{{
@@ -1048,7 +1048,7 @@ In addition, there are a number of two-character-sequences to define different l
 }}}
 
 
-==== *Keywords for declaration of other objects/features and arguments* ====
+==== *Keywords for Declaration of Other Objects/Features and Arguments* ====
 {{{
 - description				- characteristicgroup
 - documentation				- configurationprofiles
