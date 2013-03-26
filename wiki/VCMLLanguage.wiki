@@ -1003,7 +1003,7 @@ Examples for valid symbols:
 
 ==== *Extended Identifier* ====
 
-The extended identifier allows to use either an identifier or a symbol as a name and can be used for most objects/features, except e.g. for classes, see [VCMLLanguage#Classes].
+The extended identifier allows to use either an identifier or a symbol as a name and can be used for most objects/features, except e.g. for classes, see [VCMLLanguage#Classes Classes].
 Extended identifier can not be empty. 
 
 Examples for valid extended identifiers:
