@@ -1,6 +1,7 @@
 #summary VCML Language Documentation
 #labels Featured,Phase-Design
 #sidebar TableOfContents
+<wiki:toc max_depth="4" />
 
 = VCML Documentation =
 
