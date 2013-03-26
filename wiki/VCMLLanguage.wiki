@@ -906,6 +906,7 @@ Some constructs, like whitespace, empty lines or backspace?? support the structu
 Another construct allows to make comments for additional information. These are not part of the model and will not be interpreted as code.
 There are several constructs which define different kinds of character sequences, like for example strings, symbols, identifiers or even dedicated keywords, which can be assigned to object values or objects. 
 Operators are also generally defined to support different kind of assignments between objects/features and object values.
+For more information see also the Xtext grammar documentation under [http://www.eclipse.org/Xtext/documentation/2.3.0/Documentation.pdf].
 
 === Whitespace and Empty Line ===
 
@@ -1002,7 +1003,7 @@ Examples for valid symbols:
 
 ==== *Extended Identifier* ====
 
-The extended identifier allows to use either an identifier or a symbol as a name and can be used for most objects/features, except e.g. for classes, see .
+The extended identifier allows to use either an identifier or a symbol as a name and can be used for most objects/features, except e.g. for classes, see [VCMLLanguage#Classes].
 Extended identifier can not be empty. 
 
 Examples for valid extended identifiers:
@@ -1023,43 +1024,163 @@ It consists of an integer number surrounded by the brackets and a following exte
 
 Examples for valid classnames:
 {{{
-	(300)OpSys 
-	(200) car_kit4
-	(10)_gears
-	(100) 'Engines-SVU'
+(300)OpSys 
+(200) car_kit4
+(10)_gears
+(100) 'Engines-SVU'
 }}}
 
 === Keywords ===
 
-Following character sequences are used as keywords in the VCML language and can not be used therefore as identifiers:
-<wiki:comment>
-### the language should be extended such that these character sequences can be used as identifiers
+Following character sequences are used as keywords in the VCML language and can not be used therefore as identifiers. They are case sensitive.
+In addition, there are a number of two-character-sequences to define different languages for description and documentation. These are in line with SAP definitions.
 
-### there are more keywords, e.g. description, documentation, status, group, ...
-</wiki:comment>
-
-==== *Keywords for VCObject declaration* ====
+==== *Keywords for VC Object declaration* ====
 {{{
-  - billofmaterial				- material
-  - characteristic				- precondition
-  - class   					- procedure
-  - configurationprofile		- selectioncondition
-  - constraint					- variantfunction
-  - dependencynet				- varianttable 
-  - interfacedesign				- varianttablecontent
+- billofmaterial			- material
+- characteristic			- precondition
+- class   				- procedure
+- configurationprofile			- selectioncondition
+- constraint				- variantfunction
+- dependencynet				- varianttable 
+- interfacedesign			- varianttablecontent
 }}}
 
 
-==== *Keywords for declaration of other objects/features* ====
+==== *Keywords for declaration of other objects/features and arguments* ====
 {{{
-  - description					- characteristicgroup
-  - documentation				- configurationprofiles
-  - group   					- classes
-  - status						- billofmaterials
-  - type						- arguments
-  - configurationprofileentry	- format
+- description				- characteristicgroup
+- documentation				- configurationprofiles
+- group   				- classes
+- status				- billofmaterials
+- type					- arguments
+- configurationprofileentry		- format
+- table					- field
+- additionalValues			- displayAllowedvalues
+- multiValue				- noDisplay
+- notReadyForInput			- required
+- restrictable				- negativeValuesAllowed
+- intervalValuesAllowed			- caseSensitive
+- key					- released
+- inPreparation				- locked
+- entry					- top-down
+- bottom-up				- none
 }}}
 
 === Operators ===
 
-=== Literals ===
+Operators in {{{.vcml}}}-files are _Extended Backus-Naur Form_-like (EBNF) expressions. They allow to describe object dependecies and value assignments.
+
+The most important operators are the following:
+ * {{{=}}} single assignment
+ * {{{+=}}} multi value assignment
+ * {{{?=}}} boolean assignment
+ * {{{?}}} cardinality one or none
+ * {{{*}}} cardinality any number
+ * {{{+}}} cardinality at least once
+ * cardinality exactly one is the default value and required no operator.
+ * {{{()}}} groups expressions, like alternatives or numeric intervals
+ * {{{!}}} inverts an oparator or excludes a value
+ * {{{|}}} allows for multiple valid options as alternatives
+ 
+Examples for usage of operators:
+{{{
+Material :
+	'material' EXTENDED_ID ('{'								//material name is a mandatory single value EXTENDED_ID (no operator)
+		Description											//the description is a mandatory single value (no operator), if the body is used, see operator ? at the and of the body definition
+		type EXTENDED_ID									//type is a mandatory single value EXTENDED_ID (no operator), if the body is used, see operator ? at the and of the body definition
+		'billofmaterials' '{' EXTENDED_ID* '}'?				// billofmaterial is an optional value EXTENDED_ID (? operator)
+		'classes' '{' Classification* '}'?					//classes is an optional definition (? operator) which contains any number of classifications (* operator)
+		'configurationprofiles' '{' EXTENDED_ID* '}'?		//configurationprofiles is an optional value EXTENDED_ID (? operator)
+	'}')?													// the complete body is optional (? operator)
+
+Classification
+	CLASSNAME ('{' ValueAssignment* '}')?					//The classification name is a a mandatory single value CLASSNAME (no operator) which can optionally be followed by any number of value assignment definitions. 
+
+ValueAssignment :
+	EXTENDED_ID* '=' (NumericLiteral | SymbolicLiteral)+	//The value assignment can conatin any number of EXTENDED_IDs. Each EXTENDED_ID has a single assignment (=) to at least one (+) NumericLiteral or (|) SymbolicLitereal.
+}}}
+
+Example for a minimum material definition:
+{{{
+material CAR 
+}}}
+
+Example for a complete material definition:
+{{{
+material CAR {
+	description "A configurable car"
+	type KMAT
+	classes { (300)CAR }
+	billofmaterials { 'bom_car1' 'bom_car2'}
+	configurationprofiles { 'profile_car1' 'profile_car2' }
+}
+}}}
+
+=== Literals and Numeric Intervals===
+
+Literals are used for value assignment. Two types of literals are defined:
+ * Numeric literal, which can be positive or negative integer with or without decimal places. Additionally positive or negative exponents are allowed using the character {{{e}}}.
+ * Symbolic literal, which can be a character sequence as described in [VCMLLanguage#Symbols Symbols]. Note that {{{F}}} and {{{T}}} are used as keywords for false and true (no and yes) literals in boolean context.
+ 
+Examples for usage of literals:
+{{{
+characteristic colour {
+	description "oulor of the car"
+	symbolic {
+		numberOfChars 30
+		[]
+	values { 'bk' { description "black" } 'wh' { description "white" } 'rd' { description "red" } }
+}
+status released
+}
+
+characteristic seatnumber {
+	description "Number of seats"
+	numeric {
+	numberOfChars 1
+	decimalPlaces 0
+	[]
+	values { 2 4 5 7 }
+	}
+status released
+}
+
+characteristic 'automatic_gear' {
+	description "Selction of gear type"
+	symbolic {
+		numberOfChars 1
+		[ caseSensitive ]
+		values { 'F' { description "no" } 'T' { description "yes" } }
+	}
+status released
+[ restrictable ]
+}
+}}}
+
+To describe numeric intervals the hyphen character {{{-}}} is used between the lower bound number and the upper bound number. Additionally you can use standard operator cahracters to define interval boundaries according to your needs.
+
+Examples for valid numeric intervals:
+{{{
+characteristic seatnumber {
+	description "Number of seats"
+	numeric {
+	numberOfChars 1
+	decimalPlaces 0
+	[]
+	values { 2 - 7 }
+	}
+status released
+}
+	
+characteristic keynumber {
+	description "Number of keys for the car"
+	numeric {
+	numberOfChars 2
+	decimalPlaces 0
+	[]
+	values { <= 20 }
+	}
+status released
+}
+}}}
