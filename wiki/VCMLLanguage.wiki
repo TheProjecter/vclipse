@@ -102,7 +102,7 @@ VCObject :
 	| 	VariantTableContent
 }}}
 	
-The following table gives a short information about the purpose of each kind of VC object. For detailed information see the dedicated chapters in the [VCMLLanguage#List_of_VC_Objects].
+The following table gives a short information about the purpose of each kind of VC object. For detailed information see the dedicated chapters in the [VCMLLanguage#List_of_VC_Objects List of VC Objects].
 || *VC Object* || *Purpose* ||
 || [VCMLLanguage#Bill_of_Material Bill of Material] || The BOM contains all items (materials) which are required to cover all variants of the product and assigns them to the product model. ||
 || [VCMLLanguage#Characteristic Characteristic] || The characteristics precisely define all selectable options or features of a configurable product, together with their feature values. Characteristics can be assigned object dependencies and/or restrictions to ensure that the configurations are consistent and complete, i.e. they only contain valid combinations of features and feature values. Characteristics can be used for static information (display only) as well as for variable options. These variable options again may or may not allow user input. ||
@@ -125,10 +125,11 @@ Each declaration of a VC object itself consists of the dedicated keyword as list
 The body can contain other objects or references to other VC objects defined elsewhere in the {{{.vcml}}} file.
 There are some basic sublevel objects/features that are used in a number of VC objects while most sublevel objects/features are specific to a VC object. 
 The identifiers and sublevel objects/features themselves are separately declared later on in the vcml file. Using this hierarchical declaration structure, all identifiers and sub level objects/features are defined only once and can be used/referenced by all other objects and VC objects.
-For more information on the identifiers syntax and usage for the different VC objects see [VCMLLanguage#Identifier].
-For more information on the common basic objects see [VCMLLanguage#Basic_options/Features].
+For more information on the identifiers syntax and usage for the different VC objects see [VCMLLanguage#Identifier Identifier].
+For more information on the common basic objects see [VCMLLanguage#Basic_Options/Features Basic Options/Features].
 For the declaration of the sublevel objects/features specific to VC objects, see the [VCMLLanguage#List_of_VC_Objects List of VC Objects]. 
 
+=== Basic Options/Features ===
 ==== Descriptions ====
 
 Nearly each VC object has a description. For some VC objects it is mandatory and for some it is optional, see the respective sub chapter in the [VCMLLanguage#List_of_VC_Objects List of VC Objects] for more information. 
@@ -911,7 +912,7 @@ Block comments not only allow to give detailed additional information but they c
  * Enter incomplete definitions of objects as block comments which will be completed later and only then included in the model code.
  * Temporarily exclude parts of the model by enclosing it in the block comment syntax, without deleting it completely from the model.
 
-Note that comments can not be used within Strings, see [VCMLLanguage#Strings Strings]
+Note that comments can not be used within Strings, see [VCMLLanguage#Strings Strings].
 
 Examples for single-line comments:
 
