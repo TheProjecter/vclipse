@@ -78,7 +78,7 @@ Currently, the following options are defined:
  
 == VC Objects ==
 
-Each file can contain several top level VC objects.
+Each file can contain several top level VC objects. They contain all definitions required to make the product model usable in SAP Variant Configuration. 
 
 === Declaration of VC Objects ===
 
@@ -127,142 +127,131 @@ There are some basic sublevel objects/features that are used in a number of VC o
 The identifiers and sublevel objects/features themselves are separately declared later on in the vcml file. Using this hierarchical declaration structure, all identifiers and sub level objects/features are defined only once and can be used/referenced by all other objects and VC objects.
 For more information on the identifiers syntax and usage for the different VC objects see [VCMLLanguage#Identifier].
 For more information on the common basic objects see [VCMLLanguage#Basic_options/Features].
-For the declaration of the sublevel objects/features specific to VC objects, see the [VCMLLanguage#List_of_VC_Objects]. 
+For the declaration of the sublevel objects/features specific to VC objects, see the [VCMLLanguage#List_of_VC_Objects List of VC Objects]. 
 
 ==== Descriptions ====
 
-Nearly each VC object has a description.
-Descriptions can be single-language descriptions or multi-language descriptions.
+Nearly each VC object has a description. For some VC objects it is mandatory and for some it is optional, see the respective sub chapter in the [VCMLLanguage#List_of_VC_Objects List of VC Objects] for more information. 
+Descriptions can be single-language descriptions or multi-language descriptions. All SAP-supported ISO language codes can be used.
+In the case of single-language descriptions, the default language defined in VClipse preferences is used, if specified. Otherwise the English language (EN) is used.
+Note that descriptions are limited to 30 characters. In case longer texts are required, you can use the object/feature documentation, see [VCMLLanguage#Documentation Documentation].
 
+A description is defined as follows:
 {{{
 Description:
 	SimpleDescription | MultiLanguageDescriptions
-}}}
 
-A single-language description is written as follows:
-{{{	
 SimpleDescription:
-	'description' String
+	'description' STRING
+
+MultiLanguageDescriptions : 
+	{MultiLanguageDescriptions}
+	'description' '{' MultiLanguageDescription* '}'
+
+MultiLanguageDescription :
+	Language STRING
 }}}
 
-A multi-language description contains descriptions for multiple languages:
-{{{
-MultiLanguageDescriptions:
-	'description' '{' (Language String)* '}'
-	
-Language:
-	  AF | AR | BG | CA | CS | DA | DE | EL | EN | ES | ET | FI | FR | HE
-	| HR | HU | ID | IS | IT | JA | KO | LT | LV | MS | NL | NO | PL | PT
-	| RO | RU | SH | SK | SL | SR | SV | TH | TR | UK | Z1 | ZF | ZH
-}}}
-All SAP-supported ISO language codes can be used. 
+Both description definitions starts with the keyword {{{description}}}. In case of a simple description the keyword is followed by a single {{{STRING}}}. 
+In case of a multi-language description the keyword is followed by the 2-character keyword for the language definition and the {{{STRING}}} with the text in the respective language. You can add any number of languages.
+See [VCMLLanguage#Keywords_for_Language_Declaration Keywords for Language Declaration] for the supported keywords for {{{Language}}}.
 
-An example for a single-language description is
+Example for a single-language description:
 {{{
 description "the description of the VC object"
 }}}
 
-An example for a multi-language description is
+Example for a multi-language description:
 {{{
 description {
   EN "the description of the VC object"
   DE "die Beschreibung des VC-Objekts"
+  FR "la description de l'objet VC"
 }
 }}}
-
-In the case of single-language descriptions, the default language defined in VClipse preferences is used, if specified. Otherwise the English language is used (EN).
-
-Please note that descriptions are limited to 30 characters.
-In case longer texts are required, you can use documentations.
 
 ==== Documentation ====
 
-Several VC objects have a documentation.
-Documentations can be single-language documentations or multi-language documentations.
+Several VC objects can have an optional feature documentation, which allows to give detailed information using more than the 30 characters supported by the description.
+Same as with descriptions, documentations can be single-language or multi-language.
+In the case of single-language documentations, the default language defined in VClipse preferences is used, if specified. Otherwise the English language (EN) is used.
 
+A documentation is defined as follows:
 {{{
 Documentation:
 	SimpleDocumentation | MultiLanguageDocumentations
+
+SimpleDocumentation :
+	'documentation' STRING
+	
+MultipleLanguageDocumentation :
+	{MultipleLanguageDocumentation}
+	'documentation' '{' MultipleLanguageDocumentation_LanguageBlock* '}'
+	;
+
+MultipleLanguageDocumentation_LanguageBlock :
+	Language (FormattedDocumentationBlock)*
+	;
+
+FormattedDocumentationBlock :
+	STRING ('format' STRING)?
 }}}
 
-A single-language documentation is written as follows:
-{{{	
-SimpleDocumentation:
-	'documentation' String
-}}}
+Both documentation definitions starts with the keyword {{{documentation}}}. In case of a simple documentation the keyword is followed by a single {{{STRING}}}. 
+In case of a multi-language documentation the keyword is followed by the 2-character keyword for the language definition and the {{{STRING}}} with the text in the respective language. To attach a format information to a text block, you can optionally add the keyword {{{format}}} followed by a {{{STRING}}}.
+You can add any number of languages.
+See [VCMLLanguage#Keywords_for_Language_Declaration Keywords for Language Declaration] for the supported keywords for {{{Language}}}.
 
-Multi-language documentations are slightly more complicated than descriptions, since documentations may contain
-multiple text blocks with attached format information.
-
-Multi-language documentations contain documentations for multiple languages:
+Example for a single-language documentation:
 {{{
-MultiLanguageDocumentations:
-	'documentation' '{' (Language String ('format' String)? )* '}'
+documentation "the detailed documentation of the VC object"
 }}}
 
-An example for a single-language documentation is
-{{{
-documentation "the documentation of the VC object"
-}}}
-
-An example for a multi-language documentation is
-{{{
-documentation {
-  EN "the documentation of the VC object"
-  DE "die Dokumentation des VC-Objekts"
-}
-}}}
-
-<wiki:comment>
-### give another example which uses format
-</wiki:comment> 
-
+Example for a multi-language documentation with format information for the German text block:
 {{{
 documentation {
-  EN "the documentation of the VC object" 
-  DE "die Dokumentation des VC-Objekts"
+  EN "the detailed documentation of the VC object"
+  DE "die detaillierte Dokumentation des VC-Objekts" format "bold"		//check if the format information is correct!
 }
 }}}
-
-In the case of single-language documentations, the default language defined in VClipse preferences is used, if specified. Otherwise the English language is used (EN).
 
 ==== Status ====
 
-Many VC objects can have a status.
+Many VC objects can have an optional feature status, which gives information on the life cycle status of the object and is relevant for the SAP class maintenance. With the assignment of the respective status value you can set an object to be usable for variant configuration or you can temporarily or even permanently stop its usage.
 
-A status is written as follows:
+A status is defined as follows:
 {{{	
 Status:
 	'status' ('released' | 'inPreparation' | 'locked')
 }}}
+The status definition starts with the keyword {{{status}}} which is followed by one of the values {{{released}}}, {{{inPreparation}}}, or {{{locked}}}. 
 
-An example for a status is
+Example for a status is
 {{{
 status released
 }}}
 
 ==== Group ====
 
-These VC objects can also be assigned to groups.
-In the SAP systems, groups are defined in customization and thus have a restricted range of possible values.
-In VCML, they are written as strings and are therefore not restricted.
+Many VC objects can have an optional feature group, thus assigning the VC object to the specified group. This allows to easily search for all VC objects assigned to the same group.
 
-A group is written as follows:
+A group is defined as follows:
 {{{
 Group:
-	'group' String
+	'group' STRING
 }}}
+The group definition starts with the keyword {{{group}}} which is followed by a {{{STRING}}} defining the name of the group.
+In SAP, groups are defined in customization and thus have a restricted range of possible values.
+In VCML, they are written as strings and are therefore not restricted regarding the character sequence. Still, the length of a group name is restricted to 10 characters.
 
-An example for a group is
+Example for a group:
 {{{
-group "PRODUCTS_CAR"
+group "PROD_CAR"
 }}}
-
-The length of a group is restricted to 10 characters.
 
 == List of VC objects ==
-??Additionally, one or more objects have to be assigned with VC objects, which in turn can contain (sub level) objects or reference to other top level VC objects.
-//VC objects ohne body sind z.B. für generische 
+In this chapter, all VC objects are described in detail with their corresponding individual sub-level objects/features. For general information on VC objects see main chapter [VCMLLanguage#VC_Objects VC Objects].
+
 === Characteristic ===
 Characteristics are used to describe precisely of which elements a product is made of, and which values these elements can have.
 
@@ -291,7 +280,7 @@ CharacteristicAdditionalProperties =
 }}}
 
 Currently, only numeric and symbolic characteristics are possible.
-The other characteristic types possible in SAP like date or ADT are not yet implementd in VCML.
+The other characteristic types possible in SAP like date or ADT are not yet implemented in VCML.
 
 {{{
 CharacteristicType = NumericType | SymbolicType
@@ -394,7 +383,6 @@ An example for CharacteristicOrValueDependencies is:
 The main purpose of classes is to reference characteristics and attach them to materials of the model, see also [VCMLLanguage#Material Material]. 
 
 A class is defined as follows:
-
 {{{
 Class :
 	'class' CLASSNAME ('{'
@@ -1036,7 +1024,7 @@ Examples for valid classnames:
 Following character sequences are used as keywords in the VCML language and can not be used therefore as identifiers. They are case sensitive.
 In addition, there are a number of two-character-sequences to define different languages for description and documentation. These are in line with SAP definitions.
 
-==== *Keywords for VC Object declaration* ====
+==== *Keywords for VC Object Declaration* ====
 {{{
 - billofmaterial			- material
 - characteristic			- precondition
@@ -1066,6 +1054,14 @@ In addition, there are a number of two-character-sequences to define different l
 - inPreparation				- locked
 - entry					- top-down
 - bottom-up				- none
+}}}
+
+==== *Keywords for Language Declaration* ====
+{{{
+Language:
+	  AF | AR | BG | CA | CS | DA | DE | EL | EN | ES | ET | FI | FR | HE
+	| HR | HU | ID | IS | IT | JA | KO | LT | LV | MS | NL | NO | PL | PT
+	| RO | RU | SH | SK | SL | SR | SV | TH | TR | UK | Z1 | ZF | ZH
 }}}
 
 === Operators ===
@@ -1159,7 +1155,7 @@ status released
 }
 }}}
 
-To describe numeric intervals the hyphen character {{{-}}} is used between the lower bound number and the upper bound number. Additionally you can use standard operator cahracters to define interval boundaries according to your needs.
+To describe numeric intervals the hyphen character {{{-}}} is used between the lower bound number and the upper bound number. Additionally you can use standard operator characters to define interval boundaries according to your needs.
 
 Examples for valid numeric intervals:
 {{{
