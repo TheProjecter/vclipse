@@ -395,7 +395,7 @@ characteristic gear {
   }
   status released
 }
-{{{
+
 characteristic model {
   description "available car models"
   symbolic {
@@ -405,6 +405,7 @@ characteristic model {
   }
   status released
 }
+
 characteristic convertible {
   description "Do you want a convertible?"
   symbolic {
