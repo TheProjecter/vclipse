@@ -130,12 +130,14 @@ For more information on the common basic objects see [VCMLLanguage#Basic_Options
 For the declaration of the sublevel objects/features specific to VC objects, see the [VCMLLanguage#List_of_VC_Objects List of VC Objects]. 
 
 === Basic Options/Features ===
-==== Descriptions ====
+The following description give a brief overview of the basic options/features. For detailed information see the official SAP documentation.
 
-Nearly each VC object has a description. For some VC objects it is mandatory and for some it is optional, see the respective sub chapter in the [VCMLLanguage#List_of_VC_Objects List of VC Objects] for more information. 
+==== Description ====
+
+Nearly every VC object has a description. For some VC objects it is mandatory and for some it is optional, see the respective sub chapter in the [VCMLLanguage#List_of_VC_Objects List of VC Objects] for more information. 
 Descriptions can be single-language descriptions or multi-language descriptions. All SAP-supported ISO language codes can be used.
 In the case of single-language descriptions, the default language defined in VClipse preferences is used, if specified. Otherwise the English language (EN) is used.
-Note that descriptions are limited to 30 characters. In case longer texts are required, you can use the object/feature documentation, see [VCMLLanguage#Documentation Documentation].
+Descriptions are limited to 30 characters. In case longer texts are required, you can use the object/feature documentation, see [VCMLLanguage#Documentation Documentation].
 
 A description is defined as follows:
 {{{
@@ -234,7 +236,7 @@ status released
 
 ==== Group ====
 
-Many VC objects can have an optional feature group, thus assigning the VC object to the specified group. This allows to easily search for all VC objects assigned to the same group.
+Many VC objects can have an optional feature group, which refers to the SAP feature characteristics group. Assigning the VC object to a group enables you to easily search for all VC objects of the same group.
 
 A group is defined as follows:
 {{{
@@ -251,82 +253,75 @@ group "PROD_CAR"
 }}}
 
 == List of VC objects ==
-In this chapter, all VC objects are described in detail with their corresponding individual sub-level objects/features. For general information on VC objects see main chapter [VCMLLanguage#VC_Objects VC Objects].
+In this chapter, all VC objects are described in detail with their corresponding individual sub-level objects/features and attributes. For general information on VC objects see main chapter [VCMLLanguage#VC_Objects VC Objects].
 
 === Characteristic ===
-Characteristics are used to describe precisely of which elements a product is made of, and which values these elements can have.
+Characteristics are used to describe precisely of which elements a product is made of, and which values these elements can have. Each variable property requires a characteristic.
 
-A characteristic is written as follows:
+A characteristic is defined as follows:
 {{{
-Characteristic =
-  'characteristic' EXTENDED_ID ( '{'
-     Description
-	 Documentation?
-	 CharacteristicType
-     Status?
-   	 Group?
-	 CharacteristicAdditionalProperties?
-	 CharacteristicOrValueDependencies?
-  '}' )? 	
-
-CharacteristicAdditionalProperties = 
-  '[' 'additionalValue'?
-      'required'?
-      'restrictable'?
-      'noDisplay'?
-      'notReadyForInput'?
-      'multiValue'?
-      'displayAllowedValues'?  
-  ']'
+Characteristic :
+	'characteristic' EXTENDED_ID ('[' options+=Option* ']')? ('{'
+	(	Description
+	&	Documentation?
+	&	CharacteristicType
+	&	('status' Status)?
+	&	('group' STRING)?
+	&	('[' ('additionalValues'?
+		& 'required'?
+		& 'restrictable'?
+		& 'noDisplay'?
+		& 'notReadyForInput'?
+		& 'multiValue'?
+		& 'displayAllowedValues'?
+		& ('table' XID 'field' XID)?)
+		']')?
+	&	CharacteristicOrValueDependencies?
+	)
+	'}')?
 }}}
+A characteristic definition starts with the keyword {{{characteristic}}} followed by a {{{EXTENDED_ID}}} defining the name of the characteristic. 
+The characteristic can be enhanced by an optional body. If the body is added, a {{{Description}}} and the {{{CharacteristicType}}} are mandatory features while {{{Documentation}}}, {{{Status}}}, {{{Group}}} a number of attributes enclosed in square brackets {{{[ ]}}} and dependencies are optional. For more information see [VCMLLanguage#Characteristic_Types Characteristic Types], [VCMLLanguage#Characteristic_Attributes Characteristic Attributes] or [VCMLLanguage#Characteristic_Dependencies Characteristic Dependencies].
+For detailed information on the basic features description, documentation, status and group see the respective chapters [VCMLLanguage#Description Description], [VCMLLanguage#Documentation Documentation], [VCMLLanguage#Status Status], or [VCMLLanguage#Group Group].
+The entries for the optional features in the body can be made in any order. A characteristic definition without body can be used e.g. to include characteristics as placeholders whose definition will be completed later on.
 
-Currently, only numeric and symbolic characteristics are possible.
-The other characteristic types possible in SAP like date or ADT are not yet implemented in VCML.
-
+==== Characteristic Types ====
+Three characteristic types are available in VCML, allowing for different types of characteristic values. They are defined as follows:
 {{{
-CharacteristicType = NumericType | SymbolicType
+CharacteristicType :
+		NumericType | SymbolicType | DateType
 }}}
 
-A !NumericType is written as follows:
-{{{	
-NumericType =
-  'numeric' '{'
-     'numberOfChars' INT
-     'decimalPlaces' INT
-	 ('unit' String)?
-     NumericAdditionalProperties?
-     ('values' '{' NumericCharacteristicValue* '}' )?
-  '}'
+The *numeric type characteristic* is defined as follows:
+{{{
+NumericType : 
+	'numeric' '{'
+	(	('numberOfChars' INT)
+	&	('decimalPlaces' INT)
+	&	('unit' STRING)?
+	&	('[' (	'negativeValuesAllowed'?
+		&	'intervalValuesAllowed'?)
+	 	']')?
+	&	('values' '{' NumericCharacteristicValue* '}')?
+	)
+	'}'
 
-NumericAdditionalProperties = 
-  '[' 'negativeValuesAllowed'?
-      'intervalValuesAllowed'?  
-  ']'
-
-NumericCharacteristicValue = NUMBER CharacteristicOrValueDependencies?
+NumericCharacteristicValue :
+	'*'?
+	NumberListEntryForValues
+		(('{'
+	 	 (	Documentation?
+	  	&	CharacteristicOrValueDependencies?)
+		'}')?
 }}}
+The numeric characteristic definition starts with the keyword {{{numeric}}} and is followed by a mandatory body. The body includes the mandatory objects/features {{{numberOfChars}}} and {{{decimalPlaces}}}. 
+The keyword {{{numberOfChars}}} followed by an integer number defines the maximum number of digits which is allowed for the values of this characteristic, e.g. 3 to allow values up to 999.
+The keyword {{{decimalPlaces}}} followed by an integer number defines the maximum number of digits after the decimal point which is allowed for the values of this characteristic, e.g. 2 to allow values with an accuracy of one-hundreth.
+Note that the number of characters includes the number of decimal places if defined. Additionally, {{{unit}}} and {{{values}}} as well as optional attributes can be defined.
+The feature unit allows to add a unit of measurement by giving a string, like {{{"pc"}}} for pieces or {{{"l"}}} for liter, etc.
+The feature values allows to define any number of single values or a value range, which can be enhanced by an individual documentation and/or dependencies. The asterisk {{{*}}} preceding a value defines it as default value.
 
-A !SymbolicType is written as follows:
-{{{	
-SymbolicType =
-  'symbolic' '{'
-     'numberOfChars' INT
-     SymbolicAdditionalProperties?
-     ('values' '{' CharacteristicValue* '}' )?
-  '}'
-
-SymbolicAdditionalProperties = 
-  '[' 'caseSensitive'? ']'
-
-CharacteristicValue =
-  SYMBOL ('{' 
-    Description? 
-    Documentation? 
-    CharacteristicOrValueDependencies?
-  '}')?
-}}}
-
-An example for a characteristic is
+Examples for characteristics with numeric type:
 {{{
 characteristic ENGINE {
   description "the possible engines for a car"
@@ -336,48 +331,201 @@ characteristic ENGINE {
     values {1500 1800 2100 2400}
   } 
   status released
-  group "PRODUCTS_CAR"
+  group "PROD_CAR"
+}
+
+characteristic ENGINE {
+  description "the possible engines for a car"
+  numeric { 
+    numberOfChars 2
+    decimalPlaces 1
+    values {1.5 *1.8 2.1 2.4}					//The default value is 1.8
+  } 
+  status released
+  group "PROD_CAR"
+}
+characteristic keynumber {
+  description "number of the keys for the car"
+  numeric {
+    numberOfChars 2
+    decimalPlaces 0
+    [intervalValuesAllowed]
+    values { (*2 - 20) {documentation "May be required for several drivers in big companies" }}
+  }
+  status released
 }
 }}}
 
-Dependencies, i.e. conditions, procedures, or constraints can be attached to characteristics or characteristic values.
+The *symbolic type characteristic* allows to define non-numeric names as characteristic values, including boolean true/false decisions. 
 
-CharacteristicOrValueDependencies are written as follows:
+It is defined as follows:
+{{{
+SymbolicType :
+	'symbolic' '{'
+	(	('numberOfChars' INT)
+	&	('[' 'caseSensitive'? ']')?
+	&	('values' '{' CharacteristicValue* '}')?
+	)
+	'}'
+
+CharacteristicValue :
+	default?='*'?
+	EXTENDED_ID
+		(('{'
+	  	(	Description?
+	  	&	Documentation?
+	  	&	CharacteristicOrValueDependencies?
+	 	)
+		'}')?
+}}}
+The symbolic characteristic definition starts with the keyword {{{symbolic}}} and is followed by a mandatory body. The body includes the mandatory object/feature {{{numberOfChars}}}. 
+The keyword {{{numberOfChars}}} followed by an integer number defines the maximum number of characters which is allowed for the names of the characteristic values.
+Additionally, the feature {{{values}}} and the optional attribute {{{caseSensitive}}} can be defined.
+The feature values allows to define any number of names, which can be enhanced by an individual description, documentation and/or dependencies. The value name of the symbolic characteristic type is textually represented as an {{{EXTENDED_ID}}}. The asterisk {{{*}}} preceding a value defines it as default value.
+By giving the attribute {{{caseSensitive}}} you can distinguish between entries made in upper or lower case.
+
+Examples for characteristics with symbolic type:
+{{{
+characteristic gear {
+  description "selectable types of gears"
+  symbolic {
+    numberOfChars 15
+        [caseSensitive]
+    values { (*G_4 {description "gear 4" } G_4a {description "gear 4 automatic" } G_5 {description "gear 5" } G_5a {description "gear 5 automatic" }) }
+  }
+  status released
+}
+{{{
+characteristic model {
+  description "available car models"
+  symbolic {
+    numberOfChars 15
+        []
+    values { (*Alpha Beta Gamma Delta Epsilon) }		// since the attribute caseSensitive is not given, the user may enter Alpha as alpha, Alpha, ALPHA, alPha or any other lower/upper case combination as valid model name
+  }
+  status released
+}
+characteristic convertible {
+  description "Do you want a convertible?"
+  symbolic {
+    numberOfChars 1
+    [ caseSensitive ]
+    values { 'F' { description "no" } 'T' { description "yes" } }
+  }
+  status released
+}
+}}}
+
+The *date characteristic type* is defined as follows:
+{{{
+DateType : 
+	{DateType}
+	'date' '{'
+	(	('[' ( 'intervalValuesAllowed'?)']')?
+	&	('values' '{' DateCharacteristicValue* '}')?
+	)
+	'}'
+	
+DateCharacteristicValue :
+	default?='*'?
+	(DATE ('-' DATE)?
+		(('{'
+	  	(	Documentation?
+	  	&	CharacteristicOrValueDependencies?)
+		'}')?
+	));
+
+DATE : INT '.' INT '.' INT;
+}}}
+
+The date characteristic definition starts with the keyword {{{date}}} and is followed by a mandatory body. The body includes the optional attribute {{{intervalValuesAllowed}}} and object/feature {{{values}}}. 	
+If the attribute {{{intervalValuesAllowed}}} is entered, you may define date ranges (from - to) in the {{{values}}} feature.
+The feature values allows to define any number of dates or date ranges, which can be enhanced by an individual documentation and/or dependencies. The value name of the date characteristic type is textually represented as {{{DATE}}} of format {{{INT.INT.INT}}}. 
+The asterisk {{{*}}} preceding a value defines it as default value.
+<wiki:comment>
+Check this description for correctness!!
+Clarify body is mandatory but both attribute and values is optional??  reason?
+What is the date format year/month/day or day/month/year? Or both possible since no restriction on INT?!
+</wiki:comment>
+
+Examples for characteristics with date type:
+{{{
+characteristic delivery date {
+	description "enter the required delivery date"
+	date {
+		values { ?? }
+	}
+	status released
+}
+characteristic delivery date {
+	description "enter the required delivery time range"
+	date {
+		[intervalValuesAllowed]
+		values { ?? - ?? }
+	}
+	status released
+}
+}}}
+
+==== Characteristic Attributes ====
+The following optional attributes are used as boolean flags and can be used to specify certain behaviour for the characteristic. For detailed information on this attributes see also the official SAP documentation.
+The attributes can be entered in any order within square brackets.
+ * additionalValues			allows  other than the values defined via characteristic type to be entered
+ * required					a value must be entered/selected for the characteristic, it must not be left empty 
+ * restrictable				the characteristic values can be restricted dynamically depending e.g. on other entries made during variant configuration
+ * noDisplay					the characteristic is not displayed in the Variant configuration. This allows to create characteristics which do not directly depend on user input but rather on other characteristics, e.g. for internal calculations
+ * notReadyForInput			does not allow manual user input, instead the value can be set e.g. by dependencies
+ * multiValue					this characteristic allows input or selection of multiple values
+ * displayAllowedValues		all allowed values are displayed for user selection
+ * ('table' XID 'field' XID)	<wiki:comment>Is this the SAP check table? table + name , field + ? ?</wiki:comment>
+ 
+Example for attribute usage for a Info text characteristic:
+{{{
+characteristic INFO_convertible {
+	description "non-availability of convertib"
+	documentation "Information on non-availability of convertibles for selected model"
+	symbolic {
+	numberOfChars 30
+	[ restrictable notReadyForInput ]					// restrictable, since the message shall only be displayed for respective model selection. Not ready for input, since only a info text shall be displayed an no user input can be made
+	values {
+	info { 
+		description "For the selected model there i"
+		documentation "For the selected model there is no convertible available." 
+		}		
+	}
+	}
+	status released
+}
+}}}
+
+====Characteristic Dependencies ====
+Dependencies, i.e. conditions, procedures, or constraints can be attached to characteristics or to single characteristic values.
+
+CharacteristicOrValueDependencies are defined as follows:
 {{{	
-CharacteristicOrValueDependencies =
+CharacteristicOrValueDependencies :
   'dependencies' '{'
-     ID*
+     EXTENDED_ID*
   '}'
 }}}
-The {{{ID}}} name the attached depedencies.
 
-<wiki:comment>
-### This is an example for local dependencies
-An example for CharacteristicOrValueDependencies is:
+The dependency definition starts with the keyword {{{dependencies}}} and is followed by the name(s) of the attached depedency/ies, which is/are textually represented by {{{EXTENDED_ID}}}.
+The source code of dependencies of type _constraint_, _procedure_, _selection condition_, and _precondition_, respectively is stored in files with extensions {{{.cons}}}, {{{.proc}}}, {{{.sel}}}, and {{{.pre}}}, in the respective language for dependencies as defined by SAP. 
+These files have to be located in a dedicated sub folder: for a VCML file with name {{{FILENAME.vcml}}}, the dependency files have to be located in a folder {{{FILENAME-dep}}}. The name of the dependency source-code file must be the same as the name of the dependency, with the respective extension given above.
+
+Example for characteristic with dependency:
 {{{
-	dependencies {
-		precondition {
-            description "precondition for gears"
-            PRODUCTS_CAR
-            source { $SELF.GEAR in ('4-gear', '4-gear automatic')       
-                       if $ROOT.ENGINE IN ('1500', '1800') 
-                    }		
-        }
-		
-		selectioncondition {
-            description "selection condition for gears"
-            source { $SELF.GEAR SPECIFIED 
-                     if $ROOT.ENGINE SPECIFIED 
-            }
-        }
-		
-		// global dependencies like procedure, selection condition, or precondition 
-
-		PRECOND  // see [VCMLLanguage#Precondition]
-		SEL_COND // see [VCMLLanguage#Selection_Condition]
-	}
+characteristic convertible {
+  description "Do you want a convertible?"
+  symbolic {
+    numberOfChars 1
+    [ caseSensitive ]
+    values { 'F' { description "no" } 'T' { description "yes" } }
+  }
+  status released
+  dependencies { CN_CAR_12C3C45 }
+}
 }}}
-</wiki:comment>
 
 === Class ===
 
@@ -386,7 +534,7 @@ The main purpose of classes is to reference characteristics and attach them to m
 A class is defined as follows:
 {{{
 Class :
-	'class' CLASSNAME ('{'
+	'class' CLASSNAME ('{' 
 		Description
     	Status?
     	Group?
@@ -398,7 +546,7 @@ CLASSNAME = '(' INT ')' EXTENDED_ID
 }}}
 
 A class definition starts with the keyword {{{class}}} followed by a {{{CLASSNAME}}}. 
-The {{{CLASSNAME}}} consists of an integer number set in brackets defining the class type and an {{{XID}}} defining the name of the class.
+The {{{CLASSNAME}}} consists of an integer number enclosed in parentheses defining the class type and an {{{XID}}} defining the name of the class.
 The class type must be valid for usage in variant configuration, like (300).
 
 The class can be enhanced by an optional body.
@@ -1010,7 +1158,7 @@ color
 ==== *Classname* ====
 
 The classname is a special construct to define the name of the VC object kind Class. 
-It consists of an integer number surrounded by the brackets and a following extended identifier.
+It consists of an integer number encloseded by parentheses and a following extended identifier.
 
 Examples for valid classnames:
 {{{
