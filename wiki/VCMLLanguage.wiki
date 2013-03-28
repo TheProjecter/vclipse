@@ -471,14 +471,14 @@ characteristic delivery date {
 ==== Characteristic Attributes ====
 The following optional attributes are used as boolean flags and can be used to specify certain behaviour for the characteristic. For detailed information on this attributes see also the official SAP documentation.
 The attributes can be entered in any order within square brackets.
- * additionalValues			allows  other than the values defined via characteristic type to be entered
- * required					a value must be entered/selected for the characteristic, it must not be left empty 
- * restrictable				the characteristic values can be restricted dynamically depending e.g. on other entries made during variant configuration
- * noDisplay					the characteristic is not displayed in the Variant configuration. This allows to create characteristics which do not directly depend on user input but rather on other characteristics, e.g. for internal calculations
- * notReadyForInput			does not allow manual user input, instead the value can be set e.g. by dependencies
- * multiValue					this characteristic allows input or selection of multiple values
- * displayAllowedValues		all allowed values are displayed for user selection
- * ('table' XID 'field' XID)	<wiki:comment>Is this the SAP check table? table + name , field + ? ?</wiki:comment>
+ * additionalValues				//allows  other than the values defined via characteristic type to be entered
+ * required						//a value must be entered/selected for the characteristic, it must not be left empty 
+ * restrictable					//the characteristic values can be restricted dynamically depending e.g. on other entries made during variant configuration
+ * noDisplay					//the characteristic is not displayed in the Variant configuration. This allows to create characteristics which do not directly depend on user input but rather on other characteristics, e.g. for internal calculations
+ * notReadyForInput				//does not allow manual user input, instead the value can be set e.g. by dependencies
+ * multiValue					//this characteristic allows input or selection of multiple values
+ * displayAllowedValues			//all allowed values are displayed for user selection
+ * ('table' XID 'field' XID)	//<wiki:comment>Is this the SAP check table? table + name , field + ? ?</wiki:comment>
  
 Example for attribute usage for a Info text characteristic:
 {{{
