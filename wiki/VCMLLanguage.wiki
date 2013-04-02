@@ -107,7 +107,7 @@ The following table gives a short information about the purpose of each kind of 
 || [VCMLLanguage#Bill_of_Material Bill of Material] || The BOM contains all items (materials) which are required to cover all variants of the product and assigns them to the product model. ||
 || [VCMLLanguage#Characteristic Characteristic] || The characteristics precisely define all selectable options or features of a configurable product, together with their feature values. Characteristics can be assigned object dependencies and/or restrictions to ensure that the configurations are consistent and complete, i.e. they only contain valid combinations of features and feature values. Characteristics can be used for static information (display only) as well as for variable options. These variable options again may or may not allow user input. ||
 || [VCMLLanguage#Class Class] || In the standard SAP R/3 the class type 300 is the class type for variants. In the {{{.vcml}}} file all characteristics defined for the product model are assigned to this class to enable their usage for material configuration.||
-|| [VCMLLanguage#Configuration_Profile Configuration Profile] || The configuration profile is mandatory for each configurable object. It contains general settings, like the product material??, the user interface design as well as standard networks (NPs) ?? and general procedures (PPs)?? which are to be used.Dependencies are also defined in the configuration profile.  The definitions depend on the object type. ||
+|| [VCMLLanguage#Configuration_Profile Configuration Profile] || The configuration profile is mandatory for each configurable object. It contains general settings, like the product material??, the user interface design as well as standard networks (NPs) ?? and general procedures (PPs)?? which are to be used. Dependencies are also defined in the configuration profile.  The definitions depend on the object type. ||
 || [VCMLLanguage#Constraint Constraint] || Constraints monitor the consistency of a configuration. They describe dependencies between characteristics and contain information on which conditions must be fulfilled if the configuration is to be consistent.According to Sap R/3 constraints must belong to a dependency net. ||
 || [VCMLLanguage#Dependency_Net Dependency Net] || The dependency net groups all constraints for the product model and provides like a single point of entry to the constraints of the whole configuration. ||
 || [VCMLLanguage#Interface_Design Interface Design] || The interface design supports grouping of characteristics to enable a structured layout. ||
@@ -676,7 +676,7 @@ CLASSNAME = '(' INT ')' EXTENDED_ID
 }}}
 
 A class definition starts with the keyword {{{class}}} followed by a {{{CLASSNAME}}}. 
-The {{{CLASSNAME}}} consists of an integer number enclosed in parentheses defining the class type and an {{{XID}}} defining the name of the class.
+The {{{CLASSNAME}}} consists of an integer number enclosed in parentheses defining the class type and an {{{EXTENDED_ID}}} defining the name of the class.
 The class type must be valid for usage in variant configuration, like (300).
 
 The class can be enhanced by an optional body.
@@ -713,91 +713,117 @@ class (300)CAR {
 
 === Configuration Profile ===
 
+The configuration profile is a mandatory VC object for every variant configuration model. It provides the central settings applying to the model, the assignment of the dependency net(s) containing all constraints, and the procedures. 
+
 The configuration profile is defined as follows:
 {{{
-ConfigurationProfile 
-	:
-    'configurationprofile' EXTENDED_ID ('[' options+=Option* ']')? '{'
-	   (	('material' '{'EXTENDED_ID'})?
-	   		('status' Status)?
-	   		('bomapplication' EXTENDED_ID)?
-	   		('uidesign' '{'EXTENDED_ID'})?
-	    	('fixing' Fixing)?
-	   )
-       ('DependencyNet' '{'EXTENDED_ID'}])*
-       (ConfigurationProfileEntry)*
-    '}'
-    
+ConfigurationProfile :
+	'configurationprofile' EXTENDED_ID ('[' options+=Option* ']')? '{'
+		(	('material' '{'EXTENDED_ID'})?
+		&	('status' Status)?
+		&	('bomapplication' EXTENDED_ID)?
+		&	('uidesign' '{'EXTENDED_ID'})?
+		&	('fixing' Fixing)?
+		)
+		EXTENDED_ID*
+		ConfigurationProfileEntry*
+	'}'
+
+Fixing :
+	'fixing' ('entry' | 'top-down' | 'bottom-up' | 'none')
+	
 ConfigurationProfileEntry :
-    INT EXTENDED_ID
-             
+	INT EXTENDED_ID
 }}}  
-The configuration profile starts with the keyword {{{'configurationprofile'}}}, followed by the name of the profile, textually represented as an {{{EXTENDED_ID}}}, and the features.  
-Optionally, the material of the product and a ui design can be referenced, and a status, a BOM application and a Fixing can be defined.
-Describe bom application!
-Describe fixing!
-Additionally, dependency nets are referenced and configuration profile entries ?? listed.
+
+The configuration profile definition starts with the keyword {{{'configurationprofile'}}}, followed by the name of the profile, textually represented as an {{{EXTENDED_ID}}} and a mandatory body with additional features.
+The body contains several optional features {{{material}}}, {{{status}}}, {{{bomapplication}}}, {{{uidesign}}}, and {{{fixing}}}. 
+The keyword {{{material}}} followed by an {{{EXTENDED_ID}}} defining the name of the master material assigns the configuration profile to a specific material. 
+The keyword {{{bomapplication}}} followed by an {{{EXTENDED_ID}}} defining the name of the BOM application selects the BOM explosion level which is to be used for the configuration model. 
+The keyword {{{uidesign}}} followed by an {{{EXTENDED_ID}}} defining the name of the user interface design assigns a configuration user interface design, see [VCMLLanguage#Interface_Design Interface Design] for more information.
+The fixing definition starts with the keyword {{{fixing}}} which is followed by one of the values {{{entry}}}, {{{top-down}}}, {{{bottom-up}}}, or {{{none}}}. This allows to control the handling of order BOMs, see official SAP documentation for more information.
+The entries for the optional features in the body can be made in any order.
+
+Additionally, dependency net(s) for the configuration model are assigned, by listing their names textually represented as {{{EXTENDED_ID}}}, as well as procedures using {{{configurationprofileentries}}}.
 The configuration profile entry is defined by an integer referring to the sequence of the entry and a reference to a procedure, textually represented as an {{{EXTENDED_ID}}}, 
+
+Example for a configuration profile declaration:
+{{{
+configurationprofile PROD_CAR {
+	material CAR
+	status released
+	bomapplication SD01
+	uidesign PROD_CAR
+	DEP_NET_CAR
+	10 PP_CAR1
+	20 PP_CAR2
+	30 PP_GEN_01
+	}
+}}}
 
 === Constraint === 
 
+Constraints declare the configuration rules for the model, like setting of characteristic values and checking values to ensure consistency.
+All constraint names are listed in the dependency net of the configuration model, see [VCMLLanguage#Dependency_Net Dependency Net].
+The source code of every constraint is stored in an individual file with extension {{{.cons}}}, see [VCMLLanguage#Introduction_to_VCML_Model_Structure Introduction to VCML Model Structure]. The syntax of the source code is exactly defined as in SAP.
+
 A constraint is defined as follows:
 {{{
-Constraint =
-  'constraint' ID ('{'
-    Description
-    Documentation?
-    Status?
-    Group?
-    ('source' '{' ConstraintSource '}' )?
+Constraint :
+	'constraint' EXTENDED_ID ('{'
+	(	Description
+	&	Documentation?
+	&	Status?
+	&	Group?
+	)
   '}')?  
 }}}
 
-{{{ConstraintSource}}} is the source code of the constraint.
-The syntax of the source code is exactly defined like in SAP.
+A constraint definition starts with the keyword {{{constraint}}} followed by an {{{EXTENDED_ID}}} defining the name of the dependency net.
+The constraint definition can be enhanced by an optional body.
+If the body is added, {{{description}}} is a mandatory feature, while {{{documentation}}}, {{{status}}}, and {{{group}}} are optional. 
 
 Example for a constraint declaration:
 {{{
-constraint CS_CAR1 {
-  description "Possible interior for the smallest engine"
-  status released
+constraint CN_CAR1 {
+	description "gears valid for engine 1500"
+	status released
 	group "PRODUCTS_CAR"
-	source {
-	  OBJECTS: CAR IS_A (300)CAR
-      CONDITION: CAR.ENGINE = '1500'
-      RESTRICTION: CAR.INTERIOR IN ('01', '02')
 	}
-  }
 }}}
 
 === Dependency Net ===
-Each configuration model requires a dependency net which contains all relevant constraints, i.e. the declaration of the configuration rules for the model. 
-The dependency net must be assigned to the configuration profile, see [VCMLLanguage#Configuration_Profile Configuration Profile].
+Each configuration model requires a dependency net which contains all relevant constraints, i.e. the declaration of the configuration rules for the model, see see [VCMLLanguage#Constraints Constraints]. 
+In SAP it is also called constraint net. The dependency net must be assigned to the configuration profile, see [VCMLLanguage#Configuration_Profile Configuration Profile].
 
 A dependency net is defined as follows:
 {{{
-DependencyNet =
-  'dependencynet' ID ('{'
-    Description
-    Documentation?
-    Status?
-    Group?
-    ID*
+DependencyNet :
+	'dependencynet' EXTENDED_ID ('{'
+	(Description
+	&	Documentation?
+	&	Status?
+	&	Group?
+	)
+	EXTENDED_ID*
   '}')?  
 }}}
 
-The first ID defines the name of the dependency net,
-the second ID are the names of the constraints of the dependency net.
+A dependency net definition starts with the keyword {{{dependencynet}}} followed by an {{{EXTENDED_ID}}} defining the name of the dependency net.
+
+The dependency net definition can be enhanced by an optional body.
+If the body is added, {{{description}}} is a mandatory feature, while {{{documentation}}}, {{{status}}}, and {{{group}}} are optional. 
+Additionally, all constraints are listed with their names, textually defined by extended identifiers ({{{EXTENDED_ID}}}).
 
 Example for a dependency net declaration:
 {{{
-dependencynet DEP_NET {
-  description "This is a constraint net for the car"
-  documentation "documentation"
-  status released
-  group "PRODUCTS_CAR"
-  CSTRT
-  CS_CAR1
+dependencynet DEP_NET_CAR {
+	description "This is a constraint net for the car"
+	status released
+	group "PRODUCTS_CAR"
+	CN_CAR1
+	CN_CAR2
+	CN_CHECK1
 }
 }}}
 
