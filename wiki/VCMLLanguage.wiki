@@ -253,7 +253,136 @@ group "PROD_CAR"
 }}}
 
 == List of VC objects ==
-In this chapter, all VC objects are described in detail with their corresponding individual sub-level objects/features and attributes. For general information on VC objects see main chapter [VCMLLanguage#VC_Objects VC Objects].
+In this chapter, all VC objects are described in detail with their corresponding individual sub-level objects/features and attributes. They are listed in alphabetical order. 
+For general information on VC objects see main chapter [VCMLLanguage#VC_Objects VC Objects].
+
+=== Bill of Material ===
+
+The bill of material is a list of configurable items.
+The bill of material must be defined for the complete product, which is then the master BOM for all product variants. 
+This master BOM can directly list every single item of the product, see example 1, or list other BOMs for groups of items, like BOMs for engine, gear, etc. as shown in example 2. 
+You can also mix single items and BOMs in a BOM definition.
+To distinguish between mandatory material and variable, i.e. configurable material, the object/feature selection condition is used. 
+Declaration of a selection condition makes the material a variable part, i.e. it will only be added to the product if a specified condition is fulfilled. 
+
+A bill of material is defined as follows:
+
+{{{
+BillOfMaterial :
+	'billofmaterial' EXTENDED_ID ('[' Option* ']')? '{'
+		'material' '{'EXTENDED_ID'}?
+		'items' '{' BOMItem* '}'?
+	'}'
+
+BOMItem :
+	BOMItem_Material | BOMItem_Class
+
+BOMItem_Material :
+	INT EXTENDED_ID
+	('dependencies' '{'
+		EXTENDED_ID?					//selection condition??
+	 	ConfigurationProfileEntry*
+	'}')?
+
+BOMItem_Class :
+	INT CLASSNAME
+	('dependencies' '{'
+		EXTENDED_ID?					//selection condition??
+	 	ConfigurationProfileEntry*
+	'}')?
+}}}
+
+The bill of material starts with the keyword {{{billofmaterial}}} followed by the name of the bill of material, textually represented as an {{{EXTENDED_ID}}}, and the features.
+
+The bill of material definition can be enhanced by an optional body with two optional features, {{{material}}} and {{{items}}}.
+The material referenced here is the material of the product, consisting of the keyword {{{material}}} followed by the name of the corresponding material.
+The feature items consists of the keyword {{{items}}} followed by a list of all BOM items, i.e. all configurable items belonging to the product.
+
+BOM items can either be materials or classes (class nodes). Their definition starts with an integer number {{{INT}}}, representing the item number. This is followed by the name of this dedicated item, textually represented as an {{{EXTENDED_ID}}} for materials or the {{{CLASSNAME}}} for classes.
+
+Add info on when to select which type!
+
+Optionally, {{{dependencies}}} can be added giving the reference to a selection condition, see [VCMLLanguage#Selection_Condition Selection Condition], and to procedures using {{{ConfigurationProfileEntry}}}, see [VCMLLanguage#Configuration_Profile Configuration Profile].
+
+Example 1 for BOM with single items:
+
+{{{
+billofmaterial 'bom_car' {
+	material 'CAR'
+	items {
+	  10	Engine_1500
+	  dependencies {  sel cond. and/or procedure	}	  ???
+	  20	Engine_1800
+	   dependencies {    ??	 }	  ???
+	  30	Engine_2100
+	   dependencies {    ??	 }	  ???
+	  40	Engine_2400
+	   dependencies {    ??	 }	  ???
+	  50	Gear_4
+	  60	Gear_4automatic
+	  70	Gear_5
+	  80	Gear5automatic
+	  90	Interior_01
+	  100	Interior_02
+	  110	Interior_03
+	  120	Colour_black
+	  130	Colour_white
+	  140	Colour_red
+	}
+  }
+}}}
+Example 2 for BOM with further BOMs and single items:
+{{{
+billofmaterial 'bom_car' {
+	material 'CAR'
+	items {
+	  10	bom_engine
+	  20	bom_gear
+	  30	bom_interior
+	  40	bom_colour
+	  50	stereo
+	  60	navigation system
+	}
+  }
+  billofmaterial 'bom_engine' {
+	material 'engine'
+	items {
+	  10	Engine_1500
+	  dependencies {    ??	}	 ???
+	  20	Engine_1800
+	   dependencies {    ??	 }	  ???
+	  30	Engine_2100
+	   dependencies {    ??	 }	  ???
+	  40	Engine_2400
+	   dependencies {    ??	 }	  ???
+	}
+  }
+  billofmaterial 'bom_gear' {
+	material 'gear'
+	items {
+	  10	Gear_4
+	  20	Gear_4automatic
+	  30	Gear_5
+	  40	Gear5automatic
+	}
+  }
+  billofmaterial 'bom_interior' {
+	material 'interior'
+	items {
+	  10	Interior_01
+	  20	Interior_02
+	  30	Interior_03
+	}
+  }
+    billofmaterial 'bom_colour' {
+	material 'colour'
+	items {
+	  10	Colour_black
+	  20	Colour_white
+	  30	Colour_red
+	}
+  }
+}}}
 
 === Characteristic ===
 Characteristics are used to describe precisely of which elements a product is made of, and which values these elements can have. Each variable property requires a characteristic.
@@ -582,6 +711,34 @@ class (300)CAR {
 }
 }}}
 
+=== Configuration Profile ===
+
+The configuration profile is defined as follows:
+{{{
+ConfigurationProfile 
+	:
+    'configurationprofile' EXTENDED_ID ('[' options+=Option* ']')? '{'
+	   (	('material' '{'EXTENDED_ID'})?
+	   		('status' Status)?
+	   		('bomapplication' EXTENDED_ID)?
+	   		('uidesign' '{'EXTENDED_ID'})?
+	    	('fixing' Fixing)?
+	   )
+       ('DependencyNet' '{'EXTENDED_ID'}])*
+       (ConfigurationProfileEntry)*
+    '}'
+    
+ConfigurationProfileEntry :
+    INT EXTENDED_ID
+             
+}}}  
+The configuration profile starts with the keyword {{{'configurationprofile'}}}, followed by the name of the profile, textually represented as an {{{EXTENDED_ID}}}, and the features.  
+Optionally, the material of the product and a ui design can be referenced, and a status, a BOM application and a Fixing can be defined.
+Describe bom application!
+Describe fixing!
+Additionally, dependency nets are referenced and configuration profile entries ?? listed.
+The configuration profile entry is defined by an integer referring to the sequence of the entry and a reference to a procedure, textually represented as an {{{EXTENDED_ID}}}, 
+
 === Constraint === 
 
 A constraint is defined as follows:
@@ -614,6 +771,9 @@ constraint CS_CAR1 {
 }}}
 
 === Dependency Net ===
+Each configuration model requires a dependency net which contains all relevant constraints, i.e. the declaration of the configuration rules for the model. 
+The dependency net must be assigned to the configuration profile, see [VCMLLanguage#Configuration_Profile Configuration Profile].
+
 A dependency net is defined as follows:
 {{{
 DependencyNet =
@@ -740,162 +900,6 @@ material Engine_2400 {
 	type HAWA
 }
 }}}
-
-=== Bill of Material ===
-
-The bill of material is a list of configurable items.
-The bill of material must be defined for the complete product, which is then the master BOM for all product variants. 
-This master BOM can directly list every single item of the product, see example 1, or list other BOMs for groups of items, like BOMs for engine, gear, etc. as shown in example 2. 
-You can also mix single items and BOMs in a BOM definition.
-To distinguish between mandatory material and variable, i.e. configurable material, the object/feature selection condition is used. 
-Declaration of a selection condition makes the material a variable part, i.e. it will only be added to the product if a specified condition is fulfilled. 
-
-A bill of material is defined as follows:
-
-{{{
-BillOfMaterial :
-	'billofmaterial' EXTENDED_ID ('[' Option* ']')? '{'
-		'material' '{'EXTENDED_ID'}?
-		'items' '{' BOMItem* '}'?
-	'}'
-
-BOMItem :
-	BOMItem_Material | BOMItem_Class
-
-BOMItem_Material :
-	INT EXTENDED_ID
-	('dependencies' '{'
-		EXTENDED_ID?					//selection condition??
-	 	ConfigurationProfileEntry*
-	'}')?
-
-BOMItem_Class :
-	INT CLASSNAME
-	('dependencies' '{'
-		EXTENDED_ID?					//selection condition??
-	 	ConfigurationProfileEntry*
-	'}')?
-}}}
-
-The bill of material starts with the keyword {{{billofmaterial}}} followed by the name of the bill of material, textually represented as an {{{EXTENDED_ID}}}, and the features.
-
-The bill of material definition can be enhanced by an optional body with two optional features, {{{material}}} and {{{items}}}.
-The material referenced here is the material of the product, consisting of the keyword {{{material}}} followed by the name of the corresponding material.
-The feature items consists of the keyword {{{items}}} followed by a list of all BOM items, i.e. all configurable items belonging to the product.
-
-BOM items can either be materials or classes (class nodes). Their definition starts with an integer number {{{INT}}}, representing the item number. This is followed by the name of this dedicated item, textually represented as an {{{EXTENDED_ID}}} for materials or the {{{CLASSNAME}}} for classes.
-
-Add info on when to select which type!
-
-Optionally, {{{dependencies}}} can be added giving the reference to a selection condition, see [VCMLLanguage#Selection_Condition Selection Condition], and to procedures using {{{ConfigurationProfileEntry}}}, see [VCMLLanguage#Configuration_Profile Configuration Profile].
-
-Example 1 for BOM with single items:
-
-{{{
-billofmaterial 'bom_car' {
-	material 'CAR'
-	items {
-	  10	Engine_1500
-	  dependencies {  sel cond. and/or procedure	}	  ???
-	  20	Engine_1800
-	   dependencies {    ??	 }	  ???
-	  30	Engine_2100
-	   dependencies {    ??	 }	  ???
-	  40	Engine_2400
-	   dependencies {    ??	 }	  ???
-	  50	Gear_4
-	  60	Gear_4automatic
-	  70	Gear_5
-	  80	Gear5automatic
-	  90	Interior_01
-	  100	Interior_02
-	  110	Interior_03
-	  120	Colour_black
-	  130	Colour_white
-	  140	Colour_red
-	}
-  }
-}}}
-Example 2 for BOM with further BOMs and single items:
-{{{
-billofmaterial 'bom_car' {
-	material 'CAR'
-	items {
-	  10	bom_engine
-	  20	bom_gear
-	  30	bom_interior
-	  40	bom_colour
-	  50	stereo
-	  60	navigation system
-	}
-  }
-  billofmaterial 'bom_engine' {
-	material 'engine'
-	items {
-	  10	Engine_1500
-	  dependencies {    ??	}	 ???
-	  20	Engine_1800
-	   dependencies {    ??	 }	  ???
-	  30	Engine_2100
-	   dependencies {    ??	 }	  ???
-	  40	Engine_2400
-	   dependencies {    ??	 }	  ???
-	}
-  }
-  billofmaterial 'bom_gear' {
-	material 'gear'
-	items {
-	  10	Gear_4
-	  20	Gear_4automatic
-	  30	Gear_5
-	  40	Gear5automatic
-	}
-  }
-  billofmaterial 'bom_interior' {
-	material 'interior'
-	items {
-	  10	Interior_01
-	  20	Interior_02
-	  30	Interior_03
-	}
-  }
-    billofmaterial 'bom_colour' {
-	material 'colour'
-	items {
-	  10	Colour_black
-	  20	Colour_white
-	  30	Colour_red
-	}
-  }
-}}}
-
-=== Configuration Profile ===
-
-The configuration profile is defined as follows:
-{{{
-ConfigurationProfile 
-	:
-    'configurationprofile' EXTENDED_ID ('[' options+=Option* ']')? '{'
-	   (	('material' '{'EXTENDED_ID'})?
-	   		('status' Status)?
-	   		('bomapplication' EXTENDED_ID)?
-	   		('uidesign' '{'EXTENDED_ID'})?
-	    	('fixing' Fixing)?
-	   )
-       ('DependencyNet' '{'EXTENDED_ID'}])*
-       (ConfigurationProfileEntry)*
-    '}'
-    
-ConfigurationProfileEntry :
-    INT EXTENDED_ID
-             
-}}}  
-The configuration profile starts with the keyword {{{'configurationprofile'}}}, followed by the name of the profile, textually represented as an {{{EXTENDED_ID}}}, and the features.  
-Optionally, the material of the product and a ui design can be referenced, and a status, a BOM application and a Fixing can be defined.
-Describe bom application!
-Describe fixing!
-Additionally, dependency nets are referenced and configuration profile entries ?? listed.
-The configuration profile entry is defined by an integer referring to the sequence of the entry and a reference to a procedure, textually represented as an {{{EXTENDED_ID}}}, 
 
 === Precondition ===
 A precondition is defined as follows:
@@ -1037,6 +1041,9 @@ varianttable VAR_TAB {
   }
 }
 }}}
+
+=== Variant Table Content ===
+To be added later!
 
 == General Language Constructs ==
 
