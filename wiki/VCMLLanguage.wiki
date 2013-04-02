@@ -749,11 +749,11 @@ The configuration profile entry is defined by an integer referring to the sequen
 
 Example for a configuration profile declaration:
 {{{
-configurationprofile PROD_CAR {
+configurationprofile PRODUCTS_CAR {
 	material CAR
 	status released
 	bomapplication SD01
-	uidesign PROD_CAR
+	uidesign PRODUCTS_CAR
 	DEP_NET_CAR
 	10 PP_CAR1
 	20 PP_CAR2
@@ -781,19 +781,19 @@ Constraint :
 
 A constraint definition starts with the keyword {{{constraint}}} followed by an {{{EXTENDED_ID}}} defining the name of the dependency net.
 The constraint definition can be enhanced by an optional body.
-If the body is added, {{{description}}} is a mandatory feature, while {{{documentation}}}, {{{status}}}, and {{{group}}} are optional. 
+If the body is added, {{{description}}} is a mandatory feature, while {{{documentation}}}, {{{status}}}, and {{{group}}} are optional. The entries for the features in the body can be made in any order.
 
 Example for a constraint declaration:
 {{{
 constraint CN_CAR1 {
 	description "gears valid for engine 1500"
 	status released
-	group "PRODUCTS_CAR"
+	group "PROD_CAR"
 	}
 }}}
 
 === Dependency Net ===
-Each configuration model requires a dependency net which contains all relevant constraints, i.e. the declaration of the configuration rules for the model, see see [VCMLLanguage#Constraints Constraints]. 
+Each configuration model requires a dependency net which contains all relevant constraints, i.e. the declaration of the configuration rules for the model, see [VCMLLanguage#Constraints Constraints]. 
 In SAP it is also called constraint net. The dependency net must be assigned to the configuration profile, see [VCMLLanguage#Configuration_Profile Configuration Profile].
 
 A dependency net is defined as follows:
@@ -812,15 +812,15 @@ DependencyNet :
 A dependency net definition starts with the keyword {{{dependencynet}}} followed by an {{{EXTENDED_ID}}} defining the name of the dependency net.
 
 The dependency net definition can be enhanced by an optional body.
-If the body is added, {{{description}}} is a mandatory feature, while {{{documentation}}}, {{{status}}}, and {{{group}}} are optional. 
-Additionally, all constraints are listed with their names, textually defined by extended identifiers ({{{EXTENDED_ID}}}).
+If the body is added, {{{description}}} is a mandatory feature, while {{{documentation}}}, {{{status}}}, and {{{group}}} are optional. The entries for these features in the body can be made in any order.
+Additionally, all constraints are listed with their names, textually defined by extended identifiers {{{EXTENDED_ID}}}.
 
 Example for a dependency net declaration:
 {{{
 dependencynet DEP_NET_CAR {
 	description "This is a constraint net for the car"
 	status released
-	group "PRODUCTS_CAR"
+	group "PROD_CAR"
 	CN_CAR1
 	CN_CAR2
 	CN_CHECK1
@@ -830,12 +830,12 @@ dependencynet DEP_NET_CAR {
 === Interface Design === 
 An interfacedesign is defined as follows:
 {{{
-InterfaceDesign =
+InterfaceDesign :
   'interfacedesign' EXTENDED_ID ('{'
     CharacteristicGroup*
   '}')?  
 
-CharacteristicGroup =
+CharacteristicGroup :
   'characteristicgroup' EXTENDED_ID '{'
     Description
     ID*
@@ -930,7 +930,7 @@ material Engine_2400 {
 === Precondition ===
 A precondition is defined as follows:
 {{{
-Precondition =
+Precondition :
   'precondition' ID ('{'
     Description
     Documentation?
@@ -957,7 +957,7 @@ precondition PRECOND {
 === Procedure ===
 A procedure is defined as follows:
 {{{
-Procedure =
+Procedure :
   'procedure' ID ('{'
     Description
     Documentation?
@@ -983,7 +983,7 @@ procedure PROC {
 === Selection Condition === 
 A selection condition is defined as follows:
 {{{
-SelectionCondition =
+SelectionCondition :
   'selectioncondition'  ID ('{'
     Description
     Documentation?
@@ -1012,7 +1012,7 @@ ABAP respectively Java code is not defined in VCML.
 
 A variant function is defined as follows:
 {{{
-VariantFunction =
+VariantFunction :
   'variantfunction'   ('{'
     Description
     Status?
@@ -1043,7 +1043,7 @@ variantfunction VAR_FUNC {
 
 The structure (scheme) of a variant table is defined as follows:
 {{{
-VariantTable =
+VariantTable :
   'varianttable' ID ('{'
     Description
     Status?
