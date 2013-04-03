@@ -299,9 +299,9 @@ The material referenced here is the material of the product, consisting of the k
 The feature items consists of the keyword {{{items}}} followed by a list of all BOM items, i.e. all configurable items belonging to the product.
 
 BOM items can either be materials or classes (class nodes). Their definition starts with an integer number {{{INT}}}, representing the item number. This is followed by the name of this dedicated item, textually represented as an {{{EXTENDED_ID}}} for materials or the {{{CLASSNAME}}} for classes.
-
+<wiki:comment>
 Add info on when to select which type!
-
+</wiki:comment>
 Optionally, {{{dependencies}}} can be added giving the reference to a selection condition, see [VCMLLanguage#Selection_Condition Selection Condition], and to procedures using {{{ConfigurationProfileEntry}}}, see [VCMLLanguage#Configuration_Profile Configuration Profile].
 
 Example 1 for BOM with single items:
@@ -311,13 +311,14 @@ billofmaterial 'bom_car' {
 	material 'CAR'
 	items {
 	  10	Engine_1500
-	  dependencies {  sel cond. and/or procedure	}	  ???
+	  dependencies {	sel cond. 	  ???
+	  					PP_CAR1	}
 	  20	Engine_1800
-	   dependencies {    ??	 }	  ???
+	   dependencies { PP_CAR2 }	
 	  30	Engine_2100
-	   dependencies {    ??	 }	  ???
+	   dependencies { PP_CAR3 }	
 	  40	Engine_2400
-	   dependencies {    ??	 }	  ???
+	   dependencies { PP_CAR4 }	
 	  50	Gear_4
 	  60	Gear_4automatic
 	  70	Gear_5
@@ -348,13 +349,13 @@ billofmaterial 'bom_car' {
 	material 'engine'
 	items {
 	  10	Engine_1500
-	  dependencies {    ??	}	 ???
+	  dependencies { PP_CAR1 }
 	  20	Engine_1800
-	   dependencies {    ??	 }	  ???
+	   dependencies { PP_CAR2 }
 	  30	Engine_2100
-	   dependencies {    ??	 }	  ???
+	   dependencies { PP_CAR3 }
 	  40	Engine_2400
-	   dependencies {    ??	 }	  ???
+	   dependencies { PP_CAR4 }
 	}
   }
   billofmaterial 'bom_gear' {
@@ -628,10 +629,10 @@ characteristic INFO_convertible {
 }
 }}}
 
-====Characteristic Dependencies ====
+==== Characteristic Dependencies ====
 Dependencies, i.e. conditions, procedures, or constraints can be attached to characteristics or to single characteristic values.
 
-CharacteristicOrValueDependencies are defined as follows:
+Characteristic or value dependencies are defined as follows:
 {{{	
 CharacteristicOrValueDependencies :
   'dependencies' '{'
@@ -763,7 +764,7 @@ configurationprofile PRODUCTS_CAR {
 
 === Constraint === 
 
-Constraints declare the configuration rules for the model, like setting of characteristic values and checking values to ensure consistency.
+Constraints belong to the object dependencies and declare the configuration rules for the model, like setting of characteristic values and checking values to ensure consistency.
 All constraint names are listed in the dependency net of the configuration model, see [VCMLLanguage#Dependency_Net Dependency Net].
 The source code of every constraint is stored in an individual file with extension {{{.cons}}}, see [VCMLLanguage#Introduction_to_VCML_Model_Structure Introduction to VCML Model Structure]. The syntax of the source code is exactly defined as in SAP.
 
@@ -771,11 +772,11 @@ A constraint is defined as follows:
 {{{
 Constraint :
 	'constraint' EXTENDED_ID ('{'
-	(	Description
-	&	Documentation?
-	&	Status?
-	&	Group?
-	)
+		(	Description
+		&	Documentation?
+		&	Status?
+		&	Group?
+		)
   '}')?  
 }}}
 
@@ -793,19 +794,20 @@ constraint CN_CAR1 {
 }}}
 
 === Dependency Net ===
-Each configuration model requires a dependency net which contains all relevant constraints, i.e. the declaration of the configuration rules for the model, see [VCMLLanguage#Constraints Constraints]. 
+
+Each configuration model requires a dependency net which contains all relevant constraints, i.e. the declaration of the configuration rules for the model, see [VCMLLanguage#Constraint Constraint]. 
 In SAP it is also called constraint net. The dependency net must be assigned to the configuration profile, see [VCMLLanguage#Configuration_Profile Configuration Profile].
 
 A dependency net is defined as follows:
 {{{
 DependencyNet :
 	'dependencynet' EXTENDED_ID ('{'
-	(Description
-	&	Documentation?
-	&	Status?
-	&	Group?
-	)
-	EXTENDED_ID*
+		(Description
+		&	Documentation?
+		&	Status?
+		&	Group?
+		)
+		EXTENDED_ID*
   '}')?  
 }}}
 
@@ -828,36 +830,51 @@ dependencynet DEP_NET_CAR {
 }}}
 
 === Interface Design === 
-An interfacedesign is defined as follows:
+
+The definition of an interface design allows to structure, that is group the characteristics display for value assignment. To use an Interface design, it must be assigned to the configuration profile, see [VCMLLanguage#Configuration_Profile Configuration Profile].
+If no interface design is defined, all characteristics are displayed in a single tab named {{{General}}}.
+
+An interface design is defined as follows:
 {{{
 InterfaceDesign :
-  'interfacedesign' EXTENDED_ID ('{'
-    CharacteristicGroup*
-  '}')?  
+	'interfacedesign' EXTENDED_ID ('{'
+		CharacteristicGroup*
+	'}')?  
 
 CharacteristicGroup :
-  'characteristicgroup' EXTENDED_ID '{'
-    Description
-    ID*
-  '}'
+	'characteristicgroup' EXTENDED_ID '{'
+		Description
+		EXTENDED_ID*
+	'}'
 }}}
 
-The ID in a characteristic group refers to a characteristic.
+An interface design definition starts with the keyword {{{interfacedesign}}} followed by an {{{EXTENDED_ID}}} defining the name of the interface design.
+The interface design definition can be enhanced by an optional body, containing any number of {{{CharacteristicGroup}}} definitions. These start with the keyword {{{Characteristicgroup}}} followed by an {{{EXTENDED_ID}}} defining the name of the characteristic group.
+Additionally, a language dependent description and an {{{EXTENDED_ID}}} for every characteristic that shall be displayed in this group are mandatory.
 
 Example for an interface design declaration:
 {{{
-  interfacedesign INT_DESIGN {
+interfacedesign UI_DESIGN {
+	characteristicgroup Info {
+		description "General Information"
+		Headline
+		Info1
+		Info2
+		Info3
+	}
 	characteristicgroup FunEl {
-	  description "functional elements"
-	  ENGINE
-      GEAR
-    }
+		description "Functional Elements"
+		ENGINE
+		GEAR
+		STEREO
+		NAVI
+	}
 	characteristicgroup DesignEl {
-      description "design elements"
-      COLOUR
-      INTERIOR
-    }
-  }
+		description "Design Elements"
+		COLOUR
+		INTERIOR
+	}
+}
 }}}
 
 === Material === 
@@ -869,7 +886,7 @@ Please note, that material objects have no documentation, group, and status feat
 
 A material is defined as follows:
 
-{{{ 
+{{{
 Material :
 	'material' EXTENDED_ID ('{'
 		Description
@@ -903,7 +920,7 @@ The entries for the optional features in the body can be made in any order.
 
 Example for a material definition for a product, i.e. including a bill of material, a class, and a configuration profile:
 
-{{{ 
+{{{
 material CAR {
 	description "A configurable car"
 	type KMAT
@@ -928,30 +945,32 @@ material Engine_2400 {
 }}}
 
 === Precondition ===
+
+The VC object precondition belongs to the object dependencies and controls the usage of a characteristic or characteristic value in the configuration model. These are only allowed to be used in case the defined precondition is met.
+The source code of every precondition is stored in an individual file with extension {{{.pre}}}, see [VCMLLanguage#Introduction_to_VCML_Model_Structure Introduction to VCML Model Structure]. The syntax of the source code is exactly defined as in SAP.
+
 A precondition is defined as follows:
 {{{
 Precondition :
-  'precondition' ID ('{'
-    Description
-    Documentation?
-    Status?
-    Group?
-    ('source' '{' ConditionSource '}')?
-  '}')?
+	'precondition' EXTENDED_ID ('{'
+		(Description
+		&	Documentation?
+		&	Status?
+		&	Group?
+		)
+	'}')?
 }}}
 
-ConditionSource is the source code of the precondition, exactly as defined in SAP.
+A precondition definition starts with the keyword {{{precondition}}} followed by an {{{EXTENDED_ID}}} defining the name of the precondition.
+The precondition definition can be enhanced by an optional body. If the body is added, {{{description}}} is a mandatory feature, while {{{documentation}}}, {{{status}}}, and {{{group}}} are optional. The entries for the features in the body can be made in any order.
 
-An example for a precondition
+Example for a precondition declaration:
 {{{
-precondition PRECOND {
-  description "description"
-  documentation "documentation"
-  status released
-  group "group"
-  source { $SELF.GEAR in ('4-gear', '4-gear automatic')       
-           if $ROOT.ENGINE IN ('1500', '1800') }
-}
+precondition PRECOND_AUTGEAR {
+	description "engine 2+ required for automatic gear"
+	status released
+	group "PROD_CAR"
+	}
 }}}
 
 === Procedure ===
