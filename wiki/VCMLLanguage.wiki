@@ -305,84 +305,84 @@ Add info on when to select which type!
 Optionally, {{{dependencies}}} can be added giving the reference to a selection condition, see [VCMLLanguage#Selection_Condition Selection Condition], and to procedures using {{{ConfigurationProfileEntry}}}, see [VCMLLanguage#Configuration_Profile Configuration Profile].
 
 Example 1 for BOM with single items:
-
 {{{
 billofmaterial 'bom_car' {
 	material 'CAR'
 	items {
-	  10	Engine_1500
-	  dependencies {	sel cond. 	  ???
-	  					PP_CAR1	}
-	  20	Engine_1800
-	   dependencies { PP_CAR2 }	
-	  30	Engine_2100
-	   dependencies { PP_CAR3 }	
-	  40	Engine_2400
-	   dependencies { PP_CAR4 }	
-	  50	Gear_4
-	  60	Gear_4automatic
-	  70	Gear_5
-	  80	Gear5automatic
-	  90	Interior_01
-	  100	Interior_02
-	  110	Interior_03
-	  120	Colour_black
-	  130	Colour_white
-	  140	Colour_red
+		10 Engine_1500
+		 dependencies { SELC_CAR1
+	  			PP_CAR1 }
+		20 Engine_1800
+		 dependencies { PP_CAR2 }	
+		30 Engine_2100
+		 dependencies { PP_CAR3 }	
+		40 Engine_2400
+		 dependencies { PP_CAR4 }	
+		50 Gear_4
+		60 Gear_4automatic
+		70 Gear_5
+		80 Gear5automatic
+		90 Interior_01
+		100 Interior_02
+		110 Interior_03
+		120 Colour_black
+		130 Colour_white
+		140 Colour_red
 	}
-  }
+}
 }}}
+
 Example 2 for BOM with further BOMs and single items:
 {{{
 billofmaterial 'bom_car' {
 	material 'CAR'
 	items {
-	  10	bom_engine
-	  20	bom_gear
-	  30	bom_interior
-	  40	bom_colour
-	  50	stereo
-	  60	navigation system
+		10 bom_engine
+		20 bom_gear
+		30 bom_interior
+		40 bom_colour
+		50 stereo
+		60 navigation system
 	}
-  }
-  billofmaterial 'bom_engine' {
+}
+billofmaterial 'bom_engine' {
 	material 'engine'
 	items {
-	  10	Engine_1500
-	  dependencies { PP_CAR1 }
-	  20	Engine_1800
-	   dependencies { PP_CAR2 }
-	  30	Engine_2100
-	   dependencies { PP_CAR3 }
-	  40	Engine_2400
-	   dependencies { PP_CAR4 }
+		10 Engine_1500
+		 dependencies { PP_CAR1 }
+		20 Engine_1800
+		 dependencies { PP_CAR2 }
+		30 Engine_2100
+		 dependencies { PP_CAR3 }
+		40 Engine_2400
+		 dependencies { PP_CAR4 }
 	}
-  }
-  billofmaterial 'bom_gear' {
+}
+billofmaterial 'bom_gear' {
 	material 'gear'
 	items {
-	  10	Gear_4
-	  20	Gear_4automatic
-	  30	Gear_5
-	  40	Gear5automatic
+		10 Gear_4
+		20 Gear_4automatic
+		30 Gear_5
+		40 Gear5automatic
 	}
-  }
-  billofmaterial 'bom_interior' {
+}
+billofmaterial 'bom_interior' {
 	material 'interior'
 	items {
-	  10	Interior_01
-	  20	Interior_02
-	  30	Interior_03
+		10 Interior_01
+		20 Interior_02
+		30 Interior_03
 	}
-  }
-    billofmaterial 'bom_colour' {
+}
+billofmaterial 'bom_colour' {
 	material 'colour'
 	items {
-	  10	Colour_black
-	  20	Colour_white
-	  30	Colour_red
+		10 Colour_black
+		20 Colour_white
+		30 Colour_red
 	}
-  }
+}
 }}}
 
 === Characteristic ===
@@ -392,22 +392,22 @@ A characteristic is defined as follows:
 {{{
 Characteristic :
 	'characteristic' EXTENDED_ID ('[' options+=Option* ']')? ('{'
-	(	Description
-	&	Documentation?
-	&	CharacteristicType
-	&	('status' Status)?
-	&	('group' STRING)?
-	&	('[' ('additionalValues'?
-		& 'required'?
-		& 'restrictable'?
-		& 'noDisplay'?
-		& 'notReadyForInput'?
-		& 'multiValue'?
-		& 'displayAllowedValues'?
-		& ('table' XID 'field' XID)?)
-		']')?
-	&	CharacteristicOrValueDependencies?
-	)
+		( Description
+		& Documentation?
+		& CharacteristicType
+		& Status?
+		& Group?
+		& ('[' ('additionalValues'?
+			& 'required'?
+			& 'restrictable'?
+			& 'noDisplay'?
+			& 'notReadyForInput'?
+			& 'multiValue'?
+			& 'displayAllowedValues'?
+			& ('table' XID 'field' XID)?)
+			']')?
+		& CharacteristicOrValueDependencies?
+		)
 	'}')?
 }}}
 A characteristic definition starts with the keyword {{{characteristic}}} followed by a {{{EXTENDED_ID}}} defining the name of the characteristic. 
@@ -419,29 +419,28 @@ The entries for the optional features in the body can be made in any order. A ch
 Three characteristic types are available in VCML, allowing for different types of characteristic values. They are defined as follows:
 {{{
 CharacteristicType :
-		NumericType | SymbolicType | DateType
+	NumericType | SymbolicType | DateType
 }}}
 
 The *numeric type characteristic* is defined as follows:
 {{{
 NumericType : 
 	'numeric' '{'
-	(	('numberOfChars' INT)
-	&	('decimalPlaces' INT)
-	&	('unit' STRING)?
-	&	('[' (	'negativeValuesAllowed'?
-		&	'intervalValuesAllowed'?)
+		( ('numberOfChars' INT)
+		& ('decimalPlaces' INT)
+		& ('unit' STRING)?
+		& ('[' ( 'negativeValuesAllowed'?
+		& 'intervalValuesAllowed'?)
 	 	']')?
-	&	('values' '{' NumericCharacteristicValue* '}')?
-	)
+		& ('values' '{' NumericCharacteristicValue* '}')?
+		)
 	'}'
 
 NumericCharacteristicValue :
 	'*'?
-	NumberListEntryForValues
-		(('{'
-	 	 (	Documentation?
-	  	&	CharacteristicOrValueDependencies?)
+	NumberListEntryForValues ('{'
+		( Documentation?
+		& CharacteristicOrValueDependencies?)
 		'}')?
 }}}
 The numeric characteristic definition starts with the keyword {{{numeric}}} and is followed by a mandatory body. The body includes the mandatory objects/features {{{numberOfChars}}} and {{{decimalPlaces}}}. 
@@ -454,35 +453,35 @@ The feature values allows to define any number of single values or a value range
 Examples for characteristics with numeric type:
 {{{
 characteristic ENGINE {
-  description "the possible engines for a car"
-  numeric { 
-    numberOfChars 4
-    decimalPlaces 0
-    values {1500 1800 2100 2400}
-  } 
-  status released
-  group "PROD_CAR"
+	description "the possible engines for a car"
+	numeric { 
+		numberOfChars 4
+		decimalPlaces 0
+		values {1500 1800 2100 2400}
+	} 
+	status released
+	group "PROD_CAR"
 }
 
 characteristic ENGINE {
-  description "the possible engines for a car"
-  numeric { 
-    numberOfChars 2
-    decimalPlaces 1
-    values {1.5 *1.8 2.1 2.4}					//The default value is 1.8
-  } 
-  status released
-  group "PROD_CAR"
+	description "the possible engines for a car"
+	numeric { 
+		numberOfChars 2
+		decimalPlaces 1
+		values {1.5 *1.8 2.1 2.4}			//The default value is 1.8
+	} 
+	status released
+	group "PROD_CAR"
 }
 characteristic keynumber {
-  description "number of the keys for the car"
-  numeric {
-    numberOfChars 2
-    decimalPlaces 0
-    [intervalValuesAllowed]
-    values { (*2 - 20) {documentation "May be required for several drivers in big companies" }}
-  }
-  status released
+	description "number of the keys for the car"
+	numeric {
+		numberOfChars 2
+		decimalPlaces 0
+		[intervalValuesAllowed]
+		values { (*2 - 20) {documentation "May be required for several drivers in big companies" }}
+	}
+	status released
 }
 }}}
 
@@ -492,19 +491,19 @@ It is defined as follows:
 {{{
 SymbolicType :
 	'symbolic' '{'
-	(	('numberOfChars' INT)
-	&	('[' 'caseSensitive'? ']')?
-	&	('values' '{' CharacteristicValue* '}')?
-	)
+		( ('numberOfChars' INT)
+		& ('[' 'caseSensitive'? ']')?
+		& ('values' '{' CharacteristicValue* '}')?
+		)
 	'}'
 
 CharacteristicValue :
 	default?='*'?
 	EXTENDED_ID
-		(('{'
-	  	(	Description?
-	  	&	Documentation?
-	  	&	CharacteristicOrValueDependencies?
+		('{'
+	  	( Description?
+	  	& Documentation?
+	  	& CharacteristicOrValueDependencies?
 	 	)
 		'}')?
 }}}
@@ -517,33 +516,33 @@ By giving the attribute {{{caseSensitive}}} you can distinguish between entries 
 Examples for characteristics with symbolic type:
 {{{
 characteristic gear {
-  description "selectable types of gears"
-  symbolic {
-    numberOfChars 15
-        [caseSensitive]
-    values { (*G_4 {description "gear 4" } G_4a {description "gear 4 automatic" } G_5 {description "gear 5" } G_5a {description "gear 5 automatic" }) }
-  }
-  status released
+	description "selectable types of gears"
+	symbolic {
+		numberOfChars 15
+		[caseSensitive]
+		values { (*G_4 {description "4 gear" } G_4a {description "4 gear automatic" } G_5 {description "5 gear" } G_5a {description "5 gear automatic" }) }
+	}
+	status released
 }
 
 characteristic model {
-  description "available car models"
-  symbolic {
-    numberOfChars 15
-        []
-    values { (*Alpha Beta Gamma Delta Epsilon) }		// since the attribute caseSensitive is not given, the user may enter Alpha as alpha, Alpha, ALPHA, alPha or any other lower/upper case combination as valid model name
-  }
-  status released
+	description "available car models"
+	symbolic {
+		numberOfChars 15
+		[]
+		values { (*Alpha Beta Gamma Delta Epsilon) }		// since the attribute caseSensitive is not given, the user may enter Alpha as alpha, Alpha, ALPHA, alPha or any other lower/upper case combination as valid model name
+	}
+	status released
 }
 
 characteristic convertible {
-  description "Do you want a convertible?"
-  symbolic {
-    numberOfChars 1
-    [ caseSensitive ]
-    values { 'F' { description "no" } 'T' { description "yes" } }
-  }
-  status released
+	description "Do you want a convertible?"
+	symbolic {
+		numberOfChars 1
+		[ caseSensitive ]
+		values { 'F' { description "no" } 'T' { description "yes" } }
+	}
+	status released
 }
 }}}
 
@@ -552,17 +551,17 @@ The *date characteristic type* is defined as follows:
 DateType : 
 	{DateType}
 	'date' '{'
-	(	('[' ( 'intervalValuesAllowed'?)']')?
-	&	('values' '{' DateCharacteristicValue* '}')?
-	)
+		( ('[' ( 'intervalValuesAllowed'?)']')?
+		& ('values' '{' DateCharacteristicValue* '}')?
+		)
 	'}'
 	
 DateCharacteristicValue :
 	default?='*'?
 	(DATE ('-' DATE)?
 		(('{'
-	  	(	Documentation?
-	  	&	CharacteristicOrValueDependencies?)
+	  	( Documentation?
+	  	& CharacteristicOrValueDependencies?)
 		'}')?
 	));
 
@@ -635,9 +634,9 @@ Dependencies, i.e. conditions, procedures, or constraints can be attached to cha
 Characteristic or value dependencies are defined as follows:
 {{{	
 CharacteristicOrValueDependencies :
-  'dependencies' '{'
-     EXTENDED_ID*
-  '}'
+	'dependencies' '{'
+		EXTENDED_ID*
+	'}'
 }}}
 
 The dependency definition starts with the keyword {{{dependencies}}} and is followed by the name(s) of the attached depedency/ies, which is/are textually represented by {{{EXTENDED_ID}}}.
@@ -647,14 +646,14 @@ These files have to be located in a dedicated sub folder: for a VCML file with n
 Example for characteristic with dependency:
 {{{
 characteristic convertible {
-  description "Do you want a convertible?"
-  symbolic {
-    numberOfChars 1
-    [ caseSensitive ]
-    values { 'F' { description "no" } 'T' { description "yes" } }
-  }
-  status released
-  dependencies { CN_CAR_12C3C45 }
+	description "Do you want a convertible?"
+	symbolic {
+		numberOfChars 1
+		[ caseSensitive ]
+		values { 'F' { description "no" } 'T' { description "yes" } }
+	}
+	status released
+	dependencies { CN_CAR_12C3C45 }
 }
 }}}
 
@@ -720,11 +719,11 @@ The configuration profile is defined as follows:
 {{{
 ConfigurationProfile :
 	'configurationprofile' EXTENDED_ID ('[' options+=Option* ']')? '{'
-		(	('material' '{'EXTENDED_ID'})?
-		&	('status' Status)?
-		&	('bomapplication' EXTENDED_ID)?
-		&	('uidesign' '{'EXTENDED_ID'})?
-		&	('fixing' Fixing)?
+		( ('material' '{'EXTENDED_ID'})?
+		& Status?
+		& ('bomapplication' EXTENDED_ID)?
+		& ('uidesign' '{'EXTENDED_ID'})?
+		& ('fixing' Fixing)?
 		)
 		EXTENDED_ID*
 		ConfigurationProfileEntry*
@@ -766,16 +765,16 @@ configurationprofile PRODUCTS_CAR {
 
 Constraints belong to the object dependencies and declare the configuration rules for the model, like setting of characteristic values and checking values to ensure consistency.
 All constraint names are listed in the dependency net of the configuration model, see [VCMLLanguage#Dependency_Net Dependency Net].
-The source code of every constraint is stored in an individual file with extension {{{.cons}}}, see [VCMLLanguage#Introduction_to_VCML_Model_Structure Introduction to VCML Model Structure]. The syntax of the source code is exactly defined as in SAP.
+The source code of every constraint is stored in an individual file with extension in the respective language for dependencies as defined by SAP. These files have to be located in a dedicated sub folder: for a VCML file with name {{{FILENAME.vcml}}}, the constraint files have to be located in a folder {{{FILENAME-dep}}}. The name of the dependency source-code file must be the same as the name of the dependency, with the extension {{{.cons}}}.
 
 A constraint is defined as follows:
 {{{
 Constraint :
 	'constraint' EXTENDED_ID ('{'
-		(	Description
-		&	Documentation?
-		&	Status?
-		&	Group?
+		( Description
+		& Documentation?
+		& Status?
+		& Group?
 		)
   '}')?  
 }}}
@@ -786,11 +785,24 @@ If the body is added, {{{description}}} is a mandatory feature, while {{{documen
 
 Example for a constraint declaration:
 {{{
-constraint CN_CAR1 {
+constraint CN_GEAR1500 {
 	description "gears valid for engine 1500"
 	status released
 	group "PROD_CAR"
 	}
+<wiki:comment>
+Wie sieht der source code tatsächlich aus für constraint engine 1500 only allowed with gear_4??
+source code file CON_GEAR1500.cons:
+objects: CARS is_a (300)CAR . 
+condition:
+	CARS.CAR_gear in (Gear_4) and 
+	CARS.CAR_engine = '1500' or
+	CARS.CAR_gear in (Gear_4, Gear_4automatic, Gear_5, Gear_5automatic) and
+	CARS.CAR_engine <> '1500'
+
+restrictions: ? 
+inferences:  ?
+</wiki:comment> 
 }}}
 
 === Dependency Net ===
@@ -802,10 +814,10 @@ A dependency net is defined as follows:
 {{{
 DependencyNet :
 	'dependencynet' EXTENDED_ID ('{'
-		(Description
-		&	Documentation?
-		&	Status?
-		&	Group?
+		( Description
+		& Documentation?
+		& Status?
+		& Group?
 		)
 		EXTENDED_ID*
   '}')?  
@@ -890,7 +902,7 @@ A material is defined as follows:
 Material :
 	'material' EXTENDED_ID ('{'
 		Description
-		type EXTENDED_ID
+		'type' EXTENDED_ID
 		'billofmaterials' '{' EXTENDED_ID* '}'?
 		'classes' '{' Classification* '}'?
 		'configurationprofiles' '{' EXTENDED_ID* '}'?
@@ -946,17 +958,17 @@ material Engine_2400 {
 
 === Precondition ===
 
-The VC object precondition belongs to the object dependencies and controls the usage of a characteristic or characteristic value in the configuration model. These are only allowed to be used in case the defined precondition is met.
-The source code of every precondition is stored in an individual file with extension {{{.pre}}}, see [VCMLLanguage#Introduction_to_VCML_Model_Structure Introduction to VCML Model Structure]. The syntax of the source code is exactly defined as in SAP.
+The VC object precondition belongs to the object dependencies and can be assigned to characteristics and charcteristic values. Individual characteristics or characteristic values are hidden in case the circumstances defined in the precondition are met (i.e. the given value is selected or *no* value is selected).
+The source code of every precondition is stored in an individual file in the respective language for dependencies as defined by SAP. These files have to be located in a dedicated sub folder: for a VCML file with name {{{FILENAME.vcml}}}, the precondition files have to be located in a folder {{{FILENAME-dep}}}. The name of the dependency source-code file must be the same as the name of the dependency, with the extension {{{.pre}}}.
 
 A precondition is defined as follows:
 {{{
 Precondition :
 	'precondition' EXTENDED_ID ('{'
-		(Description
-		&	Documentation?
-		&	Status?
-		&	Group?
+		( Description
+		& Documentation?
+		& Status?
+		& Group?
 		)
 	'}')?
 }}}
@@ -964,131 +976,198 @@ Precondition :
 A precondition definition starts with the keyword {{{precondition}}} followed by an {{{EXTENDED_ID}}} defining the name of the precondition.
 The precondition definition can be enhanced by an optional body. If the body is added, {{{description}}} is a mandatory feature, while {{{documentation}}}, {{{status}}}, and {{{group}}} are optional. The entries for the features in the body can be made in any order.
 
-Example for a precondition declaration:
+Example for a precondition _selection of engines 1500 or 1800 results in hiding automatic gear values_:
 {{{
 precondition PRECOND_AUTGEAR {
-	description "engine 2+ required for automatic gear"
+	description "engine 1500, 1800 allows no automatic gear"
 	status released
 	group "PROD_CAR"
 	}
+<wiki:comment>
+Wie sieht der source code tatsächlich aus für engines 1500 or 1800 are precondition to restrict to non-automatic gear??
+source code file PRECOND_AUTGEAR.pre:
+$SELF.GEAR in (Gear_4, Gear_5)
+	if $ROOT.ENGINE in ('1500', '1800')
+</wiki:comment> 
 }}}
 
 === Procedure ===
+
+The VC object procedure belongs to the object dependencies and controls characteristic values in the configuration model. It can be assigned to the configuration profile, characteristics or characteristic values. Procedures allow to infer values for characteristics, e.g. to set or to override default values. See official SAP documentation for more information.
+The source code of every procedure is stored in an individual file in the respective language for dependencies as defined by SAP. These files have to be located in a dedicated sub folder: for a VCML file with name {{{FILENAME.vcml}}}, the procedure files have to be located in a folder {{{FILENAME-dep}}}. The name of the dependency source-code file must be the same as the name of the dependency, with the extension {{{.proc}}}.
+
 A procedure is defined as follows:
 {{{
 Procedure :
-  'procedure' ID ('{'
-    Description
-    Documentation?
-    Status?
-    Group?
-    ('source' '{' ProcedureSource '}')?
- '}')?
+	'procedure' EXTENDED_ID ('{'
+		( Description
+		& Documentation?
+		& Status?
+		& Group?
+		)
+    '}')?
 }}}
 
-ProcedureSource is the source code of the procedure, exactly as defined in SAP.
+A procedure definition starts with the keyword {{{procedure}}} followed by an {{{EXTENDED_ID}}} defining the name of the procedure.
+The procedure definition can be enhanced by an optional body. If the body is added, {{{description}}} is a mandatory feature, while {{{documentation}}}, {{{status}}}, and {{{group}}} are optional. The entries for the features in the body can be made in any order.
 
-Example for a procedure:
+Example for a procedure _set 4 gear in case for engine value '1500' is selected_:
 {{{
 procedure PROC {
-  description "set interior quantity"
-  documentation "documentation"
-  status released
-  group "PRODUCTS_CAR"
-  source { $self.C_QUANT = 2 if $root.ENGINE = '1500' }
+	description "set gear for engine 1500"
+	documentation "documentation"
+	status released
+	group "PROD_CAR"
 }
+<wiki:comment>
+Wie sieht der source code tatsächlich aus??
+source code file PROC_INTQ.proc:
+$self.GEAR = 'Gear_4' if $root.ENGINE = '1500'				//'' here required for Gear_4??
+</wiki:comment> 
 }}}
 
-=== Selection Condition === 
+=== Selection Condition ===
+
+The VC object selction condition belongs to the object dependencies. Selection conditions can be assigned to [VCMLLanguage#Characteristics Characteristics] and to BOM items in the  [VCMLLanguage#Bill_of_Material Bill of Material] definition. They define under which condition a characteristic must be assigned a value or a BOM item has to be added to the configuration result.
+The source code of every selction condition is stored in an individual file in the respective language for dependencies as defined by SAP. These files have to be located in a dedicated sub folder: for a VCML file with name {{{FILENAME.vcml}}}, the selction condition files have to be located in a folder {{{FILENAME-dep}}}. The name of the dependency source-code file must be the same as the name of the dependency, with the extension {{{.sel}}}.
+
 A selection condition is defined as follows:
 {{{
 SelectionCondition :
-  'selectioncondition'  ID ('{'
-    Description
-    Documentation?
-    Status?
-    Group?
-    ('source' '{' ConditionSource '}')?
+	'selectioncondition'  EXTENDED_ID ('{'
+		( Description
+		& Documentation?
+		& Status?
+		& Group?
+		)
   '}')?
 }}}
 
-ConditionSource is the source code of the selection condition, exactly as defined in SAP.
+A selction condition definition starts with the keyword {{{selctioncondition}}} followed by an {{{EXTENDED_ID}}} defining the name of the selction condition.
+The selction condition definition can be enhanced by an optional body. If the body is added, {{{description}}} is a mandatory feature, while {{{documentation}}}, {{{status}}}, and {{{group}}} are optional. The entries for the features in the body can be made in any order.
 
-Example for selection condition:
+Example for a selection condition _ensuring to make an entry for navi in case of engine 2100 or 2400 is selected_:
 {{{
-selectioncondition SEL_COND {
-  description "description"
-  documentation "documentation"
-  status released
-  group "group"
-  source { $SELF.GEAR SPECIFIED if $ROOT.ENGINE SPECIFIED }
+selectioncondition SELCOND_NAVI {
+	description "select navigation system"
+	documentation "select navigation system if engine 2100 or 2400 is selected"
+	status released
 }
+<wiki:comment>
+Wie sieht der source code tatsächlich aus??
+source code file SELCOND_NAVI.sel:
+ $SELF.NAVI SPECIFIED if $ROOT.ENGINE in ('2100', '2400')
+</wiki:comment> 
 }}}
 
 === Variant Function ===
-Only the interface of a VariantFunction is defined here.
-ABAP respectively Java code is not defined in VCML.
+
+A variant function can be used in object dependencies, i.e. constraints, preconditions, procedures, and selection conditions to realize creation of more complex dependencies. See official SAP documentation for more information.
+?? Only the interface of a VariantFunction is defined here. ABAP respectively Java code is not defined in VCML.
 
 A variant function is defined as follows:
 {{{
 VariantFunction :
-  'variantfunction'   ('{'
-    Description
-    Status?
-    Group?
-    ('arguments' '{' VariantFunctionArgument* '}' '}')?
-    
-VariantFunctionArgument = 'in'? ID
+	'variantfunction' EXTENDED_ID ('[' options+=Option* ']')? ('{'
+		( Description
+		& Status?
+		& Group?
+		& ('arguments' '{' VariantFunctionArgument* '}')
+		)
+		'}')?
+	
+VariantFunctionArgument : 'in'? EXTENDED_ID
 }}}
 
-If the keyword {{{in}}} is given the following ID refers to an input characteristic.
-Otherwise the ID belongs to an output characteristic.
+A variant function definition starts with the keyword {{{variantfunction}}} followed by an EXTENDED_ID defining the name of the variant function. The variant function definition can be enhanced by an optional body. If the body is added, {{{Description}}} is a mandatory feature, while {{{Status}}} and {{{Group}}} are optional. The entries for the features in the body can be made in any order.
+The ?? of the function are defined with the keyword {{{arguments}}} followed by any number of {{{VariantFunctionArgument}}}. A variant function argument consists of a mandatory EXTENDED_ID referring to a characteristic. If the optional keyword {{{in}}} is given, the EXTENDED_ID refers to an *input* characteristic.
+Otherwise the EXTENDED_ID belongs to an *output* characteristic.
 
-Example for a variant function:
+Example for a variant function _giving the output for fuel consumption depending on selection of engine and gear_:
 {{{
 variantfunction VAR_FUNC {
-  description "description"
-  group "group"
-  status locked
-  arguments {
-	in ENGINE 
-	in GEAR 
-	FUELCONSUMPTION   
+	( description "description"
+	group "group"
+	status locked
+	arguments {
+		in ENGINE 
+		in GEAR 
+		FUELCONSUMPTION   
   }
 }
 }}}
 
 === Variant Table ===
 
+A variant table contains the valid combinations of values for different characteristics and can be used in object dependencies, i.e. constraints, preconditions, procedures, and selection conditions. Depending on where the table is used it allows to check the consistency of the entered values, to infer or to restrict values. See official SAP documentation for more information.
+A VC object variant table defines the table structure and additionally requires the VC object [VCMLLanguage#Variant_Table_Content Variant Table Content] providing the table entries.  
+
 The structure (scheme) of a variant table is defined as follows:
 {{{
 VariantTable :
-  'varianttable' ID ('{'
-    Description
-    Status?
-    Group?
-    ('arguments' '{' VariantTableArgument* '}') '}')?
+	'varianttable' EXTENDED_ID ('{'
+	( Description
+	& Status?
+	& Group?
+	& ('arguments' '{' VariantTableArgument* '}') 
+	'}')?
     
-VariantTableArgument = 'key'? ID
+VariantTableArgument : 'key'? EXTENDED_ID
 }}}
 
-The keyword {{{key}}} is used to mark the key columns. The ID refers the appropriate columns.
+A variant table definition starts with the keyword {{{varianttable}}} followed by an {{{EXTENDED_ID}}} defining the name of the variant table.
+The variant table definition can be enhanced by an optional body. If the body is added, {{{Description}}} is a mandatory feature, while {{{Status}}} and {{{Group}}} are optional. The entries for the features in the body can be made in any order.
+The columns of the table are defined with the keyword {{{arguments}}} followed by any number of {{{VariantTableArgument}}}. A variant table argument consists of the optional keyword {{{key}}} marking the column as the key column and a mandatory EXTENDED_ID referring to the characteristic.
 
-Example for a variant table:
+Example for a variant table _containing the columns ENGINE and GEAR_:
 {{{
 varianttable VAR_TAB {
-  description "description"
-  group "group"
+  description "depend. engine and gear"
   status inPreparation
   arguments {
-	key INTERIOR
-	COLOUR
+	key ENGINE
+	GEAR
   }
 }
 }}}
 
 === Variant Table Content ===
-To be added later!
+
+The VC object variant table content provides the value entries for a [VCMLLanguage#Variant_Table Variant Table] listing the valid combinations row by row.
+The number of values given per row must be the same as the number of columns defined in the variant table.
+
+The variant table content is defined as follows:
+{{{
+VariantTableContent	:	
+	'varianttablecontent' EXTENDED_ID ('[' options+=Option* ']')? '{'
+		Row*
+		'}'
+
+Row :	{Row}
+		'row' (SymbolicLiteral | NumericLiteral)*
+}}}
+
+A variant table content definition starts with the keyword {{{varianttablecontent}}} followed by an {{{EXTENDED_ID}}} defining the name of the respective variant table.
+Additionally, one or several rows containing the values are required. Each row definition starts with the keyword {{{row}}} followed by the values, textually represented as {{{SymbolicLiteral}}} or {{{NumericLiteral}}}. 
+
+Example for a variant table content _defining the valid value combinations for engine and gear (1500 ccm and 1800 ccm do not allow automatic gear)_:
+{{{
+varianttablecontent VAR_TAB {
+	{row '1500' gear_4
+	row '1500' gear_5
+	row '1800' gear_4
+	row '1800' gear_5
+	row '2100' gear_4
+	row '2100' gear_4automatic
+	row '2100' gear_5	
+	row '2100' gear_5automatic
+	row '2400' gear_4
+	row '2400' gear_4automatic
+	row '2400' gear_5
+	row '2400' gear_5automatic
+  }
+}
+}}}
 
 == General Language Constructs ==
 
@@ -1159,7 +1238,7 @@ Sample strings are:
 These constructs are used to define names for objects/features. They allow to build names of different complexity with varying character sets.
 Some dedicated character sequences are reserved as keywords and thus cannot be used as identifier, symbol or classname, see [VCMLLanguage#Keywords Keywords]. 
 
-==== *Identifier* ====
+==== Identifier ====
 
 The simplest construction is the identifier, which is a character sequence beginning with a lower/upper character (only 
 ASCII characters are allowed) or underscore, which can be followed by further lower/upper characters, underscore 
@@ -1179,7 +1258,7 @@ Examples for *invalid* simple identifiers:
 Engine-1500		//- not allowed 
 }}}
 
-==== *Symbols* ====
+==== Symbols ====
 
 To allow special characters like {{{:}}}, {{{-}}}, {{{+}}}, etc., or numbers at the first position in character sequences for names of objects/features, the whole character sequence has to be enclosed in siongle quotes.
 This is called a symbol. Symbols are case-insensitive and can even be empty.
@@ -1192,7 +1271,7 @@ Examples for valid symbols:
 'wIndOWs:7'
 }}}
 
-==== *Extended Identifier* ====
+==== Extended Identifier ====
 
 The extended identifier allows to use either an identifier or a symbol as a name and can be used for most objects/features, except e.g. for classes, see [VCMLLanguage#Classes Classes].
 Extended identifier can not be empty. 
@@ -1208,7 +1287,7 @@ color
 'wIndOWs:7'
 }}}
   
-==== *Classname* ====
+==== Classname ====
 
 The classname is a special construct to define the name of the VC object kind Class. 
 It consists of an integer number encloseded by parentheses and a following extended identifier.
@@ -1226,7 +1305,7 @@ Examples for valid classnames:
 Following character sequences are used as keywords in the VCML language and can not be used therefore as identifiers. They are case sensitive.
 In addition, there are a number of two-character-sequences to define different languages for description and documentation. These are in line with SAP definitions.
 
-==== *Keywords for VC Object Declaration* ====
+==== Keywords for VC Object Declaration ====
 {{{
 - billofmaterial			- material
 - characteristic			- precondition
@@ -1238,7 +1317,7 @@ In addition, there are a number of two-character-sequences to define different l
 }}}
 
 
-==== *Keywords for Declaration of Other Objects/Features and Arguments* ====
+==== Keywords for Declaration of Other Objects/Features and Arguments ====
 {{{
 - description				- characteristicgroup
 - documentation				- configurationprofiles
@@ -1258,7 +1337,7 @@ In addition, there are a number of two-character-sequences to define different l
 - bottom-up				- none
 }}}
 
-==== *Keywords for Language Declaration* ====
+==== Keywords for Language Declaration ====
 {{{
 Language:
 	  AF | AR | BG | CA | CS | DA | DE | EL | EN | ES | ET | FI | FR | HE
@@ -1316,7 +1395,7 @@ material CAR {
 }
 }}}
 
-=== Literals and Numeric Intervals===
+=== Literals and Numeric Intervals ===
 
 Literals are used for value assignment. Two types of literals are defined:
  * Numeric literal, which can be positive or negative integer with or without decimal places. Additionally positive or negative exponents are allowed using the character {{{e}}}.
