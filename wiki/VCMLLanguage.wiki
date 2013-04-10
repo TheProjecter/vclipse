@@ -18,7 +18,7 @@ VCML provides a textual language to represent complete product models of the SAP
 
 VCML source code is organized in two different kinds of files:
  * files with extension {{{.vcml}}} contain all objects of a product model, e.g., characteristics, classes, configuration profiles, or dependency nets. 
- * files with extensions {{{.cons}}}, {{{.proc}}}, {{{.sel}}}, and {{{.pre}}} contain the source code of dependencies of type _constraint_, _procedure_, _selection condition_, and _precondition_, respectively, in the respective language for dependencies as defined by SAP. These files have to be located in a dedicated sub folder: for a VCML file with name {{{FILENAME.vcml}}}, the dependency files have to be located in a folder {{{FILENAME-dep}}}. The name of the dependency source-code file must be the same as the name of the dependency, with the respective extension given above.
+ * files with extensions {{{.cons}}}, {{{.proc}}}, {{{.sel}}}, and {{{.pre}}} contain the source code of dependencies of type _constraint_, _procedure_, _selection condition_, and _precondition_, respectively, in the respective language for dependencies as defined by SAP. These files have to be located in a dedicated sub folder: for a VCML file with name {{{FILENAME.vcml}}}, the dependency files have to be located in a folder {{{FILENAME-dep}}}. The name of the dependency source-code file must be the same as the name of the dependency as defined in the VCML file, with the respective extension given above.
 
 In the following the VCML file structure and the VCML-specific language syntax is described. 
 Each {{{.vcml}}} file contains the textual representation of a VCML model. It is built of three basic building blocks: imports, options, and definitions of VC objects, as shown below:
@@ -42,12 +42,13 @@ Applications:
  * Create variants of a model: you can create variants of an existing model by importing the complete model and just modify several dedicated definitions. The original model is preserved. 
    Note: In this case all modifications done in the original model will automatically apply to the variant, too.
 
+An import is defined as follows:
 {{{
 Import :
 	'import' String
 }}}
     
-The import statement consists of the keyword 'import', followed by a String. This string represents the path to the source of the file or data which is to be imported. 
+The import statement consists of the keyword `import`, followed by a `String`. This string represents the path to the source of the file or data which is to be imported. 
 The path can be given as absolute path or as relative path with respect to the {{{.vcml}}} file.
 
 Example of an import statement with absolute path:
@@ -69,18 +70,16 @@ Option :
 	Optiontype '=' String
 }}}
 
-An option definition starts with the option type, the equals '=' symbol, and the value of the option, given as a String.
+An option definition starts with the option type, the equals `=` symbol, and the value of the option, given as a `String`.
 
-Currently, the following options are defined:
+Currently, the following option types are defined:
  * {{{UPS}}}: When IDocs are created from the VCML document, the value of the UPS option is used as object key for the generated ALE distribution packet.
- * {{{ECN}}}: The value of the UPS option is used as change number for all objects.
+ * {{{ECN}}}: The value of the ECN option is used as engineering change number for all objects.
  * {{{KeyDate}}}: The value of the KeyDate option is used as key date for all object.
  
 == VC Objects ==
 
 Each file can contain several top level VC objects. They contain all definitions required to make the product model usable in SAP Variant Configuration. 
-
-=== Declaration of VC Objects ===
 
 In the {{{.vcml}}} file the following kinds of VC objects can be defined:
 
@@ -102,39 +101,39 @@ VCObject :
 	| 	VariantTableContent
 }}}
 	
-The following table gives a short information about the purpose of each kind of VC object. For detailed information see the dedicated chapters in the [VCMLLanguage#List_of_VC_Objects List of VC Objects].
+The following table gives a short information about the purpose of each kind of VC object. For definition and examples see the dedicated chapters in the [VCMLLanguage#List_of_VC_Objects List of VC Objects]. For further information see the official SAP documentation.
 || *VC Object* || *Purpose* ||
 || [VCMLLanguage#Bill_of_Material Bill of Material] || The BOM contains all items (materials) which are required to cover all variants of the product and assigns them to the product model. ||
 || [VCMLLanguage#Characteristic Characteristic] || The characteristics precisely define all selectable options or features of a configurable product, together with their feature values. Characteristics can be assigned object dependencies and/or restrictions to ensure that the configurations are consistent and complete, i.e. they only contain valid combinations of features and feature values. Characteristics can be used for static information (display only) as well as for variable options. These variable options again may or may not allow user input. ||
-|| [VCMLLanguage#Class Class] || In the standard SAP R/3 the class type 300 is the class type for variants. In the {{{.vcml}}} file all characteristics defined for the product model are assigned to this class to enable their usage for material configuration.||
+|| [VCMLLanguage#Class Class] || In the standard SAP the class type 300 is the class type for variants. In the {{{.vcml}}} file all characteristics defined for the product model are assigned to this class to enable their usage for material configuration.||
 || [VCMLLanguage#Configuration_Profile Configuration Profile] || The configuration profile is mandatory for each configurable object. It contains general settings, like the product material??, the user interface design as well as standard networks (NPs) ?? and general procedures (PPs)?? which are to be used. Dependencies are also defined in the configuration profile.  The definitions depend on the object type. ||
-|| [VCMLLanguage#Constraint Constraint] || Constraints monitor the consistency of a configuration. They describe dependencies between characteristics and contain information on which conditions must be fulfilled if the configuration is to be consistent.According to Sap R/3 constraints must belong to a dependency net. ||
-|| [VCMLLanguage#Dependency_Net Dependency Net] || The dependency net groups all constraints for the product model and provides like a single point of entry to the constraints of the whole configuration. ||
+|| [VCMLLanguage#Constraint Constraint] || Constraints monitor the consistency of a configuration. They describe dependencies between characteristics and contain information on which conditions must be fulfilled if the configuration is to be consistent. According to SAP constraints must belong to a dependency net. ||
+|| [VCMLLanguage#Dependency_Net Dependency Net] || The dependency net groups all constraints for a product model and provides like a single point of entry to the constraints of the whole configuration. ||
 || [VCMLLanguage#Interface_Design Interface Design] || The interface design supports grouping of characteristics to enable a structured layout. ||
-|| [VCMLLanguage#Material Material] || Material is used to define name and type of every single configurable item of the product. Additionally, with material general features/relations?? Like type, assigned bill of materials, classes and configuration profiles which are used for the model are defined. ||
-|| [VCMLLanguage#Precondition Precondition] || Preconditions support restricting or hiding of characteristics or characteristic values in case that they are only valid if the precondition is fulfilled. This ensures that configuration is consistent. ||
+|| [VCMLLanguage#Material Material] || Material is used to define name and type of every single configurable item of the product as well as for the whole product. For product material, additionally  general features like type, assigned bill of materials, classes and configuration profiles which are used for the model are defined. ||
+|| [VCMLLanguage#Precondition Precondition] || Preconditions support restricting or hiding of characteristics or characteristic values in case that they are only valid if the precondition is fulfilled. This ensures that a configuration is consistent. ||
 || [VCMLLanguage#Procedure Procedure] || Procedures allow to internally/automatically modify values in the model. They can be assigned to characteristics, characteristic values, the configuration profile, BOM items and operations, which will then trigger a specified value change.||
 || [VCMLLanguage#Selection_Condition Selection Condition] || The assignment of a selection condition ensures that all objects required for a variant are selected. It can be assigned e.g. to characteristics and BOM items.  ||
-|| [VCMLLanguage#Variant_Function Variant Function] ||  ||
+|| [VCMLLanguage#Variant_Function Variant Function] || Variant functions allow to create more complex object dependencies than possible with constraint, precondition, procedure, or selection condition.  ||
 || [VCMLLanguage#Variant_Table Variant Table] || A variant table supports restriction of characteristic values to valid combinations.  ||
 || [VCMLLanguage#Variant_Table_Content Variant Table Content] || Here the content of a variant table is defined.||
 
 The minimum requirement for a configurable product is the definition of the material (for the product itself as well as for the individual items), a characteristic with selectable values and the assignment of a class and a configuration profile. By adding additional characteristics and other kinds of VC objects any product however complex can be modeled for variant configuration.
 
-Each declaration of a VC object itself consists of the dedicated keyword as listed above, followed by the mandatory assignment of a name, and an optional body. 
+Each declaration of a VC object itself consists of the dedicated keyword as listed in  [VCMLLanguage#Keywords_for_VC_Object_Declaration Keywords for VC Object Declaration], followed by the mandatory assignment of a name, and an optional body. 
 The body can contain other objects or references to other VC objects defined elsewhere in the {{{.vcml}}} file.
-There are some basic sublevel objects/features that are used in a number of VC objects while most sublevel objects/features are specific to a VC object. 
+There are some types of identifiers and basic sublevel objects/features that are used in a number of VC objects while most sublevel objects/features are specific to a VC object. 
 The identifiers and sublevel objects/features themselves are separately declared later on in the vcml file. Using this hierarchical declaration structure, all identifiers and sub level objects/features are defined only once and can be used/referenced by all other objects and VC objects.
-For more information on the identifiers syntax and usage for the different VC objects see [VCMLLanguage#Identifier Identifier].
+For more information on the identifiers syntax and usage for the different VC objects see [VCMLLanguage#Identifier,_Symbol,_Extended_Identifier_and_Classname Identifier, Symbol, Extended Identifier and Classname].
 For more information on the common basic objects see [VCMLLanguage#Basic_Options/Features Basic Options/Features].
 For the declaration of the sublevel objects/features specific to VC objects, see the [VCMLLanguage#List_of_VC_Objects List of VC Objects]. 
 
 === Basic Options/Features ===
-The following description give a brief overview of the basic options/features. For detailed information see the official SAP documentation.
+The following chapters give a brief overview of the basic options/features. For detailed information see the official SAP documentation.
 
 ==== Description ====
 
-Nearly every VC object has a description. For some VC objects it is mandatory and for some it is optional, see the respective sub chapter in the [VCMLLanguage#List_of_VC_Objects List of VC Objects] for more information. 
+Nearly every VC object has a description. For some VC objects it is mandatory and for some it is optional, see the respective sub chapter in the [VCMLLanguage#List_of_VC_Objects List of VC Objects]. 
 Descriptions can be single-language descriptions or multi-language descriptions. All SAP-supported ISO language codes can be used.
 In the case of single-language descriptions, the default language defined in VClipse preferences is used, if specified. Otherwise the English language (EN) is used.
 Descriptions are limited to 30 characters. In case longer texts are required, you can use the object/feature documentation, see [VCMLLanguage#Documentation Documentation].
@@ -155,7 +154,7 @@ MultiLanguageDescription :
 	Language STRING
 }}}
 
-Both description definitions starts with the keyword {{{description}}}. In case of a simple description the keyword is followed by a single {{{STRING}}}. 
+Both description definitions start with the keyword {{{description}}}. In case of a simple description the keyword is followed by a single {{{STRING}}}. 
 In case of a multi-language description the keyword is followed by the 2-character keyword for the language definition and the {{{STRING}}} with the text in the respective language. You can add any number of languages.
 See [VCMLLanguage#Keywords_for_Language_Declaration Keywords for Language Declaration] for the supported keywords for {{{Language}}}.
 
@@ -200,7 +199,7 @@ FormattedDocumentationBlock :
 	STRING ('format' STRING)?
 }}}
 
-Both documentation definitions starts with the keyword {{{documentation}}}. In case of a simple documentation the keyword is followed by a single {{{STRING}}}. 
+Both documentation definitions start with the keyword {{{documentation}}}. In case of a simple documentation the keyword is followed by a single {{{STRING}}}. 
 In case of a multi-language documentation the keyword is followed by the 2-character keyword for the language definition and the {{{STRING}}} with the text in the respective language. To attach a format information to a text block, you can optionally add the keyword {{{format}}} followed by a {{{STRING}}}.
 You can add any number of languages.
 See [VCMLLanguage#Keywords_for_Language_Declaration Keywords for Language Declaration] for the supported keywords for {{{Language}}}.
@@ -292,10 +291,10 @@ BOMItem_Class :
 	'}')?
 }}}
 
-The bill of material starts with the keyword {{{billofmaterial}}} followed by the name of the bill of material, textually represented as an {{{EXTENDED_ID}}}, and the features.
+The bill of material definition starts with the keyword {{{billofmaterial}}} followed by the name of the bill of material, textually represented as an {{{EXTENDED_ID}}}.
 
-The bill of material definition can be enhanced by an optional body with two optional features, {{{material}}} and {{{items}}}.
-The material referenced here is the material of the product, consisting of the keyword {{{material}}} followed by the name of the corresponding material.
+This can be enhanced by an optional body with two optional features, {{{material}}} and {{{items}}}.
+The material referenced here is the material of the product, consisting of the keyword {{{material}}} followed by the name of the corresponding material represented by an `EXTENDED_ID`.
 The feature items consists of the keyword {{{items}}} followed by a list of all BOM items, i.e. all configurable items belonging to the product.
 
 BOM items can either be materials or classes (class nodes). Their definition starts with an integer number {{{INT}}}, representing the item number. This is followed by the name of this dedicated item, textually represented as an {{{EXTENDED_ID}}} for materials or the {{{CLASSNAME}}} for classes.
@@ -411,7 +410,7 @@ Characteristic :
 	'}')?
 }}}
 A characteristic definition starts with the keyword {{{characteristic}}} followed by a {{{EXTENDED_ID}}} defining the name of the characteristic. 
-The characteristic can be enhanced by an optional body. If the body is added, a {{{Description}}} and the {{{CharacteristicType}}} are mandatory features while {{{Documentation}}}, {{{Status}}}, {{{Group}}} a number of attributes enclosed in square brackets {{{[ ]}}} and dependencies are optional. For more information see [VCMLLanguage#Characteristic_Types Characteristic Types], [VCMLLanguage#Characteristic_Attributes Characteristic Attributes] or [VCMLLanguage#Characteristic_Dependencies Characteristic Dependencies].
+The characteristic can be enhanced by an optional body. If the body is added, a {{{Description}}} and the {{{CharacteristicType}}} are mandatory features while {{{Documentation}}}, {{{Status}}}, {{{Group}}}, a number of attributes enclosed in square brackets {{{[ ]}}} and dependencies are optional. For more information see [VCMLLanguage#Characteristic_Types Characteristic Types], [VCMLLanguage#Characteristic_Attributes Characteristic Attributes] or [VCMLLanguage#Characteristic_Dependencies Characteristic Dependencies].
 For detailed information on the basic features description, documentation, status and group see the respective chapters [VCMLLanguage#Description Description], [VCMLLanguage#Documentation Documentation], [VCMLLanguage#Status Status], or [VCMLLanguage#Group Group].
 The entries for the optional features in the body can be made in any order. A characteristic definition without body can be used e.g. to include characteristics as placeholders whose definition will be completed later on.
 
@@ -457,6 +456,7 @@ characteristic ENGINE {
 	numeric { 
 		numberOfChars 4
 		decimalPlaces 0
+		unit "ccm"
 		values {1500 1800 2100 2400}
 	} 
 	status released
@@ -468,6 +468,7 @@ characteristic ENGINE {
 	numeric { 
 		numberOfChars 2
 		decimalPlaces 1
+		unit "l"
 		values {1.5 *1.8 2.1 2.4}			//The default value is 1.8
 	} 
 	status released
@@ -479,7 +480,7 @@ characteristic keynumber {
 		numberOfChars 2
 		decimalPlaces 0
 		[intervalValuesAllowed]
-		values { (*2 - 20) {documentation "May be required for several drivers in big companies" }}
+		values { (*2 - 20) {documentation "Many keys may be required for several drivers in big companies" }}
 	}
 	status released
 }
@@ -598,25 +599,25 @@ characteristic delivery date {
 }}}
 
 ==== Characteristic Attributes ====
-The following optional attributes are used as boolean flags and can be used to specify certain behaviour for the characteristic. For detailed information on this attributes see also the official SAP documentation.
+The following optional attributes are used as boolean flags to specify certain behaviour for the characteristic. For detailed information on this attributes see also the official SAP documentation.
 The attributes can be entered in any order within square brackets.
  * {{{additionalValues}}}.... allows other than the values defined via characteristic type to be entered
  * {{{required}}}.... a value must be entered/selected for the characteristic, it must not be left empty 
  * {{{restrictable}}}.... the characteristic values can be restricted dynamically depending e.g. on other entries made during variant configuration
- * {{{noDisplay}}}.... the characteristic is not displayed in the Variant configuration. This allows to create characteristics which do not directly depend on user input but rather on other characteristics, e.g. for internal calculations
+ * {{{noDisplay}}}.... the characteristic is not displayed in the variant configuration. This allows to create characteristics which do not directly depend on user input but rather on other characteristics, e.g. for internal calculations
  * {{{notReadyForInput}}}.... does not allow manual user input, instead the value can be set e.g. by dependencies
  * {{{multiValue}}}.... this characteristic allows input or selection of multiple values
  * {{{displayAllowedValues}}}.... all allowed values are displayed for user selection
  * {{{('table' XID 'field' XID)}}}.... <wiki:comment>Is this the SAP check table? table + name , field + ? ?</wiki:comment>
  
-Example for attribute usage for a Info text characteristic:
+Example for attribute usage for an info text characteristic:
 {{{
 characteristic INFO_convertible {
 	description "non-availability of convertib"
 	documentation "Information on non-availability of convertibles for selected model"
 	symbolic {
 	numberOfChars 30
-	[ restrictable notReadyForInput ]					// restrictable, since the message shall only be displayed for respective model selection. Not ready for input, since only a info text shall be displayed an no user input can be made
+	[ restrictable notReadyForInput ]					// restrictable, since the message shall only be displayed for respective model selection. Not ready for input, since only an info text shall be displayed and input is not possible.
 	values {
 	info { 
 		description "For the selected model there i"
@@ -665,11 +666,11 @@ A class is defined as follows:
 {{{
 Class :
 	'class' CLASSNAME ('{' 
-		Description
-    	Status?
-    	Group?
-    	'characteristics' '{' EXTENDED_ID* '}'
-    	('superclasses' '{' CLASSNAME* '}')?
+		( Description
+    	& Status?
+    	& Group?
+    	& 'characteristics' '{' EXTENDED_ID* '}'
+    	& ('superclasses' '{' CLASSNAME* '}')?
 	'}')?
 
 CLASSNAME = '(' INT ')' EXTENDED_ID
@@ -681,7 +682,7 @@ The class type must be valid for usage in variant configuration, like (300).
 
 The class can be enhanced by an optional body.
 If the body is added, a {{{Description}}} is a mandatory feature while {{{Status}}} and {{{Group}}} are optional.
-All {{{characteristics}}} must be referenced here with their name, textually represented as an {{{XID}}}.
+All {{{characteristics}}} must be referenced here with their name, textually represented as an {{{EXTENDED_ID}}}.
 The number of characteristics in one class is restricted to 999. This total number of characteristics can be extended by adding references to superclasses, since a class inherits all characteristics of its superclasses.
 The {{{superclasses}}} can be referenced with their {{{CLASSNAME}}} which is defined as described above.
 The entries for the optional features in the body can be made in any order.
@@ -698,16 +699,16 @@ Example for a class definition with body, including all optional features:
 
 {{{
 class (300)CAR {
-	description "this is the class for the car"
+	description "this is the class for cars"
 	status released
-	group "PRODUCTS_CAR"
+	group "PROD_CAR"
 	characteristics {
 		ENGINE
 		GEAR
 		COLOUR
 		INTERIOR
 	}
-	superclasses { (300)VEHICLE }
+	superclasses { (300)CONVERTIBLE }
 }
 }}}
 
@@ -736,8 +737,8 @@ ConfigurationProfileEntry :
 	INT EXTENDED_ID
 }}}  
 
-The configuration profile definition starts with the keyword {{{'configurationprofile'}}}, followed by the name of the profile, textually represented as an {{{EXTENDED_ID}}} and a mandatory body with additional features.
-The body contains several optional features {{{material}}}, {{{status}}}, {{{bomapplication}}}, {{{uidesign}}}, and {{{fixing}}}. 
+The configuration profile definition starts with the keyword {{{'configurationprofile'}}} followed by the name of the profile, textually represented as an {{{EXTENDED_ID}}} and a mandatory body with additional features.
+The body contains several optional features, {{{material}}}, {{{status}}}, {{{bomapplication}}}, {{{uidesign}}}, and {{{fixing}}}. 
 The keyword {{{material}}} followed by an {{{EXTENDED_ID}}} defining the name of the master material assigns the configuration profile to a specific material. 
 The keyword {{{bomapplication}}} followed by an {{{EXTENDED_ID}}} defining the name of the BOM application selects the BOM explosion level which is to be used for the configuration model. 
 The keyword {{{uidesign}}} followed by an {{{EXTENDED_ID}}} defining the name of the user interface design assigns a configuration user interface design, see [VCMLLanguage#Interface_Design Interface Design] for more information.
@@ -790,6 +791,7 @@ constraint CN_GEAR1500 {
 	status released
 	group "PROD_CAR"
 	}
+	
 <wiki:comment>
 Wie sieht der source code tatsächlich aus für constraint engine 1500 only allowed with gear_4??
 source code file CON_GEAR1500.cons:
@@ -843,7 +845,7 @@ dependencynet DEP_NET_CAR {
 
 === Interface Design === 
 
-The definition of an interface design allows to structure, that is group the characteristics display for value assignment. To use an Interface design, it must be assigned to the configuration profile, see [VCMLLanguage#Configuration_Profile Configuration Profile].
+The definition of an interface design allows to structure, that is to group the characteristics display for value assignment. To use an interface design, it must be assigned to the configuration profile, see [VCMLLanguage#Configuration_Profile Configuration Profile].
 If no interface design is defined, all characteristics are displayed in a single tab named {{{General}}}.
 
 An interface design is defined as follows:
@@ -901,11 +903,12 @@ A material is defined as follows:
 {{{
 Material :
 	'material' EXTENDED_ID ('{'
-		Description
-		'type' EXTENDED_ID
-		'billofmaterials' '{' EXTENDED_ID* '}'?
-		'classes' '{' Classification* '}'?
-		'configurationprofiles' '{' EXTENDED_ID* '}'?
+		( Description
+		& 'type' EXTENDED_ID
+		& 'billofmaterials' '{' EXTENDED_ID* '}'?
+		& 'classes' '{' Classification* '}'?
+		& 'configurationprofiles' '{' EXTENDED_ID* '}'?
+		)
 	'}')?
 
 Classification
@@ -983,6 +986,7 @@ precondition PRECOND_AUTGEAR {
 	status released
 	group "PROD_CAR"
 	}
+
 <wiki:comment>
 Wie sieht der source code tatsächlich aus für engines 1500 or 1800 are precondition to restrict to non-automatic gear??
 source code file PRECOND_AUTGEAR.pre:
@@ -1028,7 +1032,7 @@ $self.GEAR = 'Gear_4' if $root.ENGINE = '1500'				//'' here required for Gear_4?
 
 === Selection Condition ===
 
-The VC object selction condition belongs to the object dependencies. Selection conditions can be assigned to [VCMLLanguage#Characteristics Characteristics] and to BOM items in the  [VCMLLanguage#Bill_of_Material Bill of Material] definition. They define under which condition a characteristic must be assigned a value or a BOM item has to be added to the configuration result.
+The VC object selction condition belongs to the object dependencies. Selection conditions can be assigned e.g. to [VCMLLanguage#Characteristics Characteristics] and to BOM items in the  [VCMLLanguage#Bill_of_Material Bill of Material] definition. They define under which condition a characteristic must be assigned a value or a BOM item has to be added to the configuration result.
 The source code of every selction condition is stored in an individual file in the respective language for dependencies as defined by SAP. These files have to be located in a dedicated sub folder: for a VCML file with name {{{FILENAME.vcml}}}, the selction condition files have to be located in a folder {{{FILENAME-dep}}}. The name of the dependency source-code file must be the same as the name of the dependency, with the extension {{{.sel}}}.
 
 A selection condition is defined as follows:
@@ -1053,6 +1057,7 @@ selectioncondition SELCOND_NAVI {
 	documentation "select navigation system if engine 2100 or 2400 is selected"
 	status released
 }
+
 <wiki:comment>
 Wie sieht der source code tatsächlich aus??
 source code file SELCOND_NAVI.sel:
@@ -1356,7 +1361,7 @@ The most important operators are the following:
  * {{{?}}} cardinality one or none
  * {{{*}}} cardinality any number
  * {{{+}}} cardinality at least once
- * cardinality exactly one is the default value and required no operator.
+ * cardinality exactly one is the default value and requires no operator
  * {{{()}}} groups expressions, like alternatives or numeric intervals
  * {{{!}}} inverts an oparator or excludes a value
  * {{{|}}} allows for multiple valid options as alternatives
