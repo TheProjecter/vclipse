@@ -75,7 +75,7 @@ An option definition starts with the option type, the equals `=` symbol, and the
 Currently, the following option types are defined:
  * {{{UPS}}}: When IDocs are created from the VCML document, the value of the UPS option is used as object key for the generated ALE distribution packet.
  * {{{ECN}}}: The value of the ECN option is used as engineering change number for all objects.
- * {{{KeyDate}}}: The value of the KeyDate option is used as key date for all object.
+ * {{{KeyDate}}}: The value of the !KeyDate option is used as key date for all object.
  
 == VC Objects ==
 
@@ -791,20 +791,17 @@ constraint CN_GEAR1500 {
 	status released
 	group "PROD_CAR"
 	}
-	
-<wiki:comment>
-Wie sieht der source code tatsächlich aus für constraint engine 1500 only allowed with gear_4??
-source code file CON_GEAR1500.cons:
-objects: CARS is_a (300)CAR . 
-condition:
-	CARS.CAR_gear in (Gear_4) and 
-	CARS.CAR_engine = '1500' or
-	CARS.CAR_gear in (Gear_4, Gear_4automatic, Gear_5, Gear_5automatic) and
-	CARS.CAR_engine <> '1500'
+}}}
 
-restrictions: ? 
-inferences:  ?
-</wiki:comment> 
+The file {{{CN_GEAR1500.cons}}} contains the source code of the constraint:
+{{{
+objects: CARS is_a (300)CAR . 
+restrictions:
+	CARS.CAR_gear = 'Gear_4' if 
+	CARS.CAR_engine = '1500',
+	CARS.CAR_gear in ('Gear_4', 'Gear_4automatic', 'Gear_5', 'Gear_5automatic') if
+	CARS.CAR_engine <> '1500'.
+inferences: CARS.CAR_gear.
 }}}
 
 === Dependency Net ===
