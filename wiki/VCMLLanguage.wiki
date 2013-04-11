@@ -1178,7 +1178,7 @@ Some constructs, like whitespace, empty lines or backspace?? support the structu
 Another construct allows to make comments for additional information. These are not part of the model and will not be interpreted as code.
 There are several constructs which define different kinds of character sequences, like for example strings, symbols, identifiers or even dedicated keywords, which can be assigned to object values or objects. 
 Operators are also generally defined to support different kind of assignments between objects/features and object values.
-For more information see also the Xtext grammar documentation under [http://www.eclipse.org/Xtext/documentation.html#grammarLanguage].
+For more information see also the [http://www.eclipse.org/Xtext/documentation.html#grammarLanguage Xtext grammar documentation].
 
 === Whitespace and Empty Line ===
 
