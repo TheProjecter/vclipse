@@ -79,7 +79,7 @@ Currently, the following option types are defined:
 
 Option definitions at the beginning of a file are valid for all VC objects. Additionally, options can be defined for individual VC objects. These VC object specific options override the general options. 
 
-Example for a general and VC object individual ECM option:
+Example for a general and VC-object individual ECM option:
 {{{
 ECM = "AB123"
 billofmaterial CAR [ECM = "DE987"]
@@ -109,7 +109,7 @@ VCObject :
 	| 	VariantTableContent
 }}}
 	
-The following table gives a short information about the purpose of each kind of VC object. For definition and examples see the dedicated chapters in the [VCMLLanguage#List_of_VC_Objects List of VC Objects]. For further information see the official SAP documentation.
+The following table gives a short information about the purpose of each kind of VC object. For definition and examples see the dedicated chapters in the [VCMLLanguage#Detailed_Descriptions_of_the_VC_Objects detailed descriptions of the VC Objects]. For further information see the official SAP documentation.
 || *VC Object* || *Purpose* ||
 || [VCMLLanguage#Bill_of_Material Bill of Material] || The BOM contains all items (materials) which are required to cover all variants of the product and assigns them to the product model. ||
 || [VCMLLanguage#Characteristic Characteristic] || The characteristics precisely define all selectable options or features of a configurable product, together with their feature values. Characteristics can be assigned object dependencies and/or restrictions to ensure that the configurations are consistent and complete, i.e. they only contain valid combinations of features and feature values. Characteristics can be used for static information (display only) as well as for variable options. These variable options again may or may not allow user input. ||
@@ -141,7 +141,7 @@ The following chapters give a brief overview of the basic options/features. For 
 
 ==== Description ====
 
-Nearly every VC object has a description. For some VC objects it is mandatory and for some it is optional, see the respective sub chapter in the [VCMLLanguage#Detailed_Descriptions_of_the_VC_Objects Detailed Descriptions of the VC Objects]. 
+Nearly every VC object has a description. For some VC objects it is mandatory and for some it is optional, see the respective sub chapter in the [VCMLLanguage#Detailed_Descriptions_of_the_VC_Objects detailed descriptions of the VC Objects]. 
 Descriptions can be single-language descriptions or multi-language descriptions. All SAP-supported ISO language codes can be used.
 In the case of single-language descriptions, the default language defined in VClipse preferences is used, if specified. Otherwise the English language (EN) is used.
 Descriptions are limited to 30 characters. In case longer texts are required, you can use the object/feature documentation, see [VCMLLanguage#Documentation Documentation].
@@ -221,10 +221,12 @@ Example for a multi-language documentation with format information for the Germa
 documentation {
   EN "the detailed documentation of the VC object"
   DE "die detaillierte Dokumentation des VC-Objekts" format "bold"		
-  
-<wiki:comment> check on format definition </wiki:comment> 
 }
 }}}
+
+<wiki:comment> 
+check on format definition 
+</wiki:comment> 
 
 ==== Status ====
 
@@ -751,7 +753,7 @@ ConfigurationProfileEntry :
 }}}  
 
 The configuration profile definition starts with the keyword `configurationprofile` followed by the name of the profile, textually represented as an `EXTENDED_ID`.
-This can be encanced by optional [VCMLLanguage#Options options] and a mandatory body. The body contains several optional features, [VCMLLanguage#Material Material], [VCMLLanguage#Status Status], `bomapplication`, `uidesign`, and `fixing`. 
+This can be encanced by optional [VCMLLanguage#Options options] and a mandatory body. The body contains several optional features, [VCMLLanguage#Material material], [VCMLLanguage#Status Status], `bomapplication`, `uidesign`, and `fixing`. 
 The keyword `material` followed by an `EXTENDED_ID` defining the name of the master material assigns the configuration profile to a specific material. 
 The keyword `bomapplication` followed by an `EXTENDED_ID` defining the name of the BOM application selects the BOM explosion level which is to be used for the configuration model. 
 The keyword `uidesign` followed by an `EXTENDED_ID` defining the name of the user interface design assigns a configuration user [VCMLLanguage#Interface_Design interface design].
@@ -764,10 +766,10 @@ The configuration profile entry is defined by an integer referring to the sequen
 Example for a configuration profile declaration:
 {{{
 configurationprofile PRODUCTS_CAR {
-	material CAR
+	material {CAR}
 	status released
 	bomapplication SD01
-	uidesign PRODUCTS_CAR
+	uidesign {PRODUCTS_CAR}
 	DEP_NET_CAR
 	10 PP_CAR1
 	20 PP_CAR2
@@ -1078,7 +1080,7 @@ $ROOT.ENGINE in ('2100', '2400')
 === Variant Function ===
 
 A variant function can be used in object dependencies, i.e. constraints, preconditions, procedures, and selection conditions to realize creation of more complex dependencies. See official SAP documentation for more information.
-Only the interface of a VariantFunction is defined here. ABAP respectively Java code is not defined in VCML.
+Only the interface of a variant function is defined here. ABAP respectively Java code is not defined in VCML.
 
 A variant function is defined as follows:
 {{{
@@ -1148,7 +1150,7 @@ varianttable VAR_TAB {
 
 === Variant Table Content ===
 
-The VC object variant table content provides the value entries for a [VCMLLanguage#Variant_Table Variant Table] listing the valid combinations row by row.
+The VC object variant table content provides the value entries for a [VCMLLanguage#Variant_Table variant table] listing the valid combinations row by row.
 The number of values given per row must be the same as the number of columns defined in the variant table.
 
 The variant table content is defined as follows:
@@ -1207,7 +1209,7 @@ Block comments not only allow to give detailed additional information but they c
  * Enter incomplete definitions of objects as block comments which will be completed later and only then included in the model code.
  * Temporarily exclude parts of the model by enclosing it in the block comment syntax, without deleting it completely from the model.
 
-Note that comments can not be used within Strings, see [VCMLLanguage#Strings Strings].
+Note that comments can not be used within [VCMLLanguage#Strings Strings].
 
 Examples for single-line comments:
 
