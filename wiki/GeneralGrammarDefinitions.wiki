@@ -1,7 +1,6 @@
 #summary General Grammar Language Definitions
 #labels Featured,Phase-Design
 #sidebar TableOfContents
-<wiki:toc max_depth="3" />
 
 = General Grammar Language Definitions =
 
