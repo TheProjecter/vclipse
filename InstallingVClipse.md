@@ -1,0 +1,9 @@
+# Installing VClipse #
+
+Install any Eclipse Juno 4.2.1 (SR1) distribution.
+
+Install SAP JCo and the SAP Java IDoc library, e.g. using the method described in [Building VClipse](BuildingVClipse.md).
+
+Install Subclipse from http://subclipse.tigris.org/update_1.8.x
+
+Intall VClipse from http://update.vclipse.org
